@@ -3,20 +3,20 @@ name: Deploy to Firebase Hosting on push
 on:
   push:
     branches:
-      - master # Asegúrate de cambiar esto si usas otra rama como tu rama principal
+      - master # Cambia esto por tu rama principal si es diferente
 
 jobs:
   deploy:
-    runs-on: windows-latest # O cambia a windows-latest si prefieres Windows
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Repo
-      uses: actions/checkout@v2
-
+      uses: actions/checkout@v3 # Asegúrate de usar la última versión
+    
     - name: Setup Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
-        node-version: '20' # Asegúrate de usar la versión de Node.js que corresponda a tu proyecto
+        node-version: '20' # Usa la versión de Node.js adecuada para tu proyecto
 
     - name: Install Dependencies
       run: npm install
