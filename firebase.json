@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "evaluacioncognitiva",
     "public": "public",
     "ignore": [
       "firebase.json",
