@@ -1,32 +1,34 @@
 name: Deploy to Firebase Hosting on push
 
-on:
+'on':
   push:
     branches:
-      - master # Cambia esto por tu rama principal si es diferente
+      - master # Asegúrate de cambiarlo si tu rama principal tiene otro nombre
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repo
-      uses: actions/checkout@v3 # Asegúrate de usar la última versión
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20' # Usa la versión de Node.js adecuada para tu proyecto
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' # Asegúrate de que coincide con la versión de Node.js que usas localmente
+          cache: 'npm'
+      
+      - name: Install Dependencies
+        run: npm ci # 'npm ci' es más rápido para CI/CD y usa exactamente lo que está en package-lock.json
 
-    - name: Install Dependencies
-      run: npm install
+      - name: Build React App
+        run: npm run build
 
-    - name: Build React App
-      run: npm run build
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_APLICACION_TACTIL_TFG }}'
+          projectId: aplicacion-tactil-tfg
 
-    - name: Deploy to Firebase Hosting
-      uses: w9jds/firebase-action@master
-      with:
-        args: deploy --only hosting
-      env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
