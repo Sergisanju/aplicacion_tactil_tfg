@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Welcome to Firebase Hosting</title>
-
+    <!-- cargamos el script de firebase-config.js -->
+    <script> src="firebase-config.js"</script>
     <!-- update the version number as needed -->
     <script defer src="/__/firebase/10.9.0/firebase-app-compat.js"></script>
     <!-- include only the Firebase features as you need -->
@@ -49,7 +50,7 @@
     <p id="load">Firebase SDK Loading&hellip;</p>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', async function() {
         const loadEl = document.querySelector('#load');
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
         // // The Firebase SDK is initialized and available here!
@@ -59,12 +60,29 @@
         // firebase.firestore().doc('/foo/bar').get().then(() => { });
         // firebase.functions().httpsCallable('yourFunction')().then(() => { });
         // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+        //firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
         // firebase.analytics(); // call to activate
         // firebase.analytics().logEvent('tutorial_completed');
         // firebase.performance(); // call to activate
         //
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        const storage = firebase.storage();
+        const storageRef = storage.ref();
+        const fileRef = storageRef.child('cartas_de_memoria/animales.json');
+
+        try {
+          const url = await fileRef.getDownloadURL();
+          const response = await fetch(url);
+          const data = await response.json();
+          const nombre = data[0].nombre; // Asumiendo que el JSON es un array y queremos el campo 'nombre' del primer objeto
+
+          // Mostrar el nombre en la página
+          const displayElement = document.getElementById('message');
+          displayElement.innerHTML += `<p>Nombre del primer animal: ${nombre}</p>`;
+        } catch (error) {
+          console.error("Error loading file:", error);
+        }
+        
 
         try {
           let app = firebase.app();

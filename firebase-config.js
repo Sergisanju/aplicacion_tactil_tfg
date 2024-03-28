@@ -23,23 +23,3 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-// Referencia al archivo JSON en Firebase Storage
-const storageRef = firebase.storage().ref('/cartas_de_memoria/animales');
-
-// Descarga el archivo JSON
-storageRef.getDownloadURL().then((url) => {
-  // Realiza la petición HTTP para obtener el archivo JSON
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      // Aquí puedes usar los datos del archivo JSON
-      console.log(data);
-      // Por ejemplo, para mostrar el nombre de la primera carta
-      console.log(data[0].nombre);
-    })
-    .catch(error => {
-      console.error('Error al descargar el archivo JSON:', error);
-    });
-}).catch((error) => {
-  console.error('Error al obtener la URL de descarga:', error);
-});
