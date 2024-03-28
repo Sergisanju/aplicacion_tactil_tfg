@@ -16,5 +16,16 @@
       "enabled": true
     },
     "singleProjectMode": true
-  }
+  },
+  "headers": [
+    {
+      "source": "**",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://evaluacioncognitiva.web.app"
+        }
+      ]
+    }
+  ]
 }
