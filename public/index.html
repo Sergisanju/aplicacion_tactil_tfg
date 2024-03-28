@@ -46,10 +46,10 @@
       <p>PRUEBA FINAL LISTA: entorno de react con firebase creado correctamente con hosting y hosting emulator</p>
       <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
     </div>
+    <div id="root"></div    
     <p id="load">Firebase SDK Loading&hellip;</p>
-
     <script>
-      document.addEventListener('DOMContentLoaded', async function() {
+      document.addEventListener('DOMContentLoaded', function() {
         const loadEl = document.querySelector('#load');
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
         // // The Firebase SDK is initialized and available here!
@@ -65,24 +65,7 @@
         // firebase.performance(); // call to activate
         //
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        const storage = firebase.storage();
-        const storageRef = storage.ref();
-        const fileRef = storageRef.child('/cartas_de_memoria/animales.json');
-
-        try {
-          const url = await fileRef.getDownloadURL();
-          const response = await fetch(url);
-          const data = await response.json();
-          const nombre = data[0].nombre; // Asumiendo que el JSON es un array y queremos el campo 'nombre' del primer objeto
-
-          // Mostrar el nombre en la página
-          const displayElement = document.getElementById('message');
-          displayElement.innerHTML += `<p>Nombre del primer animal: ${nombre}</p>`;
-        } catch (error) {
-          console.error("Error loading file:", error);
-        }
         
-
         try {
           let app = firebase.app();
           let features = [
