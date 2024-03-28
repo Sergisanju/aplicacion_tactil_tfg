@@ -3,6 +3,14 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import config from './firebase-config';
+
+// Inicializar Firebase
+if (!firebase.apps.length) {
+  firebase.initializeApp(config);
+} else {
+  firebase.app(); // si ya está inicializada, usa esa instancia.
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
