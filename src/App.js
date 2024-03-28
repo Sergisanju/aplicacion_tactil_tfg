@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import MostrarJSON from './MostrarJSON'; // Asegúrate de que la ruta de importación sea correcta
 
 function App() {
