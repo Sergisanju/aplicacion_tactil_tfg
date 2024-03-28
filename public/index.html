@@ -68,7 +68,7 @@
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
         const storage = firebase.storage();
         const storageRef = storage.ref();
-        const fileRef = storageRef.child('cartas_de_memoria/animales.json');
+        const fileRef = storageRef.child('/cartas_de_memoria/animales.json');
 
         try {
           const url = await fileRef.getDownloadURL();
