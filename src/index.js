@@ -1,6 +1,6 @@
 // MostrarJSON.js
 import React, { useEffect, useState } from 'react';
-import firebase from 'firebase'
+import firebase from './firebase-config'; // Asegúrate de que la ruta de importación sea correcta
 
 const MostrarJSON = () => {
   const [data, setData] = useState(null);
