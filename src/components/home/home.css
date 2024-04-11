@@ -1,0 +1,25 @@
+.home-container {
+    text-align: center;
+  }
+  
+  .games-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Ajusta el espacio entre los juegos según necesites */
+  }
+  
+  .game {
+    border: 2px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .game button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  /* Añade más estilos según tu diseño */
+  
