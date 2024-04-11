@@ -1,5 +1,5 @@
 import React from 'react';
-import './Home.css'; // Asegúrate de tener tu archivo de estilos correspondiente
+import './home.css'; // Asegúrate de tener tu archivo de estilos correspondiente
 import memoryGameIcon from '../../assets/images/memory-game-icon.png';
 import categorizationGameIcon from '../../assets/images/categorization-game-icon.png';
 
