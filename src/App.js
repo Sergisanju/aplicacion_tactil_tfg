@@ -1,13 +1,20 @@
 import React from 'react';
-import Home from './components/home/home';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './components/Home/Home';
+import MemoryGame from './components/MemoryGame/MemoryGame';
+import CategorizationGame from './components/CategorizationGame/CategorizationGame';
 import './App.css';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <Home />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/memory-game" element={<MemoryGame />} />
+        <Route path="/categorization-game" element={<CategorizationGame />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
