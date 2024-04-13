@@ -1,25 +1,58 @@
+/* Home.css */
 .home-container {
-    text-align: center;
+  text-align: center;
+  margin-top: 2rem; /* Ajusta según la cabecera y el diseño general */
+}
+
+.title-container h1 {
+  margin: 0;
+  padding: 0.5rem;
+}
+
+.game-selection {
+  display: flex;
+  justify-content: space-evenly; /* Distribuye el espacio uniformemente */
+  align-items: flex-start; /* Alinea los elementos al principio de su contenedor */
+  flex-wrap: wrap; /* Permite el ajuste de elementos en pantalla pequeña */
+  margin: 2rem; /* Espacio alrededor de la selección del juego */
+}
+
+.game-card {
+  width: 45%; /* Aproximadamente la mitad del contenedor para que quepan dos en una fila */
+  max-width: 600px; /* Maximo ancho de la tarjeta */
+  margin: 1rem; /* Espacio alrededor de las tarjetas */
+  padding: 2rem; /* Espacio interno */
+  background-color: #f0f0f0; /* Fondo de las tarjetas */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Sombra suave */
+  display: flex; /* Utiliza flexbox para el diseño interno */
+  flex-direction: column; /* Elementos internos en columna */
+  align-items: center; /* Centra elementos horizontalmente */
+  justify-content: center; /* Centra elementos verticalmente */
+  border-radius: 10px; /* Bordes redondeados */
+}
+
+.game-card img {
+  width: 100%; /* Ajusta la imagen al ancho completo de la tarjeta */
+  max-width: 300px; /* Ancho máximo de la imagen */
+  margin-bottom: 1rem; /* Espacio debajo de la imagen */
+}
+
+.game-card button {
+  padding: 10px 20px;
+  background-color: #007bff; /* Color del botón */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 768px) {
+  .game-selection {
+    flex-direction: column;
   }
-  
-  .games-container {
-    display: flex;
-    justify-content: center;
-    gap: 20px; /* Ajusta el espacio entre los juegos según necesites */
+  .game-card {
+    width: 80%; /* Ocupa más ancho en pantallas pequeñas */
+    margin: 1rem auto; /* Centra las tarjetas en la pantalla */
   }
-  
-  .game {
-    border: 2px solid #ccc;
-    padding: 20px;
-    border-radius: 10px;
-  }
-  
-  .game button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  /* Añade más estilos según tu diseño */
-  
+}

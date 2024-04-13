@@ -6,8 +6,11 @@ body {
 }
 
 #root {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  /* Si no deseas centrar todo el contenido de la aplicación, puedes comentar o eliminar estas propiedades */
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
+  min-height: 100vh; /* Esto asegura que #root toma al menos la altura completa de la ventana */
 }
+
+/* Si necesitas centrar específicamente tu cabecera o cualquier otro componente, debes establecer las reglas de flexbox en la clase específica de ese componente en su respectivo archivo CSS. */

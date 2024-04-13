@@ -1,0 +1,60 @@
+/* Header.css */
+.app-header {
+    display: flex;
+    justify-content: space-between; /* Alinea los elementos a ambos extremos */
+    align-items: center; /* Centra los elementos verticalmente */
+    padding: 10px 20px;
+    background-color: #8400ff; /* Reemplaza con el color que quieras para la cabecera */
+  }
+  
+  .app-title h1 {
+    color: #ff0000; /* Ajusta este color para que coincida con tu diseño */
+    margin: 0;
+    font-size: 1.5em; /* Ajusta el tamaño del texto si es necesario */
+  }
+  
+  .right-section {
+    display: flex;
+    align-items: center;
+  }
+  
+  .app-nav {
+    display: flex; /* Si los elementos de navegación están en línea */
+  }
+  
+  .app-nav a, .user-area a {
+    margin: 0 10px; /* Espacio horizontal entre los elementos de navegación */
+    text-decoration: none; /* Quita el subrayado de los enlaces */
+    color: #000000; /* Ajusta este color para que coincida con tu diseño */
+  }
+  
+  .user-area {
+    display: flex;
+    align-items: center; /* Esto asegurará que el texto y los iconos estén alineados */
+  }
+  
+  .user-icon {
+    width: 40px; /* Ajusta esto según el tamaño deseado para el ícono */
+    height: 40px; /* Ajusta esto según el tamaño deseado para el ícono */
+    border-radius: 50%; /* Da forma redonda al ícono */
+    background-color: #ccc; /* Color de fondo para el ícono, ajusta según necesites */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+  }
+  
+  /* Si necesitas ajustar la responsividad para dispositivos más pequeños */
+  @media (max-width: 768px) {
+    .app-header {
+      flex-direction: column; /* Apila los elementos verticalmente en pantallas pequeñas */
+      align-items: center; /* Centra los elementos horizontalmente */
+    }
+  
+    .right-section, .app-nav, .user-area {
+      justify-content: center; /* Centra los elementos de navegación y el área de usuario */
+      margin-top: 10px; /* Añade un espacio en la parte superior en pantallas pequeñas */
+      width: 100%; /* Asegura que llenen el ancho disponible */
+    }
+  }
+  
