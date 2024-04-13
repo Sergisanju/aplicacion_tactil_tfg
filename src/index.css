@@ -1,3 +1,4 @@
+/* index.css */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -6,11 +7,6 @@ body {
 }
 
 #root {
-  /* Si no deseas centrar todo el contenido de la aplicación, puedes comentar o eliminar estas propiedades */
-  /* display: flex; */
-  /* justify-content: center; */
-  /* align-items: center; */
-  min-height: 100vh; /* Esto asegura que #root toma al menos la altura completa de la ventana */
+  /* El min-height podría no ser necesario si tu contenido siempre supera la altura de la ventana de visualización */
+  min-height: 100vh; /* Ajusta o elimina según sea necesario para tu diseño */
 }
-
-/* Si necesitas centrar específicamente tu cabecera o cualquier otro componente, debes establecer las reglas de flexbox en la clase específica de ese componente en su respectivo archivo CSS. */

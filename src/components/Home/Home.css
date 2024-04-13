@@ -1,7 +1,7 @@
 /* Home.css */
 .home-container {
   text-align: center;
-  margin-top: 2rem; /* Ajusta según la cabecera y el diseño general */
+  margin-top: 1rem;
 }
 
 .title-container h1 {
@@ -11,48 +11,52 @@
 
 .game-selection {
   display: flex;
-  justify-content: space-evenly; /* Distribuye el espacio uniformemente */
-  align-items: flex-start; /* Alinea los elementos al principio de su contenedor */
-  flex-wrap: wrap; /* Permite el ajuste de elementos en pantalla pequeña */
-  margin: 2rem; /* Espacio alrededor de la selección del juego */
+  justify-content: space-around;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin: 1rem;
 }
 
 .game-card {
-  width: 45%; /* Aproximadamente la mitad del contenedor para que quepan dos en una fila */
-  max-width: 600px; /* Maximo ancho de la tarjeta */
-  margin: 1rem; /* Espacio alrededor de las tarjetas */
-  padding: 2rem; /* Espacio interno */
-  background-color: #f0f0f0; /* Fondo de las tarjetas */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Sombra suave */
-  display: flex; /* Utiliza flexbox para el diseño interno */
-  flex-direction: column; /* Elementos internos en columna */
-  align-items: center; /* Centra elementos horizontalmente */
-  justify-content: center; /* Centra elementos verticalmente */
-  border-radius: 10px; /* Bordes redondeados */
+  width: 40%; /* Ajustado para tablet */
+  max-width: 600px;
+  margin: 1rem;
+  padding: 1rem;
+  background-color: #f0f0f0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
 }
 
 .game-card img {
-  width: 100%; /* Ajusta la imagen al ancho completo de la tarjeta */
-  max-width: 300px; /* Ancho máximo de la imagen */
-  margin-bottom: 1rem; /* Espacio debajo de la imagen */
+  width: 100%;
+  margin-bottom: 1rem;
 }
 
 .game-card button {
   padding: 10px 20px;
-  background-color: #007bff; /* Color del botón */
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-/* Ajustes para pantallas pequeñas */
+@media (max-width: 1024px) {
+  .game-card {
+      width: 80%; /* Ajusta para tabletas más pequeñas o en orientación vertical */
+  }
+}
+
 @media (max-width: 768px) {
   .game-selection {
-    flex-direction: column;
+      flex-direction: column;
   }
   .game-card {
-    width: 80%; /* Ocupa más ancho en pantallas pequeñas */
-    margin: 1rem auto; /* Centra las tarjetas en la pantalla */
+      width: 90%; /* Ocupa más ancho en pantallas más pequeñas */
+      margin: 1rem auto;
   }
 }
