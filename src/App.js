@@ -13,21 +13,21 @@ import Login from './components/Login/Login';
 import './App.css';
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado para saber si el usuario está autenticado
   const auth = getAuth(app); // Usa la app de Firebase para obtener la instancia de autenticación
 
-  useEffect(() => {
+  useEffect(() => { // Efecto para saber si el usuario está autenticado mediante un observador
     const unsubscribe = onAuthStateChanged(auth, user => {
       setIsAuthenticated(!!user);
     });
 
-    return () => unsubscribe(); // Limpia el observador cuando el componente se desmonta
+    return () => unsubscribe(); // Devuelve una función para limpiar el efecto
   }, [auth]);
 
   return (
-    <Router>
+    <Router> // Envolvemos la aplicación en un Router para poder navegar entre las diferentes rutas
       <Header />
-      <Routes>
+      <Routes> // Definimos las rutas de la aplicación
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/memory-game" element={isAuthenticated ? <CategorySelection /> : <Navigate to="/login" />} />
