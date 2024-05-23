@@ -72,129 +72,48 @@ const Profile = () => {
     return <p>Cargando...</p>;
   }
 
+  const isEditable = (field) => editMode && !['name', 'dob', 'email', 'userType'].includes(field);
+
   return (
     <div className="profile-container">
       <h2>Perfil de Usuario</h2>
       {message && <p className="message">{message}</p>}
       <div className="profile-details">
-        <div className="profile-item">
-          <label>Nombre:</label>
-          {editMode ? (
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-            />
-          ) : (
-            <span>{userData.name || 'Completa este campo'}</span>
-          )}
-        </div>
-        <div className="profile-item">
-          <label>Fecha de Nacimiento:</label>
-          {editMode ? (
-            <input
-              type="date"
-              name="dob"
-              value={formData.dob}
-              onChange={handleChange}
-            />
-          ) : (
-            <span>{userData.dob || 'Completa este campo'}</span>
-          )}
-        </div>
-        <div className="profile-item">
-          <label>Email:</label>
-          <span>{userData.email}</span>
-        </div>
-        <div className="profile-item">
-          <label>Tipo de Usuario:</label>
-          {editMode ? (
-            <select
-              name="userType"
-              value={formData.userType}
-              onChange={handleChange}
-            >
-              <option value="Analista">Analista</option>
-              <option value="Jugador">Jugador</option>
-            </select>
-          ) : (
-            <span>{userData.userType || 'Completa este campo'}</span>
-          )}
-        </div>
-        <div className="profile-item">
-          <label>Teléfono:</label>
-          {editMode ? (
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-            />
-          ) : (
-            <span>{userData.phone || 'Completa este campo'}</span>
-          )}
-        </div>
-        <div className="profile-item">
-          <label>Dirección:</label>
-          {editMode ? (
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-            />
-          ) : (
-            <span>{userData.address || 'Completa este campo'}</span>
-          )}
-        </div>
-        <div className="profile-item">
-          <label>Género:</label>
-          {editMode ? (
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-            >
-              <option value="">Selecciona</option>
-              <option value="Masculino">Masculino</option>
-              <option value="Femenino">Femenino</option>
-              <option value="Otro">Otro</option>
-            </select>
-          ) : (
-            <span>{userData.gender || 'Completa este campo'}</span>
-          )}
-        </div>
-        <div className="profile-item">
-          <label>Intereses:</label>
-          {editMode ? (
-            <input
-              type="text"
-              name="interests"
-              value={formData.interests}
-              onChange={handleChange}
-            />
-          ) : (
-            <span>{userData.interests || 'Completa este campo'}</span>
-          )}
-        </div>
-        <div className="profile-item">
-          <label>Biografía:</label>
-          {editMode ? (
-            <textarea
-              name="bio"
-              value={formData.bio}
-              onChange={handleChange}
-            />
-          ) : (
-            <span>{userData.bio || 'Completa este campo'}</span>
-          )}
-        </div>
+        {[
+          { label: 'Nombre', value: userData.name, name: 'name', type: 'text' },
+          { label: 'Fecha de Nacimiento', value: userData.dob, name: 'dob', type: 'date' },
+          { label: 'Email', value: userData.email, name: 'email', type: 'text', editable: false },
+          { label: 'Tipo de Usuario', value: userData.userType, name: 'userType', type: 'select', options: ['Analista', 'Jugador'] },
+          { label: 'Teléfono', value: userData.phone, name: 'phone', type: 'tel' },
+          { label: 'Dirección', value: userData.address, name: 'address', type: 'text' },
+          { label: 'Género', value: userData.gender, name: 'gender', type: 'select', options: ['Masculino', 'Femenino', 'Otro'] },
+          { label: 'Intereses', value: userData.interests, name: 'interests', type: 'text' },
+          { label: 'Biografía', value: userData.bio, name: 'bio', type: 'textarea' },
+        ].map((item, index) => (
+          <div key={item.name} className={`profile-item ${index % 2 === 0 ? 'even' : 'odd'}`}>
+            <label>{item.label}:</label>
+            {isEditable(item.name) ? (
+              item.type === 'select' ? (
+                <select name={item.name} value={formData[item.name]} onChange={handleChange}>
+                  {item.options.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
+              ) : item.type === 'textarea' ? (
+                <textarea name={item.name} value={formData[item.name]} onChange={handleChange} />
+              ) : (
+                <input type={item.type} name={item.name} value={formData[item.name]} onChange={handleChange} />
+              )
+            ) : (
+              <input type={item.type} name={item.name} value={formData[item.name]} disabled />
+            )}
+          </div>
+        ))}
         <div className="profile-actions">
           {editMode ? (
-            <button onClick={handleSave}>Guardar</button>
+            <button onClick={handleSave} className="save-button">Guardar</button>
           ) : (
-            <button onClick={handleEditToggle}>Editar</button>
+            <button onClick={handleEditToggle} className="edit-button">Editar</button>
           )}
         </div>
       </div>

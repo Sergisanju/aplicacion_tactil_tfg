@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import app from './firebase-config'; // Importa la app de Firebase
 import Home from './components/Home/Home';
@@ -11,6 +11,8 @@ import MemoryGame from './components/MemoryGame/MemoryGame';
 import CategorizationGame from './components/CategorizationGame/CategorizationGame';
 import Login from './components/Login/Login';
 import Profile from './components/Profile/Profile';
+import Register from './components/Register/Register'; // Importa el componente Register
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; // Importa ProtectedRoute
 import './App.css';
 
 const App = () => {
@@ -27,19 +29,9 @@ const App = () => {
     return () => unsubscribe(); // Devuelve una función para limpiar el efecto
   }, [auth]);
 
-  const ProtectedRoute = ({ children }) => {
-    const location = useLocation();
-
-    if (loading) {
-      return <div>Loading...</div>; // Puedes mostrar un spinner u otro indicador de carga
-    }
-
-    if (!isAuthenticated) {
-      return <Navigate to="/login" state={{ from: location }} />;
-    }
-
-    return children;
-  };
+  if (loading) {
+    return <div>Loading...</div>; // Muestra un indicador de carga mientras se verifica la autenticación
+  }
 
   return (
     <Router>
@@ -47,52 +39,41 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} /> {/* Define la ruta del registro */}
         <Route
           path="/profile"
           element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
+            isAuthenticated ? <Profile /> : <Navigate to="/login" />
           }
         />
         <Route
           path="/memory-game"
           element={
-            <ProtectedRoute>
-              <CategorySelection />
-            </ProtectedRoute>
+            <ProtectedRoute roles={['Jugador']} element={CategorySelection} />
           }
         />
         <Route
           path="/memory-game/:category"
           element={
-            <ProtectedRoute>
-              <LevelSelection />
-            </ProtectedRoute>
+            <ProtectedRoute roles={['Jugador']} element={LevelSelection} />
           }
         />
         <Route
           path="/memory-game/:category/:level/difficulty"
           element={
-            <ProtectedRoute>
-              <DifficultySelection />
-            </ProtectedRoute>
+            <ProtectedRoute roles={['Jugador']} element={DifficultySelection} />
           }
         />
         <Route
           path="/memory-game/:category/:level/:difficulty/game"
           element={
-            <ProtectedRoute>
-              <MemoryGame />
-            </ProtectedRoute>
+            <ProtectedRoute roles={['Jugador']} element={MemoryGame} />
           }
         />
         <Route
           path="/categorization-game"
           element={
-            <ProtectedRoute>
-              <CategorizationGame />
-            </ProtectedRoute>
+            <ProtectedRoute roles={['Jugador']} element={CategorizationGame} />
           }
         />
       </Routes>

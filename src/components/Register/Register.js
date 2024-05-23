@@ -65,7 +65,11 @@ const Register = () => {
       // Cerrar sesión inmediatamente después del registro
       await signOut(auth);
 
-      navigate('/login');  // Redirigir a la página de inicio de sesión
+      // Mostrar alerta de bienvenida
+      alert("Registro exitoso. ¡Bienvenido!");
+
+      // Redirigir a la página de inicio de sesión
+      navigate('/login');
     } catch (error) {
       setError(error.message);
     }
@@ -143,8 +147,8 @@ const Register = () => {
               required
             >
               <option value="">Selecciona un tipo de usuario</option>
-              <option value="analyst">Analista</option>
-              <option value="player">Jugador</option>
+              <option value="Analista">Analista</option>
+              <option value="Jugador">Jugador</option>
             </select>
           </div>
           <button type="submit" className="register-button">Registrar</button>
