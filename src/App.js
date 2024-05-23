@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import app from './firebase-config'; // Importa la app de Firebase
+import app from './firebase-config';
 import Home from './components/Home/Home';
 import Header from './components/Header/Header';
 import CategorySelection from './components/MemoryGame/CategorySelection';
@@ -10,26 +10,30 @@ import DifficultySelection from './components/MemoryGame/DifficultySelection';
 import MemoryGame from './components/MemoryGame/MemoryGame';
 import CategorizationGame from './components/CategorizationGame/CategorizationGame';
 import Login from './components/Login/Login';
+import Register from './components/Register/Register';
+import Profile from './components/Profile/Profile'; // Importa el nuevo componente de perfil
 import './App.css';
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado para saber si el usuario está autenticado
-  const auth = getAuth(app); // Usa la app de Firebase para obtener la instancia de autenticación
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const auth = getAuth(app);
 
-  useEffect(() => { // Efecto para saber si el usuario está autenticado mediante un observador
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       setIsAuthenticated(!!user);
     });
 
-    return () => unsubscribe(); // Devuelve una función para limpiar el efecto
+    return () => unsubscribe();
   }, [auth]);
 
   return (
-    <Router> // Envolvemos la aplicación en un Router para poder navegar entre las diferentes rutas
+    <Router>
       <Header />
-      <Routes> // Definimos las rutas de la aplicación
+      <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/login" />} />
         <Route path="/memory-game" element={isAuthenticated ? <CategorySelection /> : <Navigate to="/login" />} />
         <Route path="/memory-game/:category" element={isAuthenticated ? <LevelSelection /> : <Navigate to="/login" />} />
         <Route path="/memory-game/:category/:level/difficulty" element={isAuthenticated ? <DifficultySelection /> : <Navigate to="/login" />} />
