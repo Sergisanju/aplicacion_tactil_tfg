@@ -23,7 +23,6 @@ const Header = () => {
   const handleSignOut = () => {
     signOut(auth).then(() => {
       console.log("Sign-out successful.");
-      // Opcionalmente, redireccionar al usuario o hacer otras acciones post-cierre de sesión
     }).catch((error) => {
       console.error("Sign-out error:", error);
     });
@@ -66,7 +65,7 @@ const Header = () => {
       {showWarning && (
         <div className="modal">
           <div className="modal-content">
-            <p>Ya has iniciado sesión.</p>
+            <p>Ya has iniciado sesión. No es necesario volver a iniciar sesión.</p>
             <button onClick={closeModal}>OK</button>
           </div>
         </div>
