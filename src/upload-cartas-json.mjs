@@ -10,7 +10,7 @@ const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
 
 initializeApp({
   credential: cert(serviceAccount),
-  storageBucket: 'your-project-id.appspot.com'  // Reemplaza 'your-project-id' con tu ID de proyecto real
+  storageBucket: 'aplicacion-tactil-tfg.appspot.com'
 });
 
 const firestore = getFirestore();
@@ -28,20 +28,20 @@ const uploadJSONFiles = async (folderPath) => {
       for (const file of files) {
         const filePath = path.join(categoryPath, file);
         const fileBuffer = fs.readFileSync(filePath);
-        const storagePath = `${category}/${file}`;
+        const storagePath = `juegos/cartas_de_memoria/${category}/${file}`;
         const fileRef = storage.file(storagePath);
 
         await fileRef.save(fileBuffer, {
           contentType: 'application/json',
         });
 
-        const url = await fileRef.getSignedUrl({ action: 'read', expires: '03-01-2500' });
+        const [url] = await fileRef.getSignedUrl({ action: 'read', expires: '03-01-2500' });
 
-        const docRef = firestore.collection('categories').doc(category).collection('files').doc(file.replace('.json', ''));
+        const docRef = firestore.collection('juegos').doc('cartas_de_memoria').collection(category).doc(file.replace('.json', ''));
         await docRef.set({
           name: file.replace('.json', ''),
           storagePath: storagePath,
-          url: url[0],
+          url: url,
         });
 
         console.log(`Subido y referenciado: ${storagePath}`);
