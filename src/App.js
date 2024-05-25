@@ -1,6 +1,10 @@
+// App.js
+
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getDoc, doc } from 'firebase/firestore';
+import { firestore } from './firebase-config'; // Importa firestore desde tu configuración de Firebase
 import app from './firebase-config'; // Importa la app de Firebase
 import Home from './components/Home/Home';
 import Header from './components/Header/Header';
@@ -8,75 +12,106 @@ import CategorySelection from './components/MemoryGame/CategorySelection';
 import LevelSelection from './components/MemoryGame/LevelSelection';
 import DifficultySelection from './components/MemoryGame/DifficultySelection';
 import MemoryGame from './components/MemoryGame/MemoryGame';
-import CategorizationGame from './components/CategorizationGame/CategorizationGame';
 import Login from './components/Login/Login';
 import Profile from './components/Profile/Profile';
-import Register from './components/Register/Register'; // Importa el componente Register
+import Register from './components/Register/Register';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; // Importa ProtectedRoute
 import './App.css';
 
+const RoleWarning = ({ handleRoleWarningClose }) => {
+  const navigate = useNavigate();
+
+  const handleOkClick = () => {
+    handleRoleWarningClose();
+    navigate('/');
+  };
+
+  return (
+    <div className="modal">
+      <div className="modal-content">
+        <p>No tienes el rol adecuado para acceder a esta sección.</p>
+        <button onClick={handleOkClick}>OK</button>
+      </div>
+    </div>
+  );
+};
+
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showRoleWarning, setShowRoleWarning] = useState(false);
   const auth = getAuth(app);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, user => {
-      setIsAuthenticated(!!user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Fetch user role from Firestore
+        const userDoc = await getDoc(doc(firestore, 'users', user.uid));
+        if (userDoc.exists()) {
+          setUserRole(userDoc.data().userType);
+        }
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
       setLoading(false);
     });
 
-    return () => unsubscribe(); // Devuelve una función para limpiar el efecto
+    return () => unsubscribe();
   }, [auth]);
 
+  const handleRoleWarningClose = () => {
+    setShowRoleWarning(false);
+  };
+
+  const renderRoutes = () => (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/login" />} />
+      <Route
+        path="/memory-game"
+        element={
+          isAuthenticated
+            ? (userRole === 'Jugador' ? <CategorySelection /> : <Navigate to="/role-warning" />)
+            : <Navigate to="/login" />
+        }
+      />
+      <Route
+        path="/memory-game/:category"
+        element={
+          isAuthenticated && userRole === 'Jugador' ? <LevelSelection /> : <Navigate to="/login" />
+        }
+      />
+      <Route
+        path="/memory-game/difficulty/:category/:level"
+        element={
+          isAuthenticated && userRole === 'Jugador' ? <DifficultySelection /> : <Navigate to="/login" />
+        }
+      />
+      <Route
+        path="/memory-game/play/:category/:level/:difficulty"
+        element={
+          isAuthenticated && userRole === 'Jugador' ? <MemoryGame /> : <Navigate to="/login" />
+        }
+      />
+      <Route
+        path="/role-warning"
+        element={<RoleWarning handleRoleWarningClose={handleRoleWarningClose} />}
+      />
+    </Routes>
+  );
+
   if (loading) {
-    return <div>Loading...</div>; // Muestra un indicador de carga mientras se verifica la autenticación
+    return <div>Loading...</div>;
   }
 
   return (
     <Router>
       <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} /> {/* Define la ruta del registro */}
-        <Route
-          path="/profile"
-          element={
-            isAuthenticated ? <Profile /> : <Navigate to="/login" />
-          }
-        />
-        <Route
-          path="/memory-game"
-          element={
-            <ProtectedRoute roles={['Jugador']} element={CategorySelection} />
-          }
-        />
-        <Route
-          path="/memory-game/:category"
-          element={
-            <ProtectedRoute roles={['Jugador']} element={LevelSelection} />
-          }
-        />
-        <Route
-          path="/memory-game/:category/:level/difficulty"
-          element={
-            <ProtectedRoute roles={['Jugador']} element={DifficultySelection} />
-          }
-        />
-        <Route
-          path="/memory-game/:category/:level/:difficulty/game"
-          element={
-            <ProtectedRoute roles={['Jugador']} element={MemoryGame} />
-          }
-        />
-        <Route
-          path="/categorization-game"
-          element={
-            <ProtectedRoute roles={['Jugador']} element={CategorizationGame} />
-          }
-        />
-      </Routes>
+      {renderRoutes()}
     </Router>
   );
 };

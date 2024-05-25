@@ -1,47 +1,40 @@
 // src/components/MemoryGame/CategorySelection.js
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getStorage, ref, listAll } from "firebase/storage";
+
+import React, { useEffect, useState } from 'react';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
+import './CategorySelection.css';
 
 const CategorySelection = () => {
-  let navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const firestore = getFirestore();
 
   useEffect(() => {
-    const storage = getStorage();
-    const categoriesRef = ref(storage, 'cartas_de_memoria');
+    const fetchCategories = async () => {
+      try {
+        const categoriesCollection = collection(firestore, 'juegos/cartas_de_memoria');
+        const categoriesSnapshot = await getDocs(categoriesCollection);
+        const categoriesList = categoriesSnapshot.docs.map(doc => doc.id);
+        setCategories(categoriesList);
+      } catch (error) {
+        console.error("Error fetching categories: ", error);
+      }
+    };
 
-    listAll(categoriesRef).then((res) => {
-      const folders = res.prefixes.map(folderRef => {
-        // Extract the category name from the folder path
-        return folderRef.name;
-      });
-      setCategories(folders);
-      setLoading(false);
-    }).catch((error) => {
-      console.error("Error fetching categories: ", error);
-      setLoading(false);
-    });
-  }, []);
-
-  const handleCategorySelect = (category) => {
-    navigate(`/memory-game/${category}`);
-  };
+    fetchCategories();
+  }, [firestore]);
 
   return (
-    <div>
+    <div className="category-selection-container">
       <h1>Cartas de memoria</h1>
-      <h2>Elige una categoría</h2>
-      {loading ? <p>Cargando...</p> : (
-        <div>
-          {categories.map((category) => (
-            <button key={category} onClick={() => handleCategorySelect(category)}>
-              {category}
-            </button>
-          ))}
-        </div>
-      )}
+      <h2>Escoge una categoría</h2>
+      <div className="categories">
+        {categories.map((category) => (
+          <Link to={`/memory-game/${category}`} key={category} className="category-button">
+            {category}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 };

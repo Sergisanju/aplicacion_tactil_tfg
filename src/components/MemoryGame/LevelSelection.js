@@ -1,26 +1,21 @@
 // src/components/MemoryGame/LevelSelection.js
+
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import './LevelSelection.css';
 
 const LevelSelection = () => {
   const { category } = useParams();
-  let navigate = useNavigate();
-  const levels = [2, 3, 4];
-
-  const handleLevelSelect = (level) => {
-    navigate(`/memory-game/${category}/${level}/difficulty`);
-  };
 
   return (
-    <div>
-      <h1>Cartas de memoria - {category}</h1>
+    <div className="level-selection-container">
+      <h1>Cartas de memoria</h1>
       <h2>Escoge un nivel</h2>
-      <div>
-        {levels.map((level) => (
-          <button key={level} onClick={() => handleLevelSelect(level)}>
-            {level} pares
-          </button>
-        ))}
+      <div className="levels">
+        <Link to={`/memory-game/${category}/3-pares`} className="level-button">3 pares</Link>
+        <Link to={`/memory-game/${category}/4-pares`} className="level-button">4 pares</Link>
+        <Link to={`/memory-game/${category}/5-pares`} className="level-button">5 pares</Link>
+        <Link to={`/memory-game/${category}/6-pares`} className="level-button">6 pares</Link>
       </div>
     </div>
   );

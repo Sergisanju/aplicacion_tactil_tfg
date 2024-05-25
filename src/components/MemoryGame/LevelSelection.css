@@ -1,0 +1,43 @@
+/* src/components/MemoryGame/LevelSelection.css */
+
+.level-selection-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+  }
+  
+  h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .levels {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .level-button {
+    background-color: #3498db;
+    color: white;
+    padding: 15px 30px;
+    margin: 10px;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 18px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+  
+  .level-button:hover {
+    background-color: #2980b9;
+  }
+  
