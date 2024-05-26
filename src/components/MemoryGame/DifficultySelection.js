@@ -5,10 +5,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 const DifficultySelection = () => {
   const { category, level } = useParams();
   let navigate = useNavigate();
-  const difficulties = ['Fácil', 'Medio', 'Difícil'];
+  const difficulties = ['Facil', 'Medio', 'Dificil'];
 
   const handleDifficultySelect = (difficulty) => {
-    navigate(`/memory-game/${category}/${level}/${difficulty}/game`);
+    navigate(`/memory-game/${category}/${level}/${difficulty}`);
   };  
 
   return (

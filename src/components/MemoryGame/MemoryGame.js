@@ -1,24 +1,52 @@
 // src/components/MemoryGame/MemoryGame.js
-import React, { useState } from 'react';
-import CategorySelection from './CategorySelection';
-import LevelSelection from './LevelSelection';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import axios from 'axios';
+import './MemoryGame.css';
 
 const MemoryGame = () => {
-  const [category, setCategory] = useState(null);
-  const [level, setLevel] = useState(null);
+  const { category } = useParams();
+  const [gameData, setGameData] = useState(null);
+  const firestore = getFirestore();
 
-  // Si se ha seleccionado una categoría y un nivel, mostrar el juego
-  // Si sólo se ha seleccionado una categoría, mostrar la selección de nivel
-  // Si no se ha seleccionado nada, mostrar la selección de categoría
+  useEffect(() => {
+    const fetchGameData = async () => {
+      try {
+        // Construir la referencia al documento en Firestore
+        const docRef = doc(firestore, 'juegos', 'cartas_de_memoria', 'categories', category);
+        
+        // Obtener el documento
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const fileData = docSnap.data();
+          // Obtener el JSON desde la URL
+          const response = await axios.get(fileData.url);
+          setGameData(response.data);
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching game data: ", error);
+      }
+    };
+
+    fetchGameData();
+  }, [category, firestore]);
+
   return (
-    <div>
-      {category && level ? (
-        // Componente del juego real con la categoría y el nivel seleccionados
-        <MemoryGame category={category} level={level} />
-      ) : category ? (
-        <LevelSelection category={category} setLevel={setLevel} />
+    <div className="memory-game-container">
+      <h1>Juego de Cartas de Memoria</h1>
+      <h2>Categoría: {category}</h2>
+      {gameData ? (
+        // Renderiza el contenido del archivo JSON
+        <div>
+          {/* Aquí puedes renderizar tu juego basado en gameData */}
+          <pre>{JSON.stringify(gameData, null, 2)}</pre>
+        </div>
       ) : (
-        <CategorySelection setCategory={setCategory} />
+        <p>Cargando datos del juego...</p>
       )}
     </div>
   );

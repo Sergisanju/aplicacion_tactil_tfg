@@ -10,7 +10,7 @@ const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
 
 initializeApp({
   credential: cert(serviceAccount),
-  storageBucket: 'aplicacion-tactil-tfg.appspot.com'  // Reemplaza 'your-project-id' con tu ID de proyecto real
+  storageBucket: 'aplicacion-tactil-tfg.appspot.com'
 });
 
 const firestore = getFirestore();
@@ -47,7 +47,8 @@ const uploadJSONFiles = async (folderPath) => {
 
             const [url] = await subFileRef.getSignedUrl({ action: 'read', expires: '03-01-2500' });
 
-            const docRef = firestore.collection('juegos').doc('categorizacion').collection(category).doc(subcategory).collection('files').doc(subFile.replace('.json', ''));
+            // Crear documento para la subcategoría y archivo JSON como subcampo
+            const docRef = firestore.collection('juegos').doc('categorizacion').collection('categories').doc(category).collection('subcategories').doc(subcategory).collection('files').doc(subFile.replace('.json', ''));
             await docRef.set({
               name: subFile.replace('.json', ''),
               storagePath: storagePath,
@@ -68,7 +69,8 @@ const uploadJSONFiles = async (folderPath) => {
 
           const [url] = await fileRef.getSignedUrl({ action: 'read', expires: '03-01-2500' });
 
-          const docRef = firestore.collection('juegos').doc('categorizacion').collection(category).doc(file.replace('.json', ''));
+          // Crear documento para la categoría y archivo JSON como subcampo
+          const docRef = firestore.collection('juegos').doc('categorizacion').collection('categories').doc(category).collection('files').doc(file.replace('.json', ''));
           await docRef.set({
             name: file.replace('.json', ''),
             storagePath: storagePath,

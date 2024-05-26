@@ -1,5 +1,4 @@
-// App.js
-
+// src/App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -29,7 +28,7 @@ const RoleWarning = ({ handleRoleWarningClose }) => {
   return (
     <div className="modal">
       <div className="modal-content">
-        <p>No tienes el rol adecuado para acceder a esta sección.</p>
+        <p>No tienes el rol adecuado para acceder a esta sección. Debes ser jugador.</p>
         <button onClick={handleOkClick}>OK</button>
       </div>
     </div>
@@ -86,13 +85,13 @@ const App = () => {
         }
       />
       <Route
-        path="/memory-game/difficulty/:category/:level"
+        path="/memory-game/:category/:level"
         element={
           isAuthenticated && userRole === 'Jugador' ? <DifficultySelection /> : <Navigate to="/login" />
         }
       />
       <Route
-        path="/memory-game/play/:category/:level/:difficulty"
+        path="/memory-game/:category/:level/:difficulty"
         element={
           isAuthenticated && userRole === 'Jugador' ? <MemoryGame /> : <Navigate to="/login" />
         }

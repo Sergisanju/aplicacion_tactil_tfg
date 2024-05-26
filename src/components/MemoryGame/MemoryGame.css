@@ -1,0 +1,21 @@
+.memory-game-container {
+    text-align: center;
+  }
+  
+  .memory-game-container h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+  }
+  
+  .memory-game-container h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+  }
+  
+  .memory-game-container pre {
+    text-align: left;
+    margin: 20px auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+  }
