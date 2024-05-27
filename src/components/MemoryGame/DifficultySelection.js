@@ -1,6 +1,6 @@
-// src/components/MemoryGame/DifficultySelection.js
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import './DifficultySelection.css';
 
 const DifficultySelection = () => {
   const { category, level } = useParams();
@@ -9,15 +9,15 @@ const DifficultySelection = () => {
 
   const handleDifficultySelect = (difficulty) => {
     navigate(`/memory-game/${category}/${level}/${difficulty}`);
-  };  
+  };
 
   return (
-    <div>
+    <div className="difficulty-selection-container">
       <h1>Cartas de memoria</h1>
       <h2>Escoge la dificultad</h2>
-      <div>
+      <div className="difficulty-buttons">
         {difficulties.map((difficulty) => (
-          <button key={difficulty} onClick={() => handleDifficultySelect(difficulty)}>
+          <button key={difficulty} className="difficulty-button" onClick={() => handleDifficultySelect(difficulty)}>
             {difficulty}
           </button>
         ))}

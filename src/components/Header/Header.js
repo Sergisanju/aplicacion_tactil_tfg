@@ -53,16 +53,16 @@ const Header = () => {
         <h1>NombreAPP</h1>
       </div>
       <nav className="app-nav">
-        <NavLink to="/" className="nav-item" activeClassName="active">
+        <NavLink to="/" className="nav-item" activeclassname="active">
           <img src={homeIcon} alt="Inicio" className="nav-icon" />
           <span>Inicio</span>
         </NavLink>
-        <NavLink to="/login" className="nav-item" activeClassName="active" onClick={handleLoginClick}>
+        <NavLink to="/login" className="nav-item" activeclassname="active" onClick={handleLoginClick}>
           <img src={loginIcon} alt="Iniciar Sesión" className="nav-icon" />
           <span>Iniciar Sesión</span>
         </NavLink>
         {isAuthenticated && (
-          <NavLink to="/profile" className="nav-item" activeClassName="active">
+          <NavLink to="/profile" className="nav-item" activeclassname="active">
             <img src={profileIcon} alt="Perfil" className="nav-icon" />
             <span>Perfil</span>
           </NavLink>

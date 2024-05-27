@@ -1,5 +1,3 @@
-// src/components/MemoryGame/LevelSelection.js
-
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import './LevelSelection.css';

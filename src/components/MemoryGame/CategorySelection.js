@@ -3,7 +3,6 @@ import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import './CategorySelection.css';
 
-// Función para capitalizar la primera letra de una palabra
 const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
@@ -27,17 +26,30 @@ const CategorySelection = () => {
     fetchCategories();
   }, [firestore]);
 
+  const renderCategoryRows = () => {
+    const rows = [];
+    const itemsPerRow = 3; // Número de elementos por fila
+    for (let i = 0; i < categories.length; i += itemsPerRow) {
+      rows.push(
+        <div className="category-row" key={i}>
+          {categories.slice(i, i + itemsPerRow).map((category) => (
+            <Link to={`/memory-game/${category}`} key={category} className="category-button">
+              {capitalizeFirstLetter(category)}
+            </Link>
+          ))}
+        </div>
+      );
+    }
+    return rows;
+  };
+
   return (
     <div className="category-selection-container">
       <h1>Cartas de memoria</h1>
       <h2>Escoge una categoría</h2>
       {categories.length > 0 ? (
         <div className="categories">
-          {categories.map((category) => (
-            <Link to={`/memory-game/${category}`} key={category} className="category-button">
-              {capitalizeFirstLetter(category)}
-            </Link>
-          ))}
+          {renderCategoryRows()}
         </div>
       ) : (
         <p>No categories found</p>

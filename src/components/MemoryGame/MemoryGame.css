@@ -1,21 +1,72 @@
 .memory-game-container {
-    text-align: center;
-  }
-  
-  .memory-game-container h1 {
-    font-size: 2em;
-    margin-bottom: 20px;
-  }
-  
-  .memory-game-container h2 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-  }
-  
-  .memory-game-container pre {
-    text-align: left;
-    margin: 20px auto;
-    padding: 10px;
-    border: 1px solid #ccc;
-    background: #f9f9f9;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  justify-items: center;
+  max-width: 800px;
+  width: 100%;
+}
+
+.game-card {
+  width: 100px;
+  height: 150px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.game-card.flipped .card-front,
+.game-card.matched .card-front,
+.game-card.incorrect .card-front {
+  transform: rotateY(0);
+}
+
+.game-card.flipped .card-back,
+.game-card.matched .card-back,
+.game-card.incorrect .card-back {
+  transform: rotateY(180deg);
+}
+
+.game-card .card-front,
+.game-card .card-back {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.game-card .card-front {
+  background: #ffffff;
+  color: #000000;
+  transform: rotateY(180deg);
+}
+
+.game-card .card-back {
+  background: #00a2ff;
+  color: #ffffff;
+}
+
+.game-card.matched .card-front {
+  border: 5px solid green;
+}
+
+.game-card.incorrect .card-front {
+  border: 5px solid red;
+}

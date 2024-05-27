@@ -1,69 +1,106 @@
-// src/components/MemoryGame/MemoryGame.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import axios from 'axios';
 import './MemoryGame.css';
 
 const MemoryGame = () => {
-  const { category } = useParams();
+  const { category, level, difficulty } = useParams();
+  const pairs = parseInt(level.split('-')[0]); // Extract the number of pairs from the level parameter
   const [gameData, setGameData] = useState(null);
-  const [error, setError] = useState(null); // Añadir estado para errores
+  const [selectedCards, setSelectedCards] = useState([]);
+  const [matchedPairs, setMatchedPairs] = useState([]);
+  const [incorrectPairs, setIncorrectPairs] = useState([]);
+  const [error, setError] = useState(null);
   const firestore = getFirestore();
 
   useEffect(() => {
     const fetchGameData = async () => {
       try {
-        // Construir la referencia al documento en Firestore
         const docRef = doc(firestore, 'juegos', 'cartas_de_memoria', 'categories', category);
-        
-        // Obtener el documento
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           const fileData = docSnap.data();
-          console.log("Document data:", fileData); // Agregar log para verificar los datos del documento
-          
-          // Verificar si el campo 'url' existe dentro del campo 'animales' o el campo correspondiente a la categoría
           const categoryData = fileData[category];
-          if (categoryData && categoryData.url) {
-            // Obtener el JSON desde la URL
-            const response = await axios.get(categoryData.url);
-            setGameData(response.data);
+          if (categoryData && categoryData.data) {
+            const filteredData = filterByDifficulty(categoryData.data, difficulty);
+            const selectedPairs = selectPairs(filteredData, pairs);
+            setGameData(shuffleArray([...selectedPairs, ...selectedPairs])); // Duplicar y mezclar
           } else {
-            throw new Error("URL is undefined or missing in the category data");
+            throw new Error("Data field is undefined or missing in the document");
           }
         } else {
           throw new Error("No such document!");
         }
       } catch (error) {
         console.error("Error fetching game data:", error);
-        setError(error.message); // Establecer el mensaje de error
+        setError(error.message);
       }
     };
 
     fetchGameData();
-  }, [category, firestore]);
+  }, [category, difficulty, pairs, firestore]);
+
+  const filterByDifficulty = (data, difficulty) => {
+    switch (difficulty.toLowerCase()) {
+      case 'facil':
+        return data.filter(item => item.dificultad === 0);
+      case 'medio':
+        return data.filter(item => item.dificultad <= 1);
+      case 'dificil':
+        return data.filter(item => item.dificultad <= 2);
+      default:
+        return data;
+    }
+  };
+
+  const selectPairs = (data, pairs) => {
+    const shuffledData = shuffleArray(data);
+    return shuffledData.slice(0, pairs);
+  };
+
+  const shuffleArray = (array) => {
+    return array.sort(() => Math.random() - 0.5);
+  };
+
+  const handleCardClick = (index) => {
+    if (selectedCards.length === 2 || selectedCards.includes(index) || matchedPairs.includes(index)) return;
+
+    const newSelectedCards = [...selectedCards, index];
+    setSelectedCards(newSelectedCards);
+
+    if (newSelectedCards.length === 2) {
+      const [firstIndex, secondIndex] = newSelectedCards;
+      if (gameData[firstIndex].nombre === gameData[secondIndex].nombre) {
+        setMatchedPairs([...matchedPairs, firstIndex, secondIndex]);
+        setTimeout(() => setSelectedCards([]), 1000);
+      } else {
+        setIncorrectPairs([firstIndex, secondIndex]);
+        setTimeout(() => {
+          setSelectedCards([]);
+          setIncorrectPairs([]);
+        }, 1000);
+      }
+    }
+  };
 
   return (
     <div className="memory-game-container">
       <h1>Juego de Cartas de Memoria</h1>
-      <h2>Categoría: {category}</h2>
       {error ? (
         <p>Error: {error}</p>
       ) : gameData ? (
-        <div>
-          {/* Renderiza los datos del archivo JSON */}
-          {Array.isArray(gameData) ? (
-            gameData.map((item, index) => (
-              <div key={index} className="game-item">
-                <h3>{item.name}</h3>
-                <p>{item.value}</p>
-              </div>
-            ))
-          ) : (
-            <pre>{JSON.stringify(gameData, null, 2)}</pre>
-          )}
+        <div className="game-board">
+          {gameData.map((item, index) => (
+            <div
+              key={index}
+              className={`game-card ${selectedCards.includes(index) ? 'flipped' : ''} ${matchedPairs.includes(index) ? 'matched' : ''} ${incorrectPairs.includes(index) ? 'incorrect' : ''}`}
+              onClick={() => handleCardClick(index)}
+            >
+              <div className="card-front">{item.nombre}</div>
+              <div className="card-back">?</div>
+            </div>
+          ))}
         </div>
       ) : (
         <p>Cargando datos del juego...</p>

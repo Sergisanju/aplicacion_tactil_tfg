@@ -1,62 +1,54 @@
-/* Home.css */
+/* General Styles for Home Component */
 .home-container {
   text-align: center;
-  margin-top: 1rem;
+  padding: 20px;
 }
 
-.title-container h1 {
-  margin: 0;
-  padding: 0.5rem;
+.title-container {
+  margin-bottom: 30px;
 }
 
 .game-selection {
   display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  margin: 1rem;
+  justify-content: center;
+  gap: 40px;
 }
 
 .game-card {
-  width: 40%; /* Ajustado para tablet */
-  max-width: 600px;
-  margin: 1rem;
-  padding: 1rem;
-  background-color: #f0f0f0;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  background-color: #ffffff;
   border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.3s;
+  width: 250px; /* Ajuste el ancho del contenedor */
+}
+
+.game-card:hover {
+  transform: translateY(-5px);
 }
 
 .game-card img {
-  width: 100%;
-  margin-bottom: 1rem;
+  width: 100%; /* Ajuste el ancho de la imagen para llenar el contenedor */
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 10px;
 }
 
 .game-card button {
-  padding: 10px 20px;
   background-color: #007bff;
   color: white;
+  padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s;
+  width: 100%; /* Asegurar que el botón llene el ancho del contenedor */
 }
 
-@media (max-width: 1024px) {
-  .game-card {
-      width: 80%; /* Ajusta para tabletas más pequeñas o en orientación vertical */
-  }
-}
-
-@media (max-width: 768px) {
-  .game-selection {
-      flex-direction: column;
-  }
-  .game-card {
-      width: 90%; /* Ocupa más ancho en pantallas más pequeñas */
-      margin: 1rem auto;
-  }
+.game-card button:hover {
+  background-color: #0056b3;
 }
