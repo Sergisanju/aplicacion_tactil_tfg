@@ -8,6 +8,7 @@ import './MemoryGame.css';
 const MemoryGame = () => {
   const { category } = useParams();
   const [gameData, setGameData] = useState(null);
+  const [error, setError] = useState(null); // Añadir estado para errores
   const firestore = getFirestore();
 
   useEffect(() => {
@@ -21,14 +22,23 @@ const MemoryGame = () => {
 
         if (docSnap.exists()) {
           const fileData = docSnap.data();
-          // Obtener el JSON desde la URL
-          const response = await axios.get(fileData.url);
-          setGameData(response.data);
+          console.log("Document data:", fileData); // Agregar log para verificar los datos del documento
+          
+          // Verificar si el campo 'url' existe dentro del campo 'animales' o el campo correspondiente a la categoría
+          const categoryData = fileData[category];
+          if (categoryData && categoryData.url) {
+            // Obtener el JSON desde la URL
+            const response = await axios.get(categoryData.url);
+            setGameData(response.data);
+          } else {
+            throw new Error("URL is undefined or missing in the category data");
+          }
         } else {
-          console.log("No such document!");
+          throw new Error("No such document!");
         }
       } catch (error) {
-        console.error("Error fetching game data: ", error);
+        console.error("Error fetching game data:", error);
+        setError(error.message); // Establecer el mensaje de error
       }
     };
 
@@ -39,11 +49,21 @@ const MemoryGame = () => {
     <div className="memory-game-container">
       <h1>Juego de Cartas de Memoria</h1>
       <h2>Categoría: {category}</h2>
-      {gameData ? (
-        // Renderiza el contenido del archivo JSON
+      {error ? (
+        <p>Error: {error}</p>
+      ) : gameData ? (
         <div>
-          {/* Aquí puedes renderizar tu juego basado en gameData */}
-          <pre>{JSON.stringify(gameData, null, 2)}</pre>
+          {/* Renderiza los datos del archivo JSON */}
+          {Array.isArray(gameData) ? (
+            gameData.map((item, index) => (
+              <div key={index} className="game-item">
+                <h3>{item.name}</h3>
+                <p>{item.value}</p>
+              </div>
+            ))
+          ) : (
+            <pre>{JSON.stringify(gameData, null, 2)}</pre>
+          )}
         </div>
       ) : (
         <p>Cargando datos del juego...</p>

@@ -14,7 +14,6 @@ import MemoryGame from './components/MemoryGame/MemoryGame';
 import Login from './components/Login/Login';
 import Profile from './components/Profile/Profile';
 import Register from './components/Register/Register';
-import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; // Importa ProtectedRoute
 import './App.css';
 
 const RoleWarning = ({ handleRoleWarningClose }) => {
@@ -39,7 +38,7 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState('');
   const [loading, setLoading] = useState(true);
-  const [showRoleWarning, setShowRoleWarning] = useState(false);
+  const [setShowRoleWarning] = useState(false);
   const auth = getAuth(app);
 
   useEffect(() => {
