@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  min-height: 100vh;
 }
 
 h1 {
@@ -12,11 +13,10 @@ h1 {
 
 .game-board {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  justify-items: center;
-  max-width: 800px;
+  grid-gap: 10px;
+  max-width: 1000px;
   width: 100%;
+  margin-top: 20px; /* Adjust the margin to move cards closer to the title */
 }
 
 .game-card {
@@ -24,6 +24,8 @@ h1 {
   height: 150px;
   perspective: 1000px;
   cursor: pointer;
+  position: relative;
+  margin: auto; /* Center the cards */
 }
 
 .game-card.flipped .card-front,
@@ -61,6 +63,14 @@ h1 {
 .game-card .card-back {
   background: #00a2ff;
   color: #ffffff;
+  font-size: 64px; /* Increase the font size for the question mark */
+}
+
+.game-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px; /* Ensure the image fits the card shape */
 }
 
 .game-card.matched .card-front {
