@@ -37,7 +37,7 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState('');
   const [loading, setLoading] = useState(true);
-  const [showRoleWarning, setShowRoleWarning] = useState(false);
+  const [, setShowRoleWarning] = useState(false);
   const auth = getAuth(app);
 
   useEffect(() => {
