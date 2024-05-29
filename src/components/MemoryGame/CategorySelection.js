@@ -28,7 +28,7 @@ const CategorySelection = () => {
 
   const renderCategoryRows = () => {
     const rows = [];
-    const itemsPerRow = 3; // Número de elementos por fila
+    const itemsPerRow = 2; // Cambiar a 2 elementos por fila
     for (let i = 0; i < categories.length; i += itemsPerRow) {
       rows.push(
         <div className="category-row" key={i}>

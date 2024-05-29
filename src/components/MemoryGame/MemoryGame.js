@@ -1,20 +1,28 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getFirestore, doc, getDoc, collection, addDoc, setDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 import './MemoryGame.css';
 
-const MemoryGame = () => {
-  const { category, level, difficulty } = useParams();
-  const pairs = parseInt(level.split('-')[0]); // Extract the number of pairs from the level parameter
-  const [gameData, setGameData] = useState(null);
-  const [selectedCards, setSelectedCards] = useState([]);
-  const [matchedPairs, setMatchedPairs] = useState([]);
-  const [incorrectPairs, setIncorrectPairs] = useState([]);
+const JuegoDeMemoria = () => {
+  const { categoria, nivel, dificultad } = useParams();
+  const pares = parseInt(nivel.split('-')[0]);
+  const [datosDelJuego, setDatosDelJuego] = useState(null);
+  const [cartasSeleccionadas, setCartasSeleccionadas] = useState([]);
+  const [paresAcertados, setParesAcertados] = useState([]);
+  const [paresIncorrectos, setParesIncorrectos] = useState([]);
   const [error, setError] = useState(null);
+  const [horaDeInicio, setHoraDeInicio] = useState(null);
+  const [horaDeFin, setHoraDeFin] = useState(null);
+  const [intentos, setIntentos] = useState(0);
+  const [intentosCorrectos, setIntentosCorrectos] = useState(0);
+  const [intentosIncorrectos, setIntentosIncorrectos] = useState(0);
   const firestore = getFirestore();
+  const auth = getAuth();
+  let navigate = useNavigate();
 
-  const filterByDifficulty = useCallback((data, difficulty) => {
-    switch (difficulty.toLowerCase()) {
+  const filtrarPorDificultad = useCallback((data, dificultad) => {
+    switch (dificultad.toLowerCase()) {
       case 'facil':
         return data.filter(item => item.dificultad === 0);
       case 'medio':
@@ -26,80 +34,120 @@ const MemoryGame = () => {
     }
   }, []);
 
-  const selectPairs = useCallback((data, pairs) => {
-    const shuffledData = shuffleArray(data);
-    return shuffledData.slice(0, pairs);
+  const seleccionarPares = useCallback((data, pares) => {
+    const datosBarajados = barajarArray(data);
+    return datosBarajados.slice(0, pares);
   }, []);
 
-  const shuffleArray = (array) => {
+  const barajarArray = (array) => {
     return array.sort(() => Math.random() - 0.5);
   };
 
   useEffect(() => {
-    const fetchGameData = async () => {
+    const obtenerDatosDelJuego = async () => {
       try {
-        const docRef = doc(firestore, 'juegos', 'cartas_de_memoria', 'categories', category);
+        const docRef = doc(firestore, 'juegos', 'cartas_de_memoria', 'categories', categoria);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          const fileData = docSnap.data();
-          const categoryData = fileData[category];
-          if (categoryData && categoryData.data) {
-            const filteredData = filterByDifficulty(categoryData.data, difficulty);
-            const selectedPairs = selectPairs(filteredData, pairs);
-            const duplicatedPairs = duplicatePairs(selectedPairs);
-            setGameData(shuffleArray(duplicatedPairs));
+          const datosArchivo = docSnap.data();
+          const datosCategoria = datosArchivo[categoria];
+          if (datosCategoria && datosCategoria.data) {
+            const datosFiltrados = filtrarPorDificultad(datosCategoria.data, dificultad);
+            const paresSeleccionados = seleccionarPares(datosFiltrados, pares);
+            const paresDuplicados = duplicarPares(paresSeleccionados);
+            setDatosDelJuego(barajarArray(paresDuplicados));
+            setHoraDeInicio(Date.now());
           } else {
-            throw new Error("Data field is undefined or missing in the document");
+            throw new Error("El campo 'data' está indefinido o falta en el documento");
           }
         } else {
-          throw new Error("No such document!");
+          throw new Error("No existe tal documento!");
         }
       } catch (error) {
-        console.error("Error fetching game data:", error);
+        console.error("Error al obtener datos del juego:", error);
         setError(error.message);
       }
     };
 
-    fetchGameData();
-  }, [category, difficulty, pairs, firestore, filterByDifficulty, selectPairs]);
+    obtenerDatosDelJuego();
+  }, [categoria, dificultad, pares, firestore, filtrarPorDificultad, seleccionarPares]);
 
-  const duplicatePairs = (data) => {
-    let duplicatedPairs = [];
+  const duplicarPares = (data) => {
+    let paresDuplicados = [];
     data.forEach(item => {
-      duplicatedPairs.push({ ...item, type: 'text' });
-      duplicatedPairs.push({ ...item, type: 'image' });
+      paresDuplicados.push({ ...item, type: 'text' });
+      paresDuplicados.push({ ...item, type: 'image' });
     });
-    return duplicatedPairs;
+    return paresDuplicados;
   };
 
-  const handleCardClick = (index) => {
-    if (selectedCards.length === 2 || selectedCards.includes(index) || matchedPairs.includes(index)) return;
+  const manejarClicEnCarta = (index) => {
+    if (cartasSeleccionadas.length === 2 || cartasSeleccionadas.includes(index) || paresAcertados.includes(index)) return;
 
-    const newSelectedCards = [...selectedCards, index];
-    setSelectedCards(newSelectedCards);
+    const nuevasCartasSeleccionadas = [...cartasSeleccionadas, index];
+    setCartasSeleccionadas(nuevasCartasSeleccionadas);
+    setIntentos(intentos + 1);
 
-    if (newSelectedCards.length === 2) {
-      const [firstIndex, secondIndex] = newSelectedCards;
-      const firstCard = gameData[firstIndex];
-      const secondCard = gameData[secondIndex];
-      if (firstCard.nombre === secondCard.nombre && firstCard.type !== secondCard.type) {
-        setMatchedPairs([...matchedPairs, firstIndex, secondIndex]);
+    if (nuevasCartasSeleccionadas.length === 2) {
+      const [primerIndex, segundoIndex] = nuevasCartasSeleccionadas;
+      const primeraCarta = datosDelJuego[primerIndex];
+      const segundaCarta = datosDelJuego[segundoIndex];
+      if (primeraCarta.nombre === segundaCarta.nombre && primeraCarta.type !== segundaCarta.type) {
+        setParesAcertados([...paresAcertados, primerIndex, segundoIndex]);
+        setIntentosCorrectos(intentosCorrectos + 1);
         setTimeout(() => {
-          setSelectedCards([]);
+          setCartasSeleccionadas([]);
+          if (paresAcertados.length + 2 === datosDelJuego.length) {
+            setHoraDeFin(Date.now());
+            guardarResultadosDelJuego();
+          }
         }, 1000);
       } else {
-        setIncorrectPairs([firstIndex, secondIndex]);
+        setParesIncorrectos([primerIndex, segundoIndex]);
+        setIntentosIncorrectos(intentosIncorrectos + 1);
         setTimeout(() => {
-          setSelectedCards([]);
-          setIncorrectPairs([]);
+          setCartasSeleccionadas([]);
+          setParesIncorrectos([]);
         }, 1000);
       }
     }
   };
 
-  const getGridTemplateColumns = () => {
-    return `repeat(${pairs}, 1fr)`;
+  const guardarResultadosDelJuego = async () => {
+    const duracionDelJuegoMs = horaDeFin - horaDeInicio;
+    const duracionDelJuego = convertirMsAMinutosSegundos(duracionDelJuegoMs);
+    const usuario = auth.currentUser;
+    const resultado = {
+      categoria,
+      nivel,
+      dificultad,
+      intentos,
+      aciertos: intentosCorrectos,
+      errores: intentosIncorrectos,
+      duracion: duracionDelJuego,
+      timestamp: new Date().toISOString(),
+      jugadorId: usuario ? usuario.uid : 'anonimo',
+    };
+    try {
+      const usuarioDocRef = doc(firestore, 'ResultadosJuegos', 'cartas_de_memoria', 'usuarios', usuario.uid);
+      await setDoc(usuarioDocRef, { exists: true }, { merge: true }); // Crear el documento de usuario si no existe
+      await addDoc(collection(usuarioDocRef, 'resultados'), resultado);
+      console.log('Resultados del juego guardados con éxito');
+      navigate('/game-results');
+    } catch (error) {
+      console.error('Error al guardar los resultados del juego:', error);
+    }
+  };
+
+  const convertirMsAMinutosSegundos = (ms) => {
+    const minutos = Math.floor(ms / 60000);
+    const segundos = ((ms % 60000) / 1000).toFixed(0);
+    return `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
+  };
+
+  const obtenerColumnasDeGrid = () => {
+    return `repeat(${pares}, 1fr)`;
   };
 
   return (
@@ -107,13 +155,13 @@ const MemoryGame = () => {
       <h1>Juego de Cartas de Memoria</h1>
       {error ? (
         <p>Error: {error}</p>
-      ) : gameData ? (
-        <div className="game-board" style={{ gridTemplateColumns: getGridTemplateColumns() }}>
-          {gameData.map((item, index) => (
+      ) : datosDelJuego ? (
+        <div className="game-board" style={{ gridTemplateColumns: obtenerColumnasDeGrid() }}>
+          {datosDelJuego.map((item, index) => (
             <div
               key={index}
-              className={`game-card ${selectedCards.includes(index) ? 'flipped' : ''} ${matchedPairs.includes(index) ? 'matched' : ''} ${incorrectPairs.includes(index) ? 'incorrect' : ''}`}
-              onClick={() => handleCardClick(index)}
+              className={`game-card ${cartasSeleccionadas.includes(index) ? 'flipped' : ''} ${paresAcertados.includes(index) ? 'matched' : ''} ${paresIncorrectos.includes(index) ? 'incorrect' : ''}`}
+              onClick={() => manejarClicEnCarta(index)}
             >
               <div className="card-front">
                 {item.type === 'text' ? item.nombre : <img src={item.imagenURL} alt={item.nombre} />}
@@ -129,4 +177,4 @@ const MemoryGame = () => {
   );
 };
 
-export default MemoryGame;
+export default JuegoDeMemoria;

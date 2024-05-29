@@ -2,9 +2,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Cambiado a flex-start para alinear en la parte superior */
+  justify-content: flex-start;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #f0e4d7; /* Cambiar el color de fondo */
   padding: 20px;
   box-sizing: border-box;
 }
@@ -12,27 +12,29 @@
 h1 {
   font-size: 36px;
   font-weight: bold;
-  margin-bottom: 10px; /* Reducido el margen inferior */
+  margin-bottom: 10px;
   font-family: 'Comic Sans MS', cursive, sans-serif;
+  color: #000; /* Color del texto */
 }
 
 h2 {
   font-size: 28px;
-  margin-bottom: 20px; /* Reducido el margen inferior */
+  margin-bottom: 20px;
   font-family: 'Comic Sans MS', cursive, sans-serif;
+  color: #000; /* Color del texto */
 }
 
 .categories {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px; /* Espaciado entre filas de botones */
+  gap: 15px;
 }
 
 .category-row {
   display: flex;
   justify-content: center;
-  gap: 15px; /* Espaciado entre botones */
+  gap: 15px;
 }
 
 .category-button {

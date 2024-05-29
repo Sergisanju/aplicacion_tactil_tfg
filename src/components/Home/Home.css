@@ -1,20 +1,20 @@
 /* General Styles for Home Component */
-.home-container {
+.homepage-container {
   text-align: center;
   padding: 20px;
 }
 
-.title-container {
+.homepage-title-container {
   margin-bottom: 30px;
 }
 
-.game-selection {
+.homepage-game-selection {
   display: flex;
   justify-content: center;
   gap: 40px;
 }
 
-.game-card {
+.homepage-game-card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,18 +26,18 @@
   width: 250px; /* Ajuste el ancho del contenedor */
 }
 
-.game-card:hover {
+.homepage-game-card:hover {
   transform: translateY(-5px);
 }
 
-.game-card img {
+.homepage-game-card img {
   width: 100%; /* Ajuste el ancho de la imagen para llenar el contenedor */
   height: auto;
   border-radius: 10px;
   margin-bottom: 10px;
 }
 
-.game-card button {
+.homepage-game-card button {
   background-color: #007bff;
   color: white;
   padding: 10px 20px;
@@ -49,6 +49,6 @@
   width: 100%; /* Asegurar que el botón llene el ancho del contenedor */
 }
 
-.game-card button:hover {
+.homepage-game-card button:hover {
   background-color: #0056b3;
 }

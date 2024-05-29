@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -7,10 +6,10 @@ import { firestore } from './firebase-config'; // Importa firestore desde tu con
 import app from './firebase-config'; // Importa la app de Firebase
 import Home from './components/Home/Home';
 import Header from './components/Header/Header';
-import CategorySelection from './components/MemoryGame/CategorySelection';
-import LevelSelection from './components/MemoryGame/LevelSelection';
-import DifficultySelection from './components/MemoryGame/DifficultySelection';
-import MemoryGame from './components/MemoryGame/MemoryGame';
+import SeleccionDeCategoria from './components/MemoryGame/CategorySelection';
+import SeleccionDeNivel from './components/MemoryGame/LevelSelection';
+import SeleccionDeDificultad from './components/MemoryGame/DifficultySelection';
+import JuegoDeMemoria from './components/MemoryGame/MemoryGame';
 import Login from './components/Login/Login';
 import Profile from './components/Profile/Profile';
 import Register from './components/Register/Register';
@@ -38,7 +37,7 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState('');
   const [loading, setLoading] = useState(true);
-  const [setShowRoleWarning] = useState(false);
+  const [showRoleWarning, setShowRoleWarning] = useState(false);
   const auth = getAuth(app);
 
   useEffect(() => {
@@ -73,26 +72,26 @@ const App = () => {
         path="/memory-game"
         element={
           isAuthenticated
-            ? (userRole === 'Jugador' ? <CategorySelection /> : <Navigate to="/role-warning" />)
+            ? (userRole === 'Jugador' ? <SeleccionDeCategoria /> : <Navigate to="/role-warning" />)
             : <Navigate to="/login" />
         }
       />
       <Route
-        path="/memory-game/:category"
+        path="/memory-game/:categoria"
         element={
-          isAuthenticated && userRole === 'Jugador' ? <LevelSelection /> : <Navigate to="/login" />
+          isAuthenticated && userRole === 'Jugador' ? <SeleccionDeNivel /> : <Navigate to="/login" />
         }
       />
       <Route
-        path="/memory-game/:category/:level"
+        path="/memory-game/:categoria/:nivel"
         element={
-          isAuthenticated && userRole === 'Jugador' ? <DifficultySelection /> : <Navigate to="/login" />
+          isAuthenticated && userRole === 'Jugador' ? <SeleccionDeDificultad /> : <Navigate to="/login" />
         }
       />
       <Route
-        path="/memory-game/:category/:level/:difficulty"
+        path="/memory-game/:categoria/:nivel/:dificultad"
         element={
-          isAuthenticated && userRole === 'Jugador' ? <MemoryGame /> : <Navigate to="/login" />
+          isAuthenticated && userRole === 'Jugador' ? <JuegoDeMemoria /> : <Navigate to="/login" />
         }
       />
       <Route
