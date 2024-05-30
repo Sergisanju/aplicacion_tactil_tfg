@@ -5,7 +5,8 @@ import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
 import homeIcon from '../../assets/images/home-icon.png';
 import profileIcon from '../../assets/images/profile-icon.png';
 import signOutIcon from '../../assets/images/signout-icon.png';
-import loginIcon from '../../assets/images/login-icon.png'; // Icono para iniciar sesión
+import loginIcon from '../../assets/images/login-icon.png'; 
+import historialevaluacionicon from '../../assets/images/historialevaluacionicon.png';
 
 const Header = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -50,14 +51,17 @@ const Header = () => {
   return (
     <header className="app-header">
       <div className="app-title">
-        <h1>NombreAPP</h1>
+        <h1>TFG EVALUACION COGNITIVA</h1>
       </div>
       <nav className="app-nav">
         <NavLink to="/" className="nav-item" activeclassname="active">
           <img src={homeIcon} alt="Inicio" className="nav-icon" />
           <span>Inicio</span>
         </NavLink>
-        <NavLink to="/h"
+        <NavLink to="/historial-evaluacion" className="nav-item" activeclassname="active">
+          <img src={historialevaluacionicon} alt="Historial de Evaluación" className="nav-icon" />
+          <span>Historial de Evaluación</span>
+        </NavLink>
         <NavLink to="/login" className="nav-item" activeclassname="active" onClick={handleLoginClick}>
           <img src={loginIcon} alt="Iniciar Sesión" className="nav-icon" />
           <span>Iniciar Sesión</span>
