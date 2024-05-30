@@ -1,10 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Inicio.css';
-import cartasMemoriaIcon from '../../assets/images/cartas-memoria-icon.png';
-import categorizacionIcon from '../../assets/images/categorization-game-icon.png';
+import { getAuth } from 'firebase/auth';
+import { getDoc, doc } from 'firebase/firestore';
+import { firestore } from '../../firebase-config';
+import memoryGameIcon from '../../assets/images/cartas-memoria-icon.png';
+import categorizationGameIcon from '../../assets/images/categorization-game-icon.png';
 
 const Inicio = () => {
+  const [rolUsuario, setRolUsuario] = useState('');
+  const auth = getAuth();
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const userDoc = await getDoc(doc(firestore, 'users', user.uid));
+        if (userDoc.exists()) {
+          setRolUsuario(userDoc.data().tipoUsuario);
+        }
+      }
+    };
+
+    fetchUserRole();
+  }, [auth]);
+
   return (
     <div className="contenedor-inicio">
       <div className="contenedor-titulo-inicio">
@@ -12,12 +32,20 @@ const Inicio = () => {
       </div>
       <div className="seleccion-juego-inicio">
         <div className="carta-juego-inicio">
-          <img src={cartasMemoriaIcon} alt="Juego de Memoria" />
-          <Link to="/cartas-memoria"><button>Cartas de memoria</button></Link>
+          <img src={memoryGameIcon} alt="Cartas de memoria" />
+          {rolUsuario === 'Jugador' ? (
+            <Link to="/cartas-memoria"><button>Cartas de memoria</button></Link>
+          ) : (
+            <button disabled>Cartas de memoria</button>
+          )}
         </div>
         <div className="carta-juego-inicio">
-          <img src={categorizacionIcon} alt="Juego de Categorización" />
-          <Link to="/categorizacion"><button>Categorización</button></Link>
+          <img src={categorizationGameIcon} alt="Categorización" />
+          {rolUsuario === 'Jugador' ? (
+            <Link to="/categorizacion"><button>Categorización</button></Link>
+          ) : (
+            <button disabled>Categorización</button>
+          )}
         </div>
       </div>
     </div>

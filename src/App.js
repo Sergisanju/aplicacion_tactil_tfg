@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
-import { firestore } from './firebase-config'; // Importa firestore desde tu configuración de Firebase
-import app from './firebase-config'; // Importa la app de Firebase
+import { firestore } from './firebase-config';
+import app from './firebase-config';
 import Inicio from './components/Inicio/Inicio';
 import Header from './components/Header/Header';
 import SeleccionDeCategoria from './components/CartasMemoria/SeleccionCategoria';
@@ -15,15 +15,20 @@ import Perfil from './components/Perfil/Perfil';
 import Registro from './components/Registro/Registro';
 import Resultados from './components/CartasMemoria/Resultados';
 import HistorialEvaluacion from './components/HistorialEvaluacion/HistorialEvaluacion';
+import Usuarios from './components/Usuarios/Usuarios';
+import AnalisisDeDatos from './components/AnalisisDeDatos/AnalisisDeDatos';
+import GestionUsuarios from './components/Gestion/GestionUsuarios';
+import GestionJuegos from './components/Gestion/GestionJuegos';
+import FormularioUsuario from './components/Gestion/FormularioUsuario';
+import DetalleUsuario from './components/Gestion/DetalleUsuario';
 import './App.css';
 
-// Componente para mostrar una advertencia de rol
 const AdvertenciaDeRol = ({ handleRoleWarningClose }) => {
   const navigate = useNavigate();
 
   const handleOkClick = () => {
     handleRoleWarningClose();
-    navigate('/'); // Redirige al inicio
+    navigate('/');
   };
 
   return (
@@ -44,34 +49,31 @@ const App = () => {
   const auth = getAuth(app);
 
   useEffect(() => {
-    // Observador de estado de autenticación de Firebase
     const unsubscribe = onAuthStateChanged(auth, async (usuario) => {
       if (usuario) {
-        // Obtener el rol del usuario desde Firestore
         const userDoc = await getDoc(doc(firestore, 'users', usuario.uid));
         if (userDoc.exists()) {
-          setRolUsuario(userDoc.data().tipoUsuario); // Establece el rol del usuario
+          setRolUsuario(userDoc.data().tipoUsuario);
         }
-        setEstaAutenticado(true); // Establece el estado de autenticación
+        setEstaAutenticado(true);
       } else {
-        setEstaAutenticado(false); // No autenticado
+        setEstaAutenticado(false);
       }
-      setCargando(false); // Finaliza la carga
+      setCargando(false);
     });
 
-    return () => unsubscribe(); // Limpia el observador al desmontar el componente
+    return () => unsubscribe();
   }, [auth]);
 
   const handleRoleWarningClose = () => {
-    setMostrarAdvertenciaDeRol(false); // Cierra la advertencia de rol
+    setMostrarAdvertenciaDeRol(false);
   };
 
-  // Función para renderizar las rutas
   const renderizarRutas = () => (
     <Routes>
-      <Route path="/" element={<Inicio />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/registro" element={<Registro />} />
+      <Route path="/" element={estaAutenticado ? <Inicio /> : <Navigate to="/login" />} />
+      <Route path="/login" element={!estaAutenticado ? <Login /> : <Navigate to="/" />} />
+      <Route path="/registro" element={!estaAutenticado ? <Registro /> : <Navigate to="/" />} />
       <Route path="/perfil" element={estaAutenticado ? <Perfil /> : <Navigate to="/login" />} />
       <Route path="/historial-evaluacion" element={estaAutenticado ? <HistorialEvaluacion /> : <Navigate to="/login" />} />
       <Route
@@ -105,20 +107,40 @@ const App = () => {
         element={estaAutenticado && rolUsuario === 'Jugador' ? <Resultados /> : <Navigate to="/login" />}
       />
       <Route
+        path="/gestion-usuarios"
+        element={estaAutenticado && rolUsuario === 'Admin' ? <GestionUsuarios /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/gestion-juegos"
+        element={estaAutenticado && rolUsuario === 'Admin' ? <GestionJuegos /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/gestion-usuarios/nuevo"
+        element={estaAutenticado && rolUsuario === 'Admin' ? <FormularioUsuario /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/gestion-usuarios/:id/editar"
+        element={estaAutenticado && rolUsuario === 'Admin' ? <FormularioUsuario /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/gestion-usuarios/:id"
+        element={estaAutenticado && rolUsuario === 'Admin' ? <DetalleUsuario /> : <Navigate to="/login" />}
+      />
+      <Route
         path="/role-warning"
         element={<AdvertenciaDeRol handleRoleWarningClose={handleRoleWarningClose} />}
       />
     </Routes>
-  );  
+  );
 
   if (cargando) {
-    return <div>Cargando...</div>; // Muestra un mensaje de carga mientras se verifica la autenticación
+    return <div>Cargando...</div>;
   }
 
   return (
     <Router>
       <Header />
-      {renderizarRutas()} {/* Renderiza las rutas definidas */}
+      {renderizarRutas()}
     </Router>
   );
 };

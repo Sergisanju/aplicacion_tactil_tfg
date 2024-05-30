@@ -59,14 +59,12 @@ const Registro = () => {
         nombre,
         fechaNacimiento,
         email,
-        tipoUsuario
+        tipoUsuario,
+        aprobado: tipoUsuario !== 'Analista' // Aprobado automáticamente si no es analista
       });
 
       // Cerrar sesión inmediatamente después del registro
       await signOut(auth);
-
-      // Mostrar alerta de bienvenida
-      alert("Registro exitoso. ¡Bienvenido!");
 
       // Redirigir a la página de inicio de sesión
       navigate('/login');

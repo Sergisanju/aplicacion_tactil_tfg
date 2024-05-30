@@ -62,7 +62,7 @@ const uploadJSONAndImageFiles = async (folderPath) => {
           }));
 
           // Crear un documento para cada archivo JSON y agregar los datos en Firestore
-          const docRef = firestore.collection('juegos').doc('cartas_de_memoria').collection('categories').doc(category);
+          const docRef = firestore.collection('juegos').doc('cartas_de_memoria').collection('categorias').doc(category);
           await docRef.set({
             [file.replace('.json', '')]: {
               name: file.replace('.json', ''),

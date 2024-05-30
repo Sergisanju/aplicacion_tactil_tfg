@@ -13,7 +13,7 @@ const JuegoDeMemoria = () => {
   const [paresIncorrectos, setParesIncorrectos] = useState([]);
   const [error, setError] = useState(null);
   const [horaDeInicio, setHoraDeInicio] = useState(null);
-  const [horaDeFin, setHoraDeFin] = useState(null);
+  const [, setHoraDeFin] = useState(null);
   const [intentos, setIntentos] = useState(0);
   const [intentosCorrectos, setIntentosCorrectos] = useState(0);
   const [intentosIncorrectos, setIntentosIncorrectos] = useState(0);
@@ -140,12 +140,6 @@ const JuegoDeMemoria = () => {
     } catch (error) {
       console.error('Error al guardar los resultados del juego:', error);
     }
-  };
-
-  const convertirMsAMinutosSegundos = (ms) => {
-    const minutos = Math.floor(ms / 60000);
-    const segundos = Math.floor((ms % 60000) / 1000);
-    return `${minutos < 10 ? '0' : ''}${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
   };
 
   const obtenerColumnasDeGrid = () => {
