@@ -1,3 +1,4 @@
+/* Estilos para el contenedor del registro */
 .register-container {
   display: flex;
   justify-content: center;
@@ -8,6 +9,7 @@
   box-sizing: border-box;
 }
 
+/* Estilos para la caja de registro */
 .register-box {
   width: 100%;
   max-width: 400px;
@@ -19,17 +21,20 @@
   box-sizing: border-box;
 }
 
+/* Estilos para el título de la caja de registro */
 .register-box h2 {
   text-align: center;
   margin-bottom: 20px;
 }
 
+/* Estilos para los mensajes de error */
 .error {
   color: red;
   text-align: center;
   margin-bottom: 15px;
 }
 
+/* Estilos para los elementos del formulario */
 form div {
   margin-bottom: 15px;
 }
@@ -48,10 +53,12 @@ form input, form select {
   border-radius: 5px;
 }
 
+/* Estilos para el contenedor de la contraseña */
 .password-container {
   position: relative;
 }
 
+/* Estilos para el ícono de toggle de la contraseña */
 .password-toggle-icon {
   position: absolute;
   right: 10px;
@@ -64,6 +71,7 @@ form input, form select {
   height: 20px;
 }
 
+/* Estilos para el botón de registro */
 .register-button {
   width: 100%;
   padding: 10px;
@@ -79,6 +87,7 @@ form input, form select {
   background-color: #218838;
 }
 
+/* Estilos para el footer de la caja de registro */
 .register-footer {
   text-align: center;
 }
@@ -87,6 +96,7 @@ form input, form select {
   margin: 10px 0;
 }
 
+/* Estilos responsivos */
 @media (max-width: 600px) {
   .register-box {
     padding: 10px;

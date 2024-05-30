@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getFirestore, doc, getDoc, collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import './MemoryGame.css';
+import './CartasMemoria.css';
 
 const JuegoDeMemoria = () => {
   const { categoria, nivel, dificultad } = useParams();
@@ -153,22 +153,22 @@ const JuegoDeMemoria = () => {
   };
 
   return (
-    <div className="memory-game-container">
+    <div className="contenedor-juego-memoria">
       <h1>Juego de Cartas de Memoria</h1>
       {error ? (
         <p>Error: {error}</p>
       ) : datosDelJuego ? (
-        <div className="game-board" style={{ gridTemplateColumns: obtenerColumnasDeGrid() }}>
+        <div className="tablero-juego" style={{ gridTemplateColumns: obtenerColumnasDeGrid() }}>
           {datosDelJuego.map((item, index) => (
             <div
               key={index}
-              className={`game-card ${cartasSeleccionadas.includes(index) ? 'flipped' : ''} ${paresAcertados.includes(index) ? 'matched' : ''} ${paresIncorrectos.includes(index) ? 'incorrect' : ''}`}
+              className={`carta-juego ${cartasSeleccionadas.includes(index) ? 'volteada' : ''} ${paresAcertados.includes(index) ? 'emparejada' : ''} ${paresIncorrectos.includes(index) ? 'incorrecta' : ''}`}
               onClick={() => manejarClicEnCarta(index)}
             >
-              <div className="card-front">
+              <div className="cara-frontal">
                 {item.type === 'text' ? item.nombre : <img src={item.imagenURL} alt={item.nombre} />}
               </div>
-              <div className="card-back">?</div>
+              <div className="cara-trasera">?</div>
             </div>
           ))}
         </div>

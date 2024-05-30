@@ -4,25 +4,26 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { firestore } from './firebase-config'; // Importa firestore desde tu configuración de Firebase
 import app from './firebase-config'; // Importa la app de Firebase
-import Home from './components/Home/Home';
+import Inicio from './components/Inicio/Inicio';
 import Header from './components/Header/Header';
-import SeleccionDeCategoria from './components/MemoryGame/CategorySelection';
-import SeleccionDeNivel from './components/MemoryGame/LevelSelection';
-import SeleccionDeDificultad from './components/MemoryGame/DifficultySelection';
-import JuegoDeMemoria from './components/MemoryGame/MemoryGame';
+import SeleccionDeCategoria from './components/CartasMemoria/SeleccionCategoria';
+import SeleccionDeNivel from './components/CartasMemoria/SeleccionNivel';
+import SeleccionDeDificultad from './components/CartasMemoria/SeleccionDificultad';
+import JuegoDeMemoria from './components/CartasMemoria/CartasMemoria';
 import Login from './components/Login/Login';
-import Profile from './components/Profile/Profile';
-import Register from './components/Register/Register';
-import Resultados from './components/MemoryGame/Resultados';
+import Perfil from './components/Perfil/Perfil';
+import Registro from './components/Registro/Registro';
+import Resultados from './components/CartasMemoria/Resultados';
 import HistorialEvaluacion from './components/HistorialEvaluacion/HistorialEvaluacion';
 import './App.css';
 
-const RoleWarning = ({ handleRoleWarningClose }) => {
+// Componente para mostrar una advertencia de rol
+const AdvertenciaDeRol = ({ handleRoleWarningClose }) => {
   const navigate = useNavigate();
 
   const handleOkClick = () => {
     handleRoleWarningClose();
-    navigate('/');
+    navigate('/'); // Redirige al inicio
   };
 
   return (
@@ -36,86 +37,88 @@ const RoleWarning = ({ handleRoleWarningClose }) => {
 };
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [, setShowRoleWarning] = useState(false);
+  const [estaAutenticado, setEstaAutenticado] = useState(false);
+  const [rolUsuario, setRolUsuario] = useState('');
+  const [cargando, setCargando] = useState(true);
+  const [, setMostrarAdvertenciaDeRol] = useState(false);
   const auth = getAuth(app);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // Fetch user role from Firestore
-        const userDoc = await getDoc(doc(firestore, 'users', user.uid));
+    // Observador de estado de autenticación de Firebase
+    const unsubscribe = onAuthStateChanged(auth, async (usuario) => {
+      if (usuario) {
+        // Obtener el rol del usuario desde Firestore
+        const userDoc = await getDoc(doc(firestore, 'users', usuario.uid));
         if (userDoc.exists()) {
-          setUserRole(userDoc.data().userType);
+          setRolUsuario(userDoc.data().tipoUsuario); // Establece el rol del usuario
         }
-        setIsAuthenticated(true);
+        setEstaAutenticado(true); // Establece el estado de autenticación
       } else {
-        setIsAuthenticated(false);
+        setEstaAutenticado(false); // No autenticado
       }
-      setLoading(false);
+      setCargando(false); // Finaliza la carga
     });
 
-    return () => unsubscribe();
+    return () => unsubscribe(); // Limpia el observador al desmontar el componente
   }, [auth]);
 
   const handleRoleWarningClose = () => {
-    setShowRoleWarning(false);
+    setMostrarAdvertenciaDeRol(false); // Cierra la advertencia de rol
   };
 
-  const renderRoutes = () => (
+  // Función para renderizar las rutas
+  const renderizarRutas = () => (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Inicio />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/login" />} />
-      <Route path="/historial-evaluacion" element={isAuthenticated ? <HistorialEvaluacion /> : <Navigate to="/login" />} />
+      <Route path="/registro" element={<Registro />} />
+      <Route path="/perfil" element={estaAutenticado ? <Perfil /> : <Navigate to="/login" />} />
+      <Route path="/historial-evaluacion" element={estaAutenticado ? <HistorialEvaluacion /> : <Navigate to="/login" />} />
       <Route
-        path="/memory-game"
+        path="/cartas-memoria"
         element={
-          isAuthenticated
-            ? (userRole === 'Jugador' ? <SeleccionDeCategoria /> : <Navigate to="/role-warning" />)
+          estaAutenticado
+            ? (rolUsuario === 'Jugador' ? <SeleccionDeCategoria /> : <Navigate to="/role-warning" />)
             : <Navigate to="/login" />
         }
       />
       <Route
-        path="/memory-game/:categoria"
+        path="/cartas-memoria/:categoria"
         element={
-          isAuthenticated && userRole === 'Jugador' ? <SeleccionDeNivel /> : <Navigate to="/login" />
+          estaAutenticado && rolUsuario === 'Jugador' ? <SeleccionDeNivel /> : <Navigate to="/login" />
         }
       />
       <Route
-        path="/memory-game/:categoria/:nivel"
+        path="/cartas-memoria/:categoria/:nivel"
         element={
-          isAuthenticated && userRole === 'Jugador' ? <SeleccionDeDificultad /> : <Navigate to="/login" />
+          estaAutenticado && rolUsuario === 'Jugador' ? <SeleccionDeDificultad /> : <Navigate to="/login" />
         }
       />
       <Route
-        path="/memory-game/:categoria/:nivel/:dificultad"
+        path="/cartas-memoria/:categoria/:nivel/:dificultad"
         element={
-          isAuthenticated && userRole === 'Jugador' ? <JuegoDeMemoria /> : <Navigate to="/login" />
+          estaAutenticado && rolUsuario === 'Jugador' ? <JuegoDeMemoria /> : <Navigate to="/login" />
         }
       />
       <Route
         path="/resultados/:sessionId"
-        element={isAuthenticated && userRole === 'Jugador' ? <Resultados /> : <Navigate to="/login" />}
+        element={estaAutenticado && rolUsuario === 'Jugador' ? <Resultados /> : <Navigate to="/login" />}
       />
       <Route
         path="/role-warning"
-        element={<RoleWarning handleRoleWarningClose={handleRoleWarningClose} />}
+        element={<AdvertenciaDeRol handleRoleWarningClose={handleRoleWarningClose} />}
       />
     </Routes>
   );  
 
-  if (loading) {
-    return <div>Loading...</div>;
+  if (cargando) {
+    return <div>Cargando...</div>; // Muestra un mensaje de carga mientras se verifica la autenticación
   }
 
   return (
     <Router>
       <Header />
-      {renderRoutes()}
+      {renderizarRutas()} {/* Renderiza las rutas definidas */}
     </Router>
   );
 };

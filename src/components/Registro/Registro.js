@@ -3,41 +3,41 @@ import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, setDoc, getDocs, collection, query, where } from 'firebase/firestore';
 import { auth, firestore } from '../../firebase-config';
-import './Register.css';
+import './Registro.css';
 import verIcon from '../../assets/images/ver.png';
 import noVerIcon from '../../assets/images/nover.png';
 
-const Register = () => {
-  const [name, setName] = useState('');
-  const [dob, setDob] = useState('');
+const Registro = () => {
+  const [nombre, setNombre] = useState('');
+  const [fechaNacimiento, setFechaNacimiento] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [userType, setUserType] = useState('');
+  const [contraseña, setContraseña] = useState('');
+  const [confirmarContraseña, setConfirmarContraseña] = useState('');
+  const [tipoUsuario, setTipoUsuario] = useState('');
   const [error, setError] = useState('');
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [contraseñaVisible, setContraseñaVisible] = useState(false);
   const navigate = useNavigate();
 
-  const validatePassword = (password) => {
+  const validarContraseña = (contraseña) => {
     const minLength = 8;
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
+    const hasUpperCase = /[A-Z]/.test(contraseña);
+    const hasLowerCase = /[a-z]/.test(contraseña);
+    const hasNumber = /[0-9]/.test(contraseña);
 
-    return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumber;
+    return contraseña.length >= minLength && hasUpperCase && hasLowerCase && hasNumber;
   };
 
-  const handleRegister = async (e) => {
+  const handleRegistrar = async (e) => {
     e.preventDefault();
-    if (!name || !dob || !email || !password || !confirmPassword || !userType) {
+    if (!nombre || !fechaNacimiento || !email || !contraseña || !confirmarContraseña || !tipoUsuario) {
       setError("Todos los campos son obligatorios");
       return;
     }
-    if (password !== confirmPassword) {
+    if (contraseña !== confirmarContraseña) {
       setError("Las contraseñas no coinciden");
       return;
     }
-    if (!validatePassword(password)) {
+    if (!validarContraseña(contraseña)) {
       setError("La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas y números");
       return;
     }
@@ -53,13 +53,13 @@ const Register = () => {
       }
 
       // Registrar al nuevo usuario
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, contraseña);
       const user = userCredential.user;
       await setDoc(doc(firestore, "users", user.uid), {
-        name,
-        dob,
+        nombre,
+        fechaNacimiento,
         email,
-        userType
+        tipoUsuario
       });
 
       // Cerrar sesión inmediatamente después del registro
@@ -75,8 +75,8 @@ const Register = () => {
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
+  const toggleContraseñaVisibilidad = () => {
+    setContraseñaVisible(!contraseñaVisible);
   };
 
   return (
@@ -84,13 +84,13 @@ const Register = () => {
       <div className="register-box">
         <h2>Registrar</h2>
         {error && <p className="error">{error}</p>}
-        <form onSubmit={handleRegister}>
+        <form onSubmit={handleRegistrar}>
           <div>
             <label>Nombre y Apellidos</label>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
               required
             />
           </div>
@@ -98,8 +98,8 @@ const Register = () => {
             <label>Fecha de Nacimiento</label>
             <input
               type="date"
-              value={dob}
-              onChange={(e) => setDob(e.target.value)}
+              value={fechaNacimiento}
+              onChange={(e) => setFechaNacimiento(e.target.value)}
               required
             />
           </div>
@@ -115,35 +115,35 @@ const Register = () => {
           <div className="password-container">
             <label>Contraseña</label>
             <input
-              type={passwordVisible ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              type={contraseñaVisible ? "text" : "password"}
+              value={contraseña}
+              onChange={(e) => setContraseña(e.target.value)}
               required
             />
-            <span onClick={togglePasswordVisibility} className="password-toggle-icon">
-              <img src={passwordVisible ? noVerIcon : verIcon} alt="Toggle visibility" />
+            <span onClick={toggleContraseñaVisibilidad} className="password-toggle-icon">
+              <img src={contraseñaVisible ? noVerIcon : verIcon} alt="Toggle visibility" />
             </span>
           </div>
           <div className="password-container">
             <label>Repetir Contraseña</label>
             <input
-              type={passwordVisible ? "text" : "password"}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              type={contraseñaVisible ? "text" : "password"}
+              value={confirmarContraseña}
+              onChange={(e) => setConfirmarContraseña(e.target.value)}
               required
             />
-            <span onClick={togglePasswordVisibility} className="password-toggle-icon">
-              <img src={passwordVisible ? noVerIcon : verIcon} alt="Toggle visibility" />
+            <span onClick={toggleContraseñaVisibilidad} className="password-toggle-icon">
+              <img src={contraseñaVisible ? noVerIcon : verIcon} alt="Toggle visibility" />
             </span>
           </div>
-          {error && password !== confirmPassword && (
+          {error && contraseña !== confirmarContraseña && (
             <p className="error">{error}</p>
           )}
           <div>
             <label>Tipo de Usuario</label>
             <select
-              value={userType}
-              onChange={(e) => setUserType(e.target.value)}
+              value={tipoUsuario}
+              onChange={(e) => setTipoUsuario(e.target.value)}
               required
             >
               <option value="">Selecciona un tipo de usuario</option>
@@ -161,4 +161,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Registro;

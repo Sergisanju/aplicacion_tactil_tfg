@@ -84,7 +84,7 @@ const Login = () => {
           Continuar con Google
         </button>
         <div className="login-footer">
-          <p>¿No tienes una cuenta? <Link to="/register">Regístrate</Link>.</p>
+          <p>¿No tienes una cuenta? <Link to="/registro">Regístrate</Link>.</p>
           <p><Link to="/forgot-password">¿Olvidaste tu contraseña?</Link></p>
         </div>
       </div>

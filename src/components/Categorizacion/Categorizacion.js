@@ -1,7 +1,7 @@
 import React from 'react';
 
-const CategorizationGame = () => {
+const Categorizacion = () => {
   return <div>Este es el juego de categorización .</div>;
 };
 
-export default CategorizationGame;
+export default Categorizacion;

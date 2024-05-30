@@ -1,4 +1,5 @@
-.category-selection-container {
+/* Estilos para el contenedor de selección de categoría */
+.contenedor-seleccion-categoria {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,6 +10,7 @@
   box-sizing: border-box;
 }
 
+/* Estilos para el título principal */
 h1 {
   font-size: 36px;
   font-weight: bold;
@@ -17,6 +19,7 @@ h1 {
   color: #000; /* Color del texto */
 }
 
+/* Estilos para el subtítulo */
 h2 {
   font-size: 28px;
   margin-bottom: 20px;
@@ -24,20 +27,23 @@ h2 {
   color: #000; /* Color del texto */
 }
 
-.categories {
+/* Estilos para la sección de categorías */
+.categorias {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 15px;
 }
 
-.category-row {
+/* Estilos para cada fila de categorías */
+.fila-categoria {
   display: flex;
   justify-content: center;
   gap: 15px;
 }
 
-.category-button {
+/* Estilos para los botones de categoría */
+.boton-categoria {
   background-color: #00a2ff;
   color: #ffffff;
   border: none;
@@ -50,7 +56,8 @@ h2 {
   transition: background-color 0.3s, transform 0.3s;
 }
 
-.category-button:hover {
+/* Estilos para el hover de los botones de categoría */
+.boton-categoria:hover {
   background-color: #007acc;
   transform: translateY(-2px);
 }

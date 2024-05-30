@@ -1,4 +1,4 @@
-.profile-container {
+.contenedor-perfil {
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
@@ -7,19 +7,25 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.profile-container h2 {
+.contenedor-perfil h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #f73737;
+  color: #333;
 }
 
-.profile-details {
+.mensaje {
+  text-align: center;
+  color: green;
+  margin-bottom: 20px;
+}
+
+.detalles-perfil {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.profile-item {
+.item-perfil {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -27,50 +33,49 @@
   border-radius: 5px;
 }
 
-.profile-item.even {
+.item-perfil.par {
   background-color: #f9f9f9;
 }
 
-.profile-item.odd {
+.item-perfil.impar {
   background-color: #fff;
 }
 
-.profile-item label {
+.item-perfil label {
   font-weight: bold;
   flex: 1;
 }
 
-.profile-item span,
-.profile-item input,
-.profile-item select,
-.profile-item textarea {
+.item-perfil input,
+.item-perfil select,
+.item-perfil textarea {
   flex: 2;
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
-.profile-item input[disabled], 
-.profile-item select[disabled], 
-.profile-item textarea[disabled] {
+.item-perfil input[disabled], 
+.item-perfil select[disabled], 
+.item-perfil textarea[disabled] {
   background-color: #e9ecef;
   cursor: not-allowed;
 }
 
-.profile-item textarea {
+.item-perfil textarea {
   resize: vertical;
 }
 
-.profile-actions {
+.acciones-perfil {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 20px;
 }
 
-.profile-actions button {
+.acciones-perfil button {
   padding: 10px 20px;
-  background-color: #f73737;
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
@@ -78,36 +83,14 @@
   transition: background-color 0.3s;
 }
 
-.profile-actions button:hover {
-  background-color: #d32f2f;
+.acciones-perfil button:hover {
+  background-color: #0056b3;
 }
 
-.save-button {
+.boton-guardar {
   background-color: #28a745;
 }
 
-.save-button:hover {
+.boton-guardar:hover {
   background-color: #218838;
-}
-
-.message {
-  text-align: center;
-  color: green;
-  margin-bottom: 20px;
-}
-
-@media (min-width: 768px) {
-  .profile-item {
-    flex-direction: row;
-  }
-
-  .profile-item label {
-    margin-right: 10px;
-  }
-
-  .profile-item input,
-  .profile-item select,
-  .profile-item textarea {
-    margin-left: 10px;
-  }
 }
