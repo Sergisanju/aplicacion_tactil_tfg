@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getFirestore, doc, getDoc, collection, addDoc, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import './MemoryGame.css';
 
@@ -100,7 +100,7 @@ const JuegoDeMemoria = () => {
           setCartasSeleccionadas([]);
           if (paresAcertados.length + 2 === datosDelJuego.length) {
             setHoraDeFin(Date.now());
-            guardarResultadosDelJuego();
+            guardarResultadosDelJuego(Date.now()); // Pasar la hora de finalización como argumento
           }
         }, 1000);
       } else {
@@ -114,9 +114,11 @@ const JuegoDeMemoria = () => {
     }
   };
 
-  const guardarResultadosDelJuego = async () => {
-    const duracionDelJuegoMs = horaDeFin - horaDeInicio;
-    const duracionDelJuego = convertirMsAMinutosSegundos(duracionDelJuegoMs);
+  const [sessionId] = useState(Date.now().toString()); // Generar un ID único para la sesión de juego
+
+  const guardarResultadosDelJuego = async (horaDeFinActual) => { // Recibir la hora de finalización como argumento
+    const duracionDelJuegoMs = horaDeFinActual - horaDeInicio;
+    const duracionDelJuegoSegundos = Math.floor(duracionDelJuegoMs / 1000); // Duración en segundos
     const usuario = auth.currentUser;
     const resultado = {
       categoria,
@@ -125,16 +127,16 @@ const JuegoDeMemoria = () => {
       intentos,
       aciertos: intentosCorrectos,
       errores: intentosIncorrectos,
-      duracion: duracionDelJuego,
+      duracion: duracionDelJuegoSegundos, // Guardar la duración en segundos
       timestamp: new Date().toISOString(),
-      jugadorId: usuario ? usuario.uid : 'anonimo',
+      jugadorId: usuario ? usuario.email : 'anonimo', // Guardar el correo electrónico
+      sessionId: sessionId // Guardar el ID de la sesión de juego
     };
     try {
-      const usuarioDocRef = doc(firestore, 'ResultadosJuegos', 'cartas_de_memoria', 'usuarios', usuario.uid);
-      await setDoc(usuarioDocRef, { exists: true }, { merge: true }); // Crear el documento de usuario si no existe
-      await addDoc(collection(usuarioDocRef, 'resultados'), resultado);
+      const usuarioDocRef = collection(firestore, `ResultadosJuegos/cartas_de_memoria/usuarios/${usuario.uid}/resultados`);
+      await addDoc(usuarioDocRef, resultado);
       console.log('Resultados del juego guardados con éxito');
-      navigate('/game-results');
+      navigate(`/resultados/${sessionId}`); // Navegar a la página de resultados con el ID de la sesión
     } catch (error) {
       console.error('Error al guardar los resultados del juego:', error);
     }
@@ -142,8 +144,8 @@ const JuegoDeMemoria = () => {
 
   const convertirMsAMinutosSegundos = (ms) => {
     const minutos = Math.floor(ms / 60000);
-    const segundos = ((ms % 60000) / 1000).toFixed(0);
-    return `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
+    const segundos = Math.floor((ms % 60000) / 1000);
+    return `${minutos < 10 ? '0' : ''}${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
   };
 
   const obtenerColumnasDeGrid = () => {

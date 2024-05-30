@@ -13,6 +13,8 @@ import JuegoDeMemoria from './components/MemoryGame/MemoryGame';
 import Login from './components/Login/Login';
 import Profile from './components/Profile/Profile';
 import Register from './components/Register/Register';
+import Resultados from './components/MemoryGame/Resultados';
+import HistorialEvaluacion from './components/HistorialEvaluacion/HistorialEvaluacion';
 import './App.css';
 
 const RoleWarning = ({ handleRoleWarningClose }) => {
@@ -68,6 +70,7 @@ const App = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/login" />} />
+      <Route path="/historial-evaluacion" element={isAuthenticated ? <HistorialEvaluacion /> : <Navigate to="/login" />} />
       <Route
         path="/memory-game"
         element={
@@ -95,11 +98,15 @@ const App = () => {
         }
       />
       <Route
+        path="/resultados/:sessionId"
+        element={isAuthenticated && userRole === 'Jugador' ? <Resultados /> : <Navigate to="/login" />}
+      />
+      <Route
         path="/role-warning"
         element={<RoleWarning handleRoleWarningClose={handleRoleWarningClose} />}
       />
     </Routes>
-  );
+  );  
 
   if (loading) {
     return <div>Loading...</div>;

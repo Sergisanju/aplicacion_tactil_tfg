@@ -57,6 +57,7 @@ const Header = () => {
           <img src={homeIcon} alt="Inicio" className="nav-icon" />
           <span>Inicio</span>
         </NavLink>
+        <NavLink to="/h"
         <NavLink to="/login" className="nav-item" activeclassname="active" onClick={handleLoginClick}>
           <img src={loginIcon} alt="Iniciar Sesión" className="nav-icon" />
           <span>Iniciar Sesión</span>
