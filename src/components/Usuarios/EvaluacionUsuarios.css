@@ -1,0 +1,42 @@
+.evaluacion-usuarios-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .evaluacion-usuarios-container h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .error {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .resultados-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .resultado-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .resultado-item h2 {
+    margin: 0 0 10px;
+    font-size: 20px;
+  }
+  
+  .resultado-item p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+  

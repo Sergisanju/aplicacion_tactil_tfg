@@ -31,7 +31,8 @@ const Usuarios = () => {
           return;
         }
 
-        const usuariosQuery = query(collection(firestore, 'users'), where('uid', 'in', asociados));
+        // Aquí está la posible corrección para obtener los usuarios asociados correctamente
+        const usuariosQuery = query(collection(firestore, 'users'), where('__name__', 'in', asociados));
         const usuariosSnapshot = await getDocs(usuariosQuery);
         const listaUsuarios = usuariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setUsuarios(listaUsuarios);

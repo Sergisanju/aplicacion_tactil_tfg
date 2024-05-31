@@ -16,6 +16,7 @@ import Registro from './components/Registro/Registro';
 import Resultados from './components/CartasMemoria/Resultados';
 import HistorialEvaluacion from './components/HistorialEvaluacion/HistorialEvaluacion';
 import Usuarios from './components/Usuarios/Usuarios';
+import EvaluacionUsuarios from './components/Usuarios/EvaluacionUsuarios';
 import AnalisisDeDatos from './components/AnalisisDeDatos/AnalisisDeDatos';
 import GestionUsuarios from './components/Gestion/GestionUsuarios';
 import GestionJuegos from './components/Gestion/GestionJuegos';
@@ -129,6 +130,10 @@ const App = () => {
       <Route
         path="/usuarios"
         element={estaAutenticado && rolUsuario === 'Analista' ? <Usuarios /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/analista-usuarios/:usuarioId/evaluaciones"
+        element={estaAutenticado && rolUsuario === 'Analista' ? <EvaluacionUsuarios /> : <Navigate to="/login" />}
       />
       <Route
         path="/analisis-datos"
