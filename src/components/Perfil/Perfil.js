@@ -5,7 +5,7 @@ import { firestore } from '../../firebase-config';
 import './Perfil.css';
 
 const Perfil = () => {
-  const [datosUsuario, setDatosUsuario] = useState(null);
+  const [datosUsuario, setDatosUsuario] = useState({});
   const [modoEdicion, setModoEdicion] = useState(false);
   const [formularioDatos, setFormularioDatos] = useState({
     nombre: '',
@@ -28,8 +28,19 @@ const Perfil = () => {
         try {
           const userDoc = await getDoc(doc(firestore, 'users', user.uid));
           if (userDoc.exists()) {
-            setDatosUsuario(userDoc.data());
-            setFormularioDatos(userDoc.data());
+            const userData = userDoc.data();
+            setDatosUsuario(userData);
+            setFormularioDatos({
+              nombre: userData.nombre || '',
+              fechaNacimiento: userData.fechaNacimiento || '',
+              email: userData.email || '',
+              tipoUsuario: userData.tipoUsuario || '',
+              telefono: userData.telefono || '',
+              direccion: userData.direccion || '',
+              genero: userData.genero || '',
+              intereses: userData.intereses || '',
+              biografia: userData.biografia || ''
+            });
           } else {
             setMensaje('No se encontró la información del perfil.');
           }
@@ -68,7 +79,7 @@ const Perfil = () => {
     }
   };
 
-  if (!datosUsuario) {
+  if (!Object.keys(datosUsuario).length) {
     return <p>Cargando...</p>;
   }
 

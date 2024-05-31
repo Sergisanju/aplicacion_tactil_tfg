@@ -18,8 +18,24 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate('/'); // Redirigir a la página principal después del inicio de sesión
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Verificar si el usuario está registrado en Firestore
+      const userDoc = await getDoc(doc(firestore, "users", user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.tipoUsuario === 'Analista' && !userData.aprobado) {
+          // Si el usuario es un analista no aprobado, cerrar sesión y mostrar error
+          await auth.signOut();
+          setError("El usuario analista debe ser aprobado por un administrador.");
+        } else {
+          // Si el usuario está aprobado o no es analista, redirigir a la página principal
+          navigate('/');
+        }
+      } else {
+        setError("Usuario no registrado. Por favor, regístrese primero.");
+      }
     } catch (error) {
       setError("Correo electrónico o contraseña incorrectos");
     }
@@ -38,8 +54,15 @@ const Login = () => {
         await auth.signOut();
         setError("Usuario no registrado. Por favor, regístrese primero.");
       } else {
-        // Si está registrado, redirigir a la página principal
-        navigate('/');
+        const userData = userDoc.data();
+        if (userData.tipoUsuario === 'Analista' && !userData.aprobado) {
+          // Si el usuario es un analista no aprobado, cerrar sesión y mostrar error
+          await auth.signOut();
+          setError("El usuario analista debe ser aprobado por un administrador.");
+        } else {
+          // Si el usuario está aprobado o no es analista, redirigir a la página principal
+          navigate('/');
+        }
       }
     } catch (error) {
       setError("Error al iniciar sesión con Google");

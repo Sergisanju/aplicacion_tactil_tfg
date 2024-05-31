@@ -1,181 +1,176 @@
 import React, { useState, useEffect } from 'react';
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getAuth, createUserWithEmailAndPassword, updatePassword } from 'firebase/auth';
+import { getFirestore, doc, getDoc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import './FormularioUsuario.css';
 
 const FormularioUsuario = () => {
-  const [datosUsuario, setDatosUsuario] = useState({
-    nombre: '',
-    email: '',
-    tipoUsuario: 'Jugador',
-    telefono: '',
-    direccion: '',
-    genero: '',
-    intereses: '',
-    bio: '',
-    password: '',
-    confirmPassword: ''
-  });
   const { id } = useParams();
   const navigate = useNavigate();
   const firestore = getFirestore();
-  const auth = getAuth();
-  const usuarioActual = auth.currentUser;
+  const [usuario, setUsuario] = useState(null);
+  const [nombre, setNombre] = useState('');
+  const [fechaNacimiento, setFechaNacimiento] = useState('');
+  const [email, setEmail] = useState('');
+  const [tipoUsuario, setTipoUsuario] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [direccion, setDireccion] = useState('');
+  const [genero, setGenero] = useState('');
+  const [intereses, setIntereses] = useState('');
+  const [biografia, setBiografia] = useState('');
+  const [asociados, setAsociados] = useState([]);
+  const [jugadores, setJugadores] = useState([]);
+  const [selectedJugadores, setSelectedJugadores] = useState([]);
 
   useEffect(() => {
     const obtenerUsuario = async () => {
-      if (id) {
-        const usuarioDoc = await getDoc(doc(firestore, 'users', id));
-        if (usuarioDoc.exists()) {
-          setDatosUsuario({ ...usuarioDoc.data(), password: '', confirmPassword: '' });
+      const usuarioDoc = await getDoc(doc(firestore, 'users', id));
+      if (usuarioDoc.exists()) {
+        const data = usuarioDoc.data();
+        setUsuario(data);
+        setNombre(data.nombre);
+        setFechaNacimiento(data.fechaNacimiento);
+        setEmail(data.email);
+        setTipoUsuario(data.tipoUsuario);
+        setTelefono(data.telefono || '');
+        setDireccion(data.direccion || '');
+        setGenero(data.genero || '');
+        setIntereses(data.intereses || '');
+        setBiografia(data.biografia || '');
+        setAsociados(data.asociados || []);
+        if (data.tipoUsuario === 'Analista') {
+          const jugadoresSnapshot = await getDocs(query(collection(firestore, 'users'), where('tipoUsuario', '==', 'Jugador')));
+          const listaJugadores = jugadoresSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setJugadores(listaJugadores);
+          setSelectedJugadores(data.asociados || []);
         }
       }
     };
-
-    const verificarPermiso = async () => {
-      const userDoc = await getDoc(doc(firestore, 'users', usuarioActual.uid));
-      return userDoc.exists() && userDoc.data().tipoUsuario === 'Admin';
-    };
-
-    verificarPermiso().then((isAdmin) => {
-      if (!isAdmin) {
-        navigate('/'); // Redirigir si el usuario no es administrador
-      }
-    });
 
     obtenerUsuario();
-  }, [id, firestore, usuarioActual.uid, navigate]);
+  }, [firestore, id]);
 
-  const manejarCambio = (e) => {
-    const { name, value } = e.target;
-    setDatosUsuario(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
-  const manejarSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const { email, password, confirmPassword, nombre, tipoUsuario, telefono, direccion, genero, intereses, bio } = datosUsuario;
-
-    if (password !== confirmPassword) {
-      alert("Las contraseñas no coinciden");
-      return;
-    }
-
-    try {
-      if (id) {
-        // Si estamos editando un usuario existente
-        const userDocRef = doc(firestore, 'users', id);
-        await setDoc(userDocRef, {
-          nombre, email, tipoUsuario, telefono, direccion, genero, intereses, bio
-        });
-
-        // Si se proporciona una nueva contraseña, actualizarla
-        if (password) {
-          const user = await auth.currentUser;
-          await updatePassword(user, password);
-        }
-      } else {
-        // Si estamos agregando un nuevo usuario
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        await setDoc(doc(firestore, 'users', user.uid), {
-          nombre, email, tipoUsuario, telefono, direccion, genero, intereses, bio
-        });
-      }
-      navigate('/gestion-usuarios');
-    } catch (error) {
-      console.error("Error al guardar el usuario:", error);
-      alert("Error al guardar el usuario: " + error.message);
-    }
+    const usuarioRef = doc(firestore, 'users', id);
+    await updateDoc(usuarioRef, {
+      nombre,
+      fechaNacimiento,
+      email,
+      tipoUsuario,
+      telefono,
+      direccion,
+      genero,
+      intereses,
+      biografia,
+      asociados: selectedJugadores
+    });
+    navigate('/gestion-usuarios');
   };
+
+  const manejarSeleccionarJugador = (id) => {
+    setSelectedJugadores(prevState =>
+      prevState.includes(id) ? prevState.filter(jId => jId !== id) : [...prevState, id]
+    );
+  };
+
+  if (!usuario) {
+    return <p>Cargando...</p>;
+  }
 
   return (
-    <div className="contenedor-formulario-usuario">
-      <h1>{id ? 'Editar Usuario' : 'Agregar Usuario'}</h1>
-      <form onSubmit={manejarSubmit}>
-        <input
-          type="text"
-          name="nombre"
-          placeholder="Nombre"
-          value={datosUsuario.nombre}
-          onChange={manejarCambio}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={datosUsuario.email}
-          onChange={manejarCambio}
-          required
-        />
-        <select
-          name="tipoUsuario"
-          value={datosUsuario.tipoUsuario}
-          onChange={manejarCambio}
-          required
-        >
-          <option value="Jugador">Jugador</option>
-          <option value="Analista">Analista</option>
-        </select>
-        <input
-          type="tel"
-          name="telefono"
-          placeholder="Teléfono"
-          value={datosUsuario.telefono}
-          onChange={manejarCambio}
-        />
-        <input
-          type="text"
-          name="direccion"
-          placeholder="Dirección"
-          value={datosUsuario.direccion}
-          onChange={manejarCambio}
-        />
-        <input
-          type="text"
-          name="genero"
-          placeholder="Género"
-          value={datosUsuario.genero}
-          onChange={manejarCambio}
-        />
-        <input
-          type="text"
-          name="intereses"
-          placeholder="Intereses"
-          value={datosUsuario.intereses}
-          onChange={manejarCambio}
-        />
-        <textarea
-          name="bio"
-          placeholder="Biografía"
-          value={datosUsuario.bio}
-          onChange={manejarCambio}
-        />
-        {!id && (
-          <>
-            <input
-              type="password"
-              name="password"
-              placeholder="Contraseña"
-              value={datosUsuario.password}
-              onChange={manejarCambio}
-              required={!id} // Requerir contraseña solo si estamos agregando un nuevo usuario
-            />
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirmar Contraseña"
-              value={datosUsuario.confirmPassword}
-              onChange={manejarCambio}
-              required={!id} // Requerir confirmación de contraseña solo si estamos agregando un nuevo usuario
-            />
-          </>
+    <div className="contenedor-formulario">
+      <h2>Editar Usuario</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Nombre:</label>
+          <input
+            type="text"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Fecha de Nacimiento:</label>
+          <input
+            type="date"
+            value={fechaNacimiento}
+            onChange={(e) => setFechaNacimiento(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Tipo de Usuario:</label>
+          <select value={tipoUsuario} onChange={(e) => setTipoUsuario(e.target.value)} required>
+            <option value="Analista">Analista</option>
+            <option value="Jugador">Jugador</option>
+          </select>
+        </div>
+        <div>
+          <label>Teléfono:</label>
+          <input
+            type="tel"
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Dirección:</label>
+          <input
+            type="text"
+            value={direccion}
+            onChange={(e) => setDireccion(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Género:</label>
+          <select value={genero} onChange={(e) => setGenero(e.target.value)}>
+            <option value="">Seleccione</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div>
+          <label>Intereses:</label>
+          <input
+            type="text"
+            value={intereses}
+            onChange={(e) => setIntereses(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Biografía:</label>
+          <textarea
+            value={biografia}
+            onChange={(e) => setBiografia(e.target.value)}
+          />
+        </div>
+        {tipoUsuario === 'Analista' && (
+          <div className="asociar-usuarios">
+            <h3>Usuarios Asociados</h3>
+            {jugadores.map(jugador => (
+              <div key={jugador.id} className="usuario-item">
+                <p>{jugador.nombre}</p>
+                <input
+                  type="checkbox"
+                  checked={selectedJugadores.includes(jugador.id)}
+                  onChange={() => manejarSeleccionarJugador(jugador.id)}
+                />
+              </div>
+            ))}
+          </div>
         )}
-        <button type="submit">{id ? 'Guardar Cambios' : 'Agregar Usuario'}</button>
+        <button type="submit" className="boton-guardar">Guardar</button>
       </form>
     </div>
   );

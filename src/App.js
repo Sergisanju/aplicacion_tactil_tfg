@@ -127,6 +127,14 @@ const App = () => {
         element={estaAutenticado && rolUsuario === 'Admin' ? <DetalleUsuario /> : <Navigate to="/login" />}
       />
       <Route
+        path="/usuarios"
+        element={estaAutenticado && rolUsuario === 'Analista' ? <Usuarios /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/analisis-datos"
+        element={estaAutenticado && rolUsuario === 'Analista' ? <AnalisisDeDatos /> : <Navigate to="/login" />}
+      />
+      <Route
         path="/role-warning"
         element={<AdvertenciaDeRol handleRoleWarningClose={handleRoleWarningClose} />}
       />
