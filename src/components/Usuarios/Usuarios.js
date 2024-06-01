@@ -53,7 +53,7 @@ const Usuarios = () => {
         {usuarios.map(usuario => (
           <div key={usuario.id} className="usuario-item">
             <p>{usuario.nombre}</p>
-            <Link to={`/analista-usuarios/${usuario.id}/evaluaciones`} className="boton-ver-evaluaciones">Ver Evaluaciones</Link>
+            <Link to={`/usuarios/${usuario.id}/evaluaciones`} className="boton-ver-evaluaciones">Ver Evaluaciones</Link>
             <button onClick={() => exportarDatos(usuario.id)} className="boton-exportar-datos">Exportar Datos</button>
           </div>
         ))}

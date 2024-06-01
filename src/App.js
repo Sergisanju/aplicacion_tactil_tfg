@@ -132,7 +132,7 @@ const App = () => {
         element={estaAutenticado && rolUsuario === 'Analista' ? <Usuarios /> : <Navigate to="/login" />}
       />
       <Route
-        path="/analista-usuarios/:usuarioId/evaluaciones"
+        path="/usuarios/:usuarioId/evaluaciones"
         element={estaAutenticado && rolUsuario === 'Analista' ? <EvaluacionUsuarios /> : <Navigate to="/login" />}
       />
       <Route
