@@ -108,7 +108,7 @@ const Login = () => {
         </button>
         <div className="login-footer">
           <p>¿No tienes una cuenta? <Link to="/registro">Regístrate</Link>.</p>
-          <p><Link to="/forgot-password">¿Olvidaste tu contraseña?</Link></p>
+          <p><Link to="/login/restablecer-contrasena">¿Olvidaste tu contraseña?</Link></p>
         </div>
       </div>
     </div>

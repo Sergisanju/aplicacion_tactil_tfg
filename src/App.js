@@ -11,18 +11,19 @@ import SeleccionDeNivel from './components/CartasMemoria/SeleccionNivel';
 import SeleccionDeDificultad from './components/CartasMemoria/SeleccionDificultad';
 import JuegoDeMemoria from './components/CartasMemoria/CartasMemoria';
 import Login from './components/Login/Login';
+import RestablecerContrasena from './components/Login/RestablecerContrasena';
 import Perfil from './components/Perfil/Perfil';
 import Registro from './components/Registro/Registro';
 import Resultados from './components/CartasMemoria/Resultados';
 import HistorialEvaluacion from './components/HistorialEvaluacion/HistorialEvaluacion';
-import Usuarios from './components/Usuarios/Usuarios';
-import EvaluacionUsuarios from './components/Usuarios/EvaluacionUsuarios';
+import EvaluacionUsuarios from './components/AnalisisDeDatos/EvaluacionUsuarios';
 import AnalisisDeDatos from './components/AnalisisDeDatos/AnalisisDeDatos';
 import GestionUsuarios from './components/Gestion/GestionUsuarios';
 import GestionJuegos from './components/Gestion/GestionJuegos';
 import FormularioUsuario from './components/Gestion/FormularioUsuario';
 import DetalleUsuario from './components/Gestion/DetalleUsuario';
 import './App.css';
+import Categorizacion from './components/Categorizacion/Categorizacion';
 
 const AdvertenciaDeRol = ({ handleRoleWarningClose }) => {
   const navigate = useNavigate();
@@ -74,6 +75,7 @@ const App = () => {
     <Routes>
       <Route path="/" element={estaAutenticado ? <Inicio /> : <Navigate to="/login" />} />
       <Route path="/login" element={!estaAutenticado ? <Login /> : <Navigate to="/" />} />
+      <Route path="/login/restablecer-contrasena" element={<RestablecerContrasena />} />
       <Route path="/registro" element={!estaAutenticado ? <Registro /> : <Navigate to="/" />} />
       <Route path="/perfil" element={estaAutenticado ? <Perfil /> : <Navigate to="/login" />} />
       <Route path="/historial-evaluacion" element={estaAutenticado ? <HistorialEvaluacion /> : <Navigate to="/login" />} />
@@ -104,6 +106,12 @@ const App = () => {
         }
       />
       <Route
+        path="/categorizacion"
+        element={
+          estaAutenticado && rolUsuario === 'Jugador' ? <Categorizacion /> : <Navigate to="/login" />
+        }
+      />
+      <Route
         path="/resultados/:sessionId"
         element={estaAutenticado && rolUsuario === 'Jugador' ? <Resultados /> : <Navigate to="/login" />}
       />
@@ -128,16 +136,12 @@ const App = () => {
         element={estaAutenticado && rolUsuario === 'Admin' ? <DetalleUsuario /> : <Navigate to="/login" />}
       />
       <Route
-        path="/usuarios"
-        element={estaAutenticado && rolUsuario === 'Analista' ? <Usuarios /> : <Navigate to="/login" />}
-      />
-      <Route
-        path="/usuarios/:usuarioId/evaluaciones"
-        element={estaAutenticado && rolUsuario === 'Analista' ? <EvaluacionUsuarios /> : <Navigate to="/login" />}
-      />
-      <Route
         path="/analisis-datos"
         element={estaAutenticado && rolUsuario === 'Analista' ? <AnalisisDeDatos /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/analisis-datos/:usuarioId/evaluaciones"
+        element={estaAutenticado && rolUsuario === 'Analista' ? <EvaluacionUsuarios /> : <Navigate to="/login" />}
       />
       <Route
         path="/role-warning"

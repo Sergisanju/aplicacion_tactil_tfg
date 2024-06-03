@@ -89,10 +89,6 @@ const Header = () => {
         )}
         {estaAutenticado && rolUsuario === 'Analista' && (
           <>
-            <NavLink to="/usuarios" className="nav-item" activeclassname="active">
-              <img src={usuariosIcon} alt="Usuarios" className="nav-icon" />
-              <span>Usuarios</span>
-            </NavLink>
             <NavLink to="/analisis-datos" className="nav-item" activeclassname="active">
               <img src={analisisIcon} alt="Análisis de Datos" className="nav-icon" />
               <span>Análisis de Datos</span>
