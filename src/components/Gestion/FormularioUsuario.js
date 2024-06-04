@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getFirestore, doc, getDoc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore';
-import { getAuth, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 import './FormularioUsuario.css';
 
 const FormularioUsuario = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const firestore = getFirestore();
-  const auth = getAuth();
   const [usuario, setUsuario] = useState(null);
   const [nombre, setNombre] = useState('');
   const [fechaNacimiento, setFechaNacimiento] = useState('');
@@ -20,7 +18,6 @@ const FormularioUsuario = () => {
   const [intereses, setIntereses] = useState('');
   const [biografia, setBiografia] = useState('');
   const [password, setPassword] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('');
   const [, setAsociados] = useState([]);
   const [jugadores, setJugadores] = useState([]);
   const [selectedJugadores, setSelectedJugadores] = useState([]);
@@ -53,18 +50,6 @@ const FormularioUsuario = () => {
     obtenerUsuario();
   }, [firestore, id]);
 
-  const reauthenticate = async () => {
-    const user = auth.currentUser;
-    const credential = EmailAuthProvider.credential(user.email, currentPassword);
-    try {
-      await reauthenticateWithCredential(user, credential);
-      return true;
-    } catch (error) {
-      console.error('Error reauthenticating', error);
-      return false;
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const usuarioRef = doc(firestore, 'users', id);
@@ -82,13 +67,22 @@ const FormularioUsuario = () => {
     });
 
     if (password) {
-      const reauthenticated = await reauthenticate();
-      if (reauthenticated) {
-        const user = auth.currentUser;
-        await updatePassword(user, password);
-      } else {
-        alert('Error reauthenticating. Please try again.');
-        return;
+      try {
+        const response = await fetch('https://us-central1-aplicacion-tactil-tfg.cloudfunctions.net/api/change-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            uid: id,
+            newPassword: password,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+      } catch (error) {
+        console.error('Error changing password:', error);
       }
     }
 
@@ -191,17 +185,6 @@ const FormularioUsuario = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        {password && (
-          <div>
-            <label>Contraseña Actual:</label>
-            <input
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              required
-            />
-          </div>
-        )}
         {tipoUsuario === 'Analista' && (
           <div className="asociar-usuarios">
             <h3>Usuarios Asociados</h3>
