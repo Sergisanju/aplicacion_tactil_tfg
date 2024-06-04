@@ -23,7 +23,13 @@ import GestionJuegos from './components/Gestion/GestionJuegos';
 import FormularioUsuario from './components/Gestion/FormularioUsuario';
 import DetalleUsuario from './components/Gestion/DetalleUsuario';
 import './App.css';
-import Categorizacion from './components/Categorizacion/Categorizacion';
+import JuegoDeCategorizacion from './components/Categorizacion/Categorizacion';
+import SeleccionNivelCategorizacion from './components/Categorizacion/SeleccionNivel';
+import SeleccionDificultadCategorizacion from './components/Categorizacion/SeleccionDificultad';
+import JuegoDeSecuenciacion from './components/Secuenciacion/Secuenciacion';
+import SeleccionCategoriaSecuenciacion from './components/Secuenciacion/SeleccionCategoria';
+import SeleccionNivelSecuenciacion from './components/Secuenciacion/SeleccionNivel';
+import SeleccionDificultadSecuenciacion from './components/Secuenciacion/SeleccionDificultad';
 
 const AdvertenciaDeRol = ({ handleRoleWarningClose }) => {
   const navigate = useNavigate();
@@ -108,7 +114,45 @@ const App = () => {
       <Route
         path="/categorizacion"
         element={
-          estaAutenticado && rolUsuario === 'Jugador' ? <Categorizacion /> : <Navigate to="/login" />
+          estaAutenticado && rolUsuario === 'Jugador' ? <SeleccionNivelCategorizacion /> : <Navigate to="/login" />
+        }
+      />
+      <Route
+        path="/categorizacion/:nivel"
+        element={
+          estaAutenticado && rolUsuario === 'Jugador' ? <SeleccionDificultadCategorizacion /> : <Navigate to="/login" />
+        }
+      />
+      <Route
+        path="/categorizacion/:nivel/:dificultad"
+        element={
+          estaAutenticado && rolUsuario === 'Jugador' ? <JuegoDeCategorizacion /> : <Navigate to="/login" />
+        }
+      />
+      <Route
+        path="/secuenciacion"
+        element={
+          estaAutenticado
+            ? (rolUsuario === 'Jugador' ? <SeleccionCategoriaSecuenciacion /> : <Navigate to="/role-warning" />)
+            : <Navigate to="/login" />
+        }
+      />
+      <Route
+        path="/secuenciacion/:categoria"
+        element={
+          estaAutenticado && rolUsuario === 'Jugador' ? <SeleccionNivelSecuenciacion /> : <Navigate to="/login" />
+        }
+      />
+      <Route
+        path="/secuenciacion/:categoria/:nivel"
+        element={
+          estaAutenticado && rolUsuario === 'Jugador' ? <SeleccionDificultadSecuenciacion /> : <Navigate to="/login" />
+        }
+      />
+      <Route
+        path="/secuenciacion/:categoria/:nivel/:dificultad"
+        element={
+          estaAutenticado && rolUsuario === 'Jugador' ? <JuegoDeSecuenciacion /> : <Navigate to="/login" />
         }
       />
       <Route

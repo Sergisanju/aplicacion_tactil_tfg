@@ -1,0 +1,63 @@
+/* Estilos para el contenedor de selección de categoría */
+.contenedor-seleccion-categoria {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  background-color: #f0e4d7; /* Cambiar el color de fondo */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Estilos para el título principal */
+h1 {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  color: #000; /* Color del texto */
+}
+
+/* Estilos para el subtítulo */
+h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  color: #000; /* Color del texto */
+}
+
+/* Estilos para la sección de categorías */
+.categorias {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Estilos para cada fila de categorías */
+.fila-categoria {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* Estilos para los botones de categoría */
+.boton-categoria {
+  background-color: #00a2ff;
+  color: #ffffff;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 22px;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+/* Estilos para el hover de los botones de categoría */
+.boton-categoria:hover {
+  background-color: #007acc;
+  transform: translateY(-2px);
+}

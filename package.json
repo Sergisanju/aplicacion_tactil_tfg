@@ -7,8 +7,8 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.2",
-    "express": "^4.18.2",
     "cors": "^2.8.5",
+    "express": "^4.18.2",
     "firebase": "^10.9.0",
     "firebase-admin": "^12.1.1",
     "firebase-functions": "^5.0.1",
@@ -19,6 +19,8 @@
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.22.3",
     "react-scripts": "5.0.1",
+    "unicode": "^14.0.0",
+    "unidecode": "^1.1.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -26,7 +28,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start-backend": "node backend/index.js"  
+    "start-backend": "node backend/index.js"
   },
   "eslintConfig": {
     "extends": [

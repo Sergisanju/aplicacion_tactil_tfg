@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getFirestore, doc, getDoc, collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import './CartasMemoria.css';
+import './Secuenciacion.css';
 
 const JuegoDeMemoria = () => {
   const { categoria, nivel, dificultad } = useParams();

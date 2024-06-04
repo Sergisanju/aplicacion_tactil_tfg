@@ -14,7 +14,7 @@ const SeleccionCategoria = () => {
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
-        const categoriasCollection = collection(firestore, 'juegos', 'cartas_de_memoria', 'categorias');
+        const categoriasCollection = collection(firestore, 'juegos', 'secuenciacion', 'categorias');
         const categoriasSnapshot = await getDocs(categoriasCollection);
         const categoriasList = categoriasSnapshot.docs.map(doc => doc.id);
         setCategorias(categoriasList);
@@ -33,7 +33,7 @@ const SeleccionCategoria = () => {
       filas.push(
         <div className="fila-categoria" key={i}>
           {categorias.slice(i, i + itemsPorFila).map((categoria) => (
-            <Link to={`/cartas-memoria/${categoria}`} key={categoria} className="boton-categoria">
+            <Link to={`/secuenciacion/${categoria}`} key={categoria} className="boton-categoria">
               {capitalizeFirstLetter(categoria)}
             </Link>
           ))}
@@ -45,7 +45,7 @@ const SeleccionCategoria = () => {
 
   return (
     <div className="contenedor-seleccion-categoria">
-      <h1>Cartas de memoria</h1>
+      <h1>Secuenciación</h1>
       <h2>Escoge una categoría</h2>
       {categorias.length > 0 ? (
         <div className="categorias">

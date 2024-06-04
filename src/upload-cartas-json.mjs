@@ -16,6 +16,14 @@ initializeApp({
 const firestore = getFirestore();
 const storage = getStorage().bucket();
 
+// Función para normalizar el nombre de archivo (sin acentos y con guiones bajos en lugar de espacios)
+const normalizeFilename = (name) => {
+  // Eliminar acentos y caracteres especiales
+  const normalized_name = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  // Reemplazar espacios con guiones bajos
+  return normalized_name.replace(/ /g, '_').toLowerCase();
+};
+
 // Función para subir archivos JSON e imágenes y guardar referencias en Firestore
 const uploadJSONAndImageFiles = async (folderPath) => {
   try {
@@ -43,20 +51,22 @@ const uploadJSONAndImageFiles = async (folderPath) => {
 
           // Subir imágenes y actualizar el JSON con la URL de la imagen
           const updatedFileData = await Promise.all(fileData.map(async item => {
-            const imagePath = path.join(categoryPath, `${item.nombre.toLowerCase()}.jpg`);
-            if (fs.existsSync(imagePath)) {
-              const imageBuffer = fs.readFileSync(imagePath);
-              const imageStoragePath = `juegos/cartas_de_memoria/${category}/${item.nombre.toLowerCase()}.jpg`;
-              const imageRef = storage.file(imageStoragePath);
+            const imageExtensions = ['.jpg', '.png'];
+            for (const ext of imageExtensions) {
+              const imagePath = path.join(categoryPath, `${normalizeFilename(item.nombre)}${ext}`);
+              if (fs.existsSync(imagePath)) {
+                const imageBuffer = fs.readFileSync(imagePath);
+                const imageStoragePath = `juegos/cartas_de_memoria/${category}/${normalizeFilename(item.nombre)}${ext}`;
+                const imageRef = storage.file(imageStoragePath);
 
-              await imageRef.save(imageBuffer, {
-                contentType: 'image/jpeg',
-              });
+                await imageRef.save(imageBuffer, {
+                  contentType: 'image/jpeg', // Cambiar a 'image/png' si es necesario
+                });
 
-              const [imageURL] = await imageRef.getSignedUrl({ action: 'read', expires: '03-01-2500' });
-              item.imagenURL = imageURL;
-            } else {
-              console.warn(`Imagen no encontrada para: ${item.nombre}`);
+                const [imageURL] = await imageRef.getSignedUrl({ action: 'read', expires: '03-01-2500' });
+                item.imagenURL = imageURL;
+                break; // Si se encuentra una imagen, salir del bucle
+              }
             }
             return item;
           }));

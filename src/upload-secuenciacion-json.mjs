@@ -41,13 +41,15 @@ const uploadJSONFiles = async (folderPath, juego) => {
         const fileData = JSON.parse(fileBuffer);
 
         // Crear un documento para cada archivo JSON dentro de la subcolección 'files' de cada categoría
-        const docRef = firestore.collection('juegos').doc(juego).collection('categorias').doc(category).collection('files').doc(file.replace('.json', ''));
+        const docRef = firestore.collection('juegos').doc(juego).collection('categorias').doc(category);
         await docRef.set({
+          [file.replace('.json', '')]: {
           name: file.replace('.json', ''),
           storagePath: storagePath,
           url: url,
           data: fileData, // Guardar los datos del JSON en Firestore
-        });
+          }
+        }, { merge: true });
 
         console.log(`Subido y referenciado: ${storagePath}`);
       }

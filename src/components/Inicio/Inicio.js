@@ -4,8 +4,9 @@ import './Inicio.css';
 import { getAuth } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { firestore } from '../../firebase-config';
-import memoryGameIcon from '../../assets/images/cartas-memoria-icon.png';
-import categorizationGameIcon from '../../assets/images/categorization-game-icon.png';
+import cartasmemoriaIcono from '../../assets/images/cartas-memoria-icono.png';
+import categorizacionIcono from '../../assets/images/categorizacion-juego-icono.png';
+import secuenciacionIcono from '../../assets/images/secuenciacion-juego-icono.png';
 
 const Inicio = () => {
   const [rolUsuario, setRolUsuario] = useState('');
@@ -32,7 +33,7 @@ const Inicio = () => {
       </div>
       <div className="seleccion-juego-inicio">
         <div className="carta-juego-inicio">
-          <img src={memoryGameIcon} alt="Cartas de memoria" />
+          <img src={cartasmemoriaIcono} alt="Cartas de memoria" />
           {rolUsuario === 'Jugador' ? (
             <Link to="/cartas-memoria"><button>Cartas de memoria</button></Link>
           ) : (
@@ -40,11 +41,19 @@ const Inicio = () => {
           )}
         </div>
         <div className="carta-juego-inicio">
-          <img src={categorizationGameIcon} alt="Categorización" />
+          <img src={categorizacionIcono} alt="Categorización" />
           {rolUsuario === 'Jugador' ? (
             <Link to="/categorizacion"><button>Categorización</button></Link>
           ) : (
             <button disabled>Categorización</button>
+          )}
+        </div>
+        <div className="carta-juego-inicio">
+          <img src={secuenciacionIcono} alt="Categorización" />
+          {rolUsuario === 'Jugador' ? (
+            <Link to="/secuenciacion"><button>Secuenciación</button></Link>
+          ) : (
+            <button disabled>Secuenciación</button>
           )}
         </div>
       </div>

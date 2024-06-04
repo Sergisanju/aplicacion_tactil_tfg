@@ -51,7 +51,7 @@ const uploadJSONFiles = async (folderPath) => {
             const fileData = JSON.parse(subFileBuffer);
 
             // Crear documento para la subcategoría y archivo JSON como subcampo
-            const docRef = firestore.collection('juegos').doc('categorizacion').collection('categories').doc(category).collection('subcategories').doc(subcategory).collection('files').doc(subFile.replace('.json', ''));
+            const docRef = firestore.collection('juegos').doc('categorizacion').collection('categorias').doc(category).collection('subcategorias').doc(subcategory).collection('files').doc(subFile.replace('.json', ''));
             await docRef.set({
               name: subFile.replace('.json', ''),
               storagePath: storagePath,
