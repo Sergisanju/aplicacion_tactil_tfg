@@ -33,13 +33,51 @@ const GestionUsuarios = () => {
   }, [firestore, usuarioActual.email]);
 
   const manejarEliminarUsuario = async (id) => {
-    await deleteDoc(doc(firestore, 'users', id));
-    setUsuarios(usuarios.filter(usuario => usuario.id !== id));
-    setAnalistas(analistas.filter(analista => analista.id !== id));
-    setJugadores(jugadores.filter(jugador => jugador.id !== id));
-    // Cerrar el modal
-    setUsuarioAEliminar(null);
+    try {
+      const usuarioDoc = await getDoc(doc(firestore, 'users', id));
+      if (usuarioDoc.exists()) {
+        const { email, fechaNacimiento, nombre, tipoUsuario } = usuarioDoc.data();
+        const uid = id; // Use the Firestore document ID as the UID
+  
+        if (!uid || typeof uid !== 'string' || uid.length > 128) {
+          throw new Error('Invalid UID');
+        }
+  
+        console.log('Deleting user with UID:', uid); // Debugging line
+  
+        // Eliminar usuario de Firestore
+        await deleteDoc(doc(firestore, 'users', id));
+  
+        // Llamar a la función de Firebase para eliminar al usuario de la autenticación
+        const response = await fetch('https://us-central1-aplicacion-tactil-tfg.cloudfunctions.net/api/delete-user', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ uid }),
+        });
+  
+        if (!response.ok) {
+          const errorText = await response.text(); // Capture error response text
+          throw new Error('Network response was not ok: ' + errorText);
+        }
+  
+        setUsuarios(usuarios.filter(usuario => usuario.id !== id));
+        setAnalistas(analistas.filter(analista => analista.id !== id));
+        setJugadores(jugadores.filter(jugador => jugador.id !== id));
+  
+        // Cerrar el modal
+        setUsuarioAEliminar(null);
+        alert('Usuario eliminado correctamente.');
+      } else {
+        throw new Error('User document does not exist');
+      }
+    } catch (error) {
+      console.error("Error eliminando el usuario: ", error);
+      alert('Error eliminando el usuario: ' + error.message);
+    }
   };
+  
 
   const manejarSeleccionarAnalista = async (id) => {
     setSelectedAnalista(id);
