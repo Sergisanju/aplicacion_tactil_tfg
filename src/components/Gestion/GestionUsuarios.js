@@ -4,6 +4,7 @@ import { getAuth } from 'firebase/auth';
 import { Link } from 'react-router-dom';
 import './GestionUsuarios.css';
 import ConfirmacionEliminacion from './ConfirmacionEliminacion';
+import FormularioNuevoUsuario from './FormularioNuevoUsuario';
 
 const GestionUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -13,41 +14,98 @@ const GestionUsuarios = () => {
   const [selectedAnalista, setSelectedAnalista] = useState(null);
   const [selectedJugadores, setSelectedJugadores] = useState([]);
   const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
+  const [nuevoUsuario, setNuevoUsuario] = useState({
+    nombre: '',
+    email: '',
+    password: '',
+    tipoUsuario: 'Analista', // or 'Jugador'
+    fechaNacimiento: '', // nuevo campo
+  });
+  const [mostrarFormularioNuevoUsuario, setMostrarFormularioNuevoUsuario] = useState(false);
   const firestore = getFirestore();
   const auth = getAuth();
   const usuarioActual = auth.currentUser;
 
   useEffect(() => {
     const obtenerUsuarios = async () => {
-      const usuariosCollection = collection(firestore, 'users');
-      const usuariosSnapshot = await getDocs(usuariosCollection);
-      const listaUsuarios = usuariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      const analistas = listaUsuarios.filter(user => user.tipoUsuario === 'Analista' && user.email !== usuarioActual.email);
-      const jugadores = listaUsuarios.filter(user => user.tipoUsuario === 'Jugador');
-      setUsuarios(listaUsuarios);
-      setAnalistas(analistas);
-      setJugadores(jugadores);
+      try {
+        const usuariosCollection = collection(firestore, 'users');
+        const usuariosSnapshot = await getDocs(usuariosCollection);
+        const listaUsuarios = usuariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const analistas = listaUsuarios.filter(user => user.tipoUsuario === 'Analista' && user.email !== usuarioActual.email);
+        const jugadores = listaUsuarios.filter(user => user.tipoUsuario === 'Jugador');
+        setUsuarios(listaUsuarios);
+        setAnalistas(analistas);
+        setJugadores(jugadores);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
     };
 
     obtenerUsuarios();
   }, [firestore, usuarioActual.email]);
 
+  const manejarAgregarUsuario = async () => {
+    try {
+      const { nombre, email, password, tipoUsuario, fechaNacimiento } = nuevoUsuario;
+
+      // Llamar a la función de Firebase para agregar el usuario
+      const response = await fetch('https://us-central1-aplicacion-tactil-tfg.cloudfunctions.net/api/add-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ nombre, email, password, tipoUsuario, fechaNacimiento }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text(); // Capture error response text
+        throw new Error('Network response was not ok: ' + errorText);
+      }
+
+      const { uid } = await response.json();
+
+      const newUser = {
+        id: uid,
+        nombre,
+        email,
+        tipoUsuario,
+        fechaNacimiento,
+      };
+
+      setUsuarios([...usuarios, newUser]);
+      if (tipoUsuario === 'Analista') {
+        setAnalistas([...analistas, newUser]);
+      } else {
+        setJugadores([...jugadores, newUser]);
+      }
+
+      // Limpiar el formulario y cerrar el modal
+      setNuevoUsuario({ nombre: '', email: '', password: '', tipoUsuario: 'Analista', fechaNacimiento: '' });
+      setMostrarFormularioNuevoUsuario(false);
+      alert('Usuario agregado correctamente.');
+    } catch (error) {
+      console.error("Error agregando el usuario: ", error);
+      alert('Error agregando el usuario: ' + error.message);
+    }
+  };
+
   const manejarEliminarUsuario = async (id) => {
     try {
+      console.log('Deleting user with ID:', id);
       const usuarioDoc = await getDoc(doc(firestore, 'users', id));
       if (usuarioDoc.exists()) {
-        const { email, fechaNacimiento, nombre, tipoUsuario } = usuarioDoc.data();
         const uid = id; // Use the Firestore document ID as the UID
-  
+
         if (!uid || typeof uid !== 'string' || uid.length > 128) {
           throw new Error('Invalid UID');
         }
-  
+
         console.log('Deleting user with UID:', uid); // Debugging line
-  
+
         // Eliminar usuario de Firestore
         await deleteDoc(doc(firestore, 'users', id));
-  
+
         // Llamar a la función de Firebase para eliminar al usuario de la autenticación
         const response = await fetch('https://us-central1-aplicacion-tactil-tfg.cloudfunctions.net/api/delete-user', {
           method: 'POST',
@@ -56,16 +114,16 @@ const GestionUsuarios = () => {
           },
           body: JSON.stringify({ uid }),
         });
-  
+
         if (!response.ok) {
           const errorText = await response.text(); // Capture error response text
           throw new Error('Network response was not ok: ' + errorText);
         }
-  
+
         setUsuarios(usuarios.filter(usuario => usuario.id !== id));
         setAnalistas(analistas.filter(analista => analista.id !== id));
         setJugadores(jugadores.filter(jugador => jugador.id !== id));
-  
+
         // Cerrar el modal
         setUsuarioAEliminar(null);
         alert('Usuario eliminado correctamente.');
@@ -77,7 +135,6 @@ const GestionUsuarios = () => {
       alert('Error eliminando el usuario: ' + error.message);
     }
   };
-  
 
   const manejarSeleccionarAnalista = async (id) => {
     setSelectedAnalista(id);
@@ -119,7 +176,15 @@ const GestionUsuarios = () => {
         value={busqueda}
         onChange={(e) => setBusqueda(e.target.value)}
       />
-      <Link to="/gestion-usuarios/nuevo" className="boton-agregar-usuario">Agregar Usuario</Link>
+      <button onClick={() => setMostrarFormularioNuevoUsuario(true)} className="boton-agregar-usuario">Agregar Usuario</button>
+      {mostrarFormularioNuevoUsuario && (
+        <FormularioNuevoUsuario
+          nuevoUsuario={nuevoUsuario}
+          setNuevoUsuario={setNuevoUsuario}
+          manejarAgregarUsuario={manejarAgregarUsuario}
+          onClose={() => setMostrarFormularioNuevoUsuario(false)}
+        />
+      )}
       <div className="lista-usuarios">
         <h2>Analistas</h2>
         {filtrarUsuarios(analistas, busqueda).map(analista => (

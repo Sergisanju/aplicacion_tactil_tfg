@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import './Resultados.css'; // Puedes crear un archivo CSS para estilos
@@ -10,6 +10,7 @@ const Resultados = () => {
   const [error, setError] = useState(null);
   const firestore = getFirestore();
   const auth = getAuth();
+  const navigate = useNavigate(); // Nuevo hook para navegación
 
   useEffect(() => {
     const fetchResultados = async () => {
@@ -38,6 +39,18 @@ const Resultados = () => {
 
     fetchResultados();
   }, [firestore, auth, sessionId]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      navigate('/');
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [navigate]);
 
   const convertirSegundosAMinutosSegundos = (segundos) => {
     const minutos = Math.floor(segundos / 60);

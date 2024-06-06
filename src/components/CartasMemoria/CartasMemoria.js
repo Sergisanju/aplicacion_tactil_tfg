@@ -17,6 +17,7 @@ const JuegoDeMemoria = () => {
   const [intentos, setIntentos] = useState(0);
   const [intentosCorrectos, setIntentosCorrectos] = useState(0);
   const [intentosIncorrectos, setIntentosIncorrectos] = useState(0);
+  const [mostrarModal, setMostrarModal] = useState(false); // Nuevo estado para controlar el modal
   const firestore = getFirestore();
   const auth = getAuth();
   let navigate = useNavigate();
@@ -101,6 +102,7 @@ const JuegoDeMemoria = () => {
           if (paresAcertados.length + 2 === datosDelJuego.length) {
             setHoraDeFin(Date.now());
             guardarResultadosDelJuego(Date.now()); // Pasar la hora de finalización como argumento
+            setMostrarModal(true); // Mostrar el modal
           }
         }, 1000);
       } else {
@@ -136,7 +138,6 @@ const JuegoDeMemoria = () => {
       const usuarioDocRef = collection(firestore, `ResultadosJuegos/cartas_de_memoria/usuarios/${usuario.uid}/resultados`);
       await addDoc(usuarioDocRef, resultado);
       console.log('Resultados del juego guardados con éxito');
-      navigate(`/resultados/${sessionId}`); // Navegar a la página de resultados con el ID de la sesión
     } catch (error) {
       console.error('Error al guardar los resultados del juego:', error);
     }
@@ -144,6 +145,11 @@ const JuegoDeMemoria = () => {
 
   const obtenerColumnasDeGrid = () => {
     return `repeat(${pares}, 1fr)`;
+  };
+
+  const cerrarModal = () => {
+    setMostrarModal(false);
+    navigate(`/resultados/${sessionId}`); // Navegar a la página de resultados con el ID de la sesión
   };
 
   return (
@@ -168,6 +174,15 @@ const JuegoDeMemoria = () => {
         </div>
       ) : (
         <p>Cargando datos del juego...</p>
+      )}
+      {mostrarModal && (
+        <div className="modal">
+          <div className="modal-contenido">
+            <h2>¡Enhorabuena!</h2>
+            <p>Has terminado el juego.</p>
+            <button onClick={cerrarModal}>OK</button>
+          </div>
+        </div>
       )}
     </div>
   );

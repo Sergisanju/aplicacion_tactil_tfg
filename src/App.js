@@ -21,7 +21,6 @@ import AnalisisDeDatos from './components/AnalisisDeDatos/AnalisisDeDatos';
 import GestionUsuarios from './components/Gestion/GestionUsuarios';
 import GestionJuegos from './components/Gestion/GestionJuegos';
 import FormularioUsuario from './components/Gestion/FormularioUsuario';
-import DetalleUsuario from './components/Gestion/DetalleUsuario';
 import './App.css';
 import JuegoDeCategorizacion from './components/Categorizacion/Categorizacion';
 import SeleccionNivelCategorizacion from './components/Categorizacion/SeleccionNivel';
@@ -174,10 +173,6 @@ const App = () => {
       <Route
         path="/gestion-usuarios/:id/editar"
         element={estaAutenticado && rolUsuario === 'Admin' ? <FormularioUsuario /> : <Navigate to="/login" />}
-      />
-      <Route
-        path="/gestion-usuarios/:id"
-        element={estaAutenticado && rolUsuario === 'Admin' ? <DetalleUsuario /> : <Navigate to="/login" />}
       />
       <Route
         path="/analisis-datos"

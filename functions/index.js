@@ -40,4 +40,32 @@ app.post('/delete-user', async (req, res) => {
   }
 });
 
+app.post('/add-user', async (req, res) => {
+  const { nombre, email, password, tipoUsuario, fechaNacimiento } = req.body;
+  if (!nombre || !email || !password || !tipoUsuario || !fechaNacimiento) {
+    return res.status(400).send('Missing fields');
+  }
+  try {
+    // Crear el usuario en Firebase Authentication
+    const userRecord = await admin.auth().createUser({
+      email,
+      password,
+      displayName: nombre,
+    });
+
+    // Añadir el usuario a Firestore
+    await admin.firestore().collection('users').doc(userRecord.uid).set({
+      nombre,
+      email,
+      tipoUsuario,
+      fechaNacimiento,
+    });
+
+    res.status(200).json({ uid: userRecord.uid });
+  } catch (error) {
+    console.error('Error adding user:', error);
+    res.status(500).send('Error adding user: ' + error.message);
+  }
+});
+
 exports.api = functions.https.onRequest(app);
