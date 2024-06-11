@@ -1,3 +1,6 @@
+/* Importa la fuente Roboto desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 /* Estilos para el contenedor del registro */
 .register-container {
   display: flex;
@@ -25,6 +28,10 @@
 .register-box h2 {
   text-align: center;
   margin-bottom: 20px;
+  font-family: 'Roboto', sans-serif; /*Fuente Roboto */
+  font-weight: 700; /* Usa un peso de fuente más grueso */
+  font-size: 28px; /* Tamaño de la fuente */
+  color: #333; /* Color de texto */
 }
 
 /* Estilos para los mensajes de error */
@@ -51,6 +58,7 @@ form input, form select {
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 5px;
+  font-family: 'Roboto', sans-serif; /*Fuente Roboto */
 }
 
 /* Estilos para el contenedor de la contraseña */
@@ -81,6 +89,9 @@ form input, form select {
   border-radius: 5px;
   cursor: pointer;
   margin-bottom: 10px;
+  font-family: 'Roboto', sans-serif; /* Fuente Roboto */
+  font-size: 18px; /* Tamaño de la fuente */
+  font-weight: 700; /* Usa un peso de fuente más grueso */
 }
 
 .register-button:hover {
@@ -110,3 +121,5 @@ form input, form select {
     padding: 8px;
   }
 }
+
+

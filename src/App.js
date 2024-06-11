@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { firestore } from './firebase-config';
@@ -30,60 +30,46 @@ import SeleccionCategoriaSecuenciacion from './components/Secuenciacion/Seleccio
 import SeleccionNivelSecuenciacion from './components/Secuenciacion/SeleccionNivel';
 import SeleccionDificultadSecuenciacion from './components/Secuenciacion/SeleccionDificultad';
 
-const AdvertenciaDeRol = ({ handleRoleWarningClose }) => {
-  const navigate = useNavigate();
-
-  const handleOkClick = () => {
-    handleRoleWarningClose();
-    navigate('/');
-  };
-
-  return (
-    <div className="modal">
-      <div className="modal-content">
-        <p>No tienes el rol adecuado para acceder a esta sección. Debes ser jugador.</p>
-        <button onClick={handleOkClick}>OK</button>
-      </div>
-    </div>
-  );
-};
-
 const App = () => {
-  const [estaAutenticado, setEstaAutenticado] = useState(false);
-  const [rolUsuario, setRolUsuario] = useState('');
-  const [cargando, setCargando] = useState(true);
-  const [, setMostrarAdvertenciaDeRol] = useState(false);
-  const auth = getAuth(app);
+  const [estaAutenticado, setEstaAutenticado] = useState(false); // Estado de autenticación del usuario
+  const [rolUsuario, setRolUsuario] = useState(''); // Rol del usuario autenticado
+  const [cargando, setCargando] = useState(true); // Estado de carga
+  const auth = getAuth(app); // Obtiene la instancia de autenticación de Firebase
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (usuario) => {
+    // Observa el estado de autenticación del usuario
+    const limpiaObservador = onAuthStateChanged(auth, async (usuario) => {
       if (usuario) {
+        // Si el usuario está autenticado, obtiene el documento del usuario
         const userDoc = await getDoc(doc(firestore, 'users', usuario.uid));
         if (userDoc.exists()) {
-          setRolUsuario(userDoc.data().tipoUsuario);
+          setRolUsuario(userDoc.data().tipoUsuario); // Establece el rol del usuario
         }
-        setEstaAutenticado(true);
+        setEstaAutenticado(true); // Establece que el usuario está autenticado
       } else {
-        setEstaAutenticado(false);
+        setEstaAutenticado(false); // El usuario no está autenticado
       }
-      setCargando(false);
+      setCargando(false); // Termina la carga
     });
 
-    return () => unsubscribe();
+    return () => limpiaObservador(); // Limpia el observador cuando el componente se desmonta
   }, [auth]);
-
-  const handleRoleWarningClose = () => {
-    setMostrarAdvertenciaDeRol(false);
-  };
 
   const renderizarRutas = () => (
     <Routes>
+      {/* Ruta principal, depende de la autenticación */}
       <Route path="/" element={estaAutenticado ? <Inicio /> : <Navigate to="/login" />} />
+      {/* Ruta de login, depende de la autenticación */}
       <Route path="/login" element={!estaAutenticado ? <Login /> : <Navigate to="/" />} />
       <Route path="/login/restablecer-contrasena" element={<RestablecerContrasena />} />
+      {/* Ruta de registro, depende de la autenticación */}
       <Route path="/registro" element={!estaAutenticado ? <Registro /> : <Navigate to="/" />} />
+      {/* Ruta de perfil, depende de la autenticación */}
       <Route path="/perfil" element={estaAutenticado ? <Perfil /> : <Navigate to="/login" />} />
+      {/* Ruta de historial de evaluación, depende de la autenticación */}
       <Route path="/historial-evaluacion" element={estaAutenticado ? <HistorialEvaluacion /> : <Navigate to="/login" />} />
+      
+      {/* Rutas para el juego de cartas de memoria, solo accesible para jugadores */}
       <Route
         path="/cartas-memoria"
         element={
@@ -110,6 +96,8 @@ const App = () => {
           estaAutenticado && rolUsuario === 'Jugador' ? <JuegoDeMemoria /> : <Navigate to="/login" />
         }
       />
+      
+      {/* Rutas para el juego de categorización, solo accesible para jugadores */}
       <Route
         path="/categorizacion"
         element={
@@ -128,6 +116,8 @@ const App = () => {
           estaAutenticado && rolUsuario === 'Jugador' ? <JuegoDeCategorizacion /> : <Navigate to="/login" />
         }
       />
+      
+      {/* Rutas para el juego de secuenciación, solo accesible para jugadores */}
       <Route
         path="/secuenciacion"
         element={
@@ -154,10 +144,14 @@ const App = () => {
           estaAutenticado && rolUsuario === 'Jugador' ? <JuegoDeSecuenciacion /> : <Navigate to="/login" />
         }
       />
+      
+      {/* Ruta para ver resultados, solo accesible para jugadores */}
       <Route
         path="/resultados/:sessionId"
         element={estaAutenticado && rolUsuario === 'Jugador' ? <Resultados /> : <Navigate to="/login" />}
       />
+      
+      {/* Rutas de gestión, solo accesible para administradores */}
       <Route
         path="/gestion-usuarios"
         element={estaAutenticado && rolUsuario === 'Admin' ? <GestionUsuarios /> : <Navigate to="/login" />}
@@ -174,6 +168,8 @@ const App = () => {
         path="/gestion-usuarios/:id/editar"
         element={estaAutenticado && rolUsuario === 'Admin' ? <FormularioUsuario /> : <Navigate to="/login" />}
       />
+      
+      {/* Rutas de análisis de datos, solo accesible para analistas */}
       <Route
         path="/analisis-datos"
         element={estaAutenticado && rolUsuario === 'Analista' ? <AnalisisDeDatos /> : <Navigate to="/login" />}
@@ -182,21 +178,20 @@ const App = () => {
         path="/analisis-datos/:usuarioId/evaluaciones"
         element={estaAutenticado && rolUsuario === 'Analista' ? <EvaluacionUsuarios /> : <Navigate to="/login" />}
       />
-      <Route
-        path="/role-warning"
-        element={<AdvertenciaDeRol handleRoleWarningClose={handleRoleWarningClose} />}
-      />
+      
+      
     </Routes>
   );
 
   if (cargando) {
+    // Muestra el estado de carga
     return <div>Cargando...</div>;
   }
 
   return (
     <Router>
-      <Header />
-      {renderizarRutas()}
+      <Header /> {/* Renderiza el componente de cabecera */}
+      {renderizarRutas()} {/* Renderiza las rutas */}
     </Router>
   );
 };

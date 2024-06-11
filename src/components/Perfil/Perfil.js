@@ -5,8 +5,8 @@ import { firestore } from '../../firebase-config';
 import './Perfil.css';
 
 const Perfil = () => {
-  const [datosUsuario, setDatosUsuario] = useState({});
-  const [modoEdicion, setModoEdicion] = useState(false);
+  const [datosUsuario, setDatosUsuario] = useState({}); // Almacena los datos del usuario
+  const [modoEdicion, setModoEdicion] = useState(false); // Controla el modo de edición
   const [formularioDatos, setFormularioDatos] = useState({
     nombre: '',
     fechaNacimiento: '',
@@ -17,22 +17,26 @@ const Perfil = () => {
     genero: '',
     intereses: '',
     biografia: ''
-  });
-  const [mensajeModal, setMensajeModal] = useState('');
-  const [showChangePassword, setShowChangePassword] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const auth = getAuth();
+  }); // Almacena los datos del formulario de edición
+  const [mensajeModal, setMensajeModal] = useState(''); // Mensaje a mostrar en el modal
+  const [modalVisible, setModalVisible] = useState(false); // Controla la visibilidad del modal general
+  const [showChangePassword, setShowChangePassword] = useState(false); // Controla la visibilidad del modal de cambio de contraseña
+  const [currentPassword, setCurrentPassword] = useState(''); // Almacena la contraseña actual
+  const [newPassword, setNewPassword] = useState(''); // Almacena la nueva contraseña
+  const [mensajeContraseña, setMensajeContraseña] = useState(''); // Almacena los mensajes de error para el cambio de contraseña
+  const auth = getAuth(); // Obtiene la instancia de autenticación
 
+  // Hook useEffect para cargar los datos del usuario cuando el componente se monta
   useEffect(() => {
     const fetchDatosUsuario = async () => {
-      const user = auth.currentUser;
-      if (user) {
+      const user = auth.currentUser; // Obtiene el usuario actualmente autenticado
+      if (user) { // Verifica si hay un usuario autenticado
         try {
-          const userDoc = await getDoc(doc(firestore, 'users', user.uid));
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            setDatosUsuario(userData);
+          const userDoc = await getDoc(doc(firestore, 'users', user.uid)); // Obtiene el documento del usuario en Firestore
+          if (userDoc.exists()) { // Verifica si el documento existe
+            const userData = userDoc.data(); // Obtiene los datos del usuario
+            setDatosUsuario(userData); // Establece los datos del usuario en el estado
+            // Inicializa el formulario con los datos del usuario
             setFormularioDatos({
               nombre: userData.nombre || '',
               fechaNacimiento: userData.fechaNacimiento || '',
@@ -45,95 +49,122 @@ const Perfil = () => {
               biografia: userData.biografia || ''
             });
           } else {
-            setMensajeModal('No se encontró la información del perfil.');
+            setMensajeModal('No se encontró la información del perfil.'); // Muestra un mensaje si el documento no existe
           }
         } catch (error) {
-          setMensajeModal('Error al cargar la información del perfil.');
+          setMensajeModal('Error al cargar la información del perfil.'); // Muestra un mensaje de error si algo falla
         }
       }
     };
 
-    fetchDatosUsuario();
+    fetchDatosUsuario(); // Llama a la función para cargar los datos del usuario
   }, [auth]);
 
+  // Función para manejar los cambios en el formulario
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target; // Desestructura el nombre del campo (name) y el valor ingresado (value) del evento
     setFormularioDatos((prevState) => ({
-      ...prevState,
-      [name]: value,
+      ...prevState, // Copia todos los valores actuales del formulario
+      [name]: value, // Actualiza el valor del campo específico que cambió
     }));
   };
 
+  // Función para alternar el modo de edición
   const handleToggleEdicion = () => {
-    setModoEdicion(!modoEdicion);
+    setModoEdicion(!modoEdicion); // Alterna el estado de modoEdicion entre verdadero (true) y falso (false)
   };
 
+  // Función para guardar los cambios en el perfil
   const handleGuardar = async () => {
-    const user = auth.currentUser;
+    const user = auth.currentUser; // Obtiene el usuario actualmente autenticado
     if (user) {
       try {
-        await updateDoc(doc(firestore, 'users', user.uid), formularioDatos);
-        setDatosUsuario(formularioDatos);
-        setModoEdicion(false);
-        setMensajeModal('Perfil actualizado correctamente.');
+        await updateDoc(doc(firestore, 'users', user.uid), formularioDatos); // Actualiza el documento del usuario en Firestore con los datos del formulario
+        setDatosUsuario(formularioDatos); // Actualiza el estado datosUsuario con los nuevos datos guardados
+        setModoEdicion(false); // Desactiva el modo de edición
+        setMensajeModal('Perfil actualizado correctamente.'); // Muestra un mensaje de éxito
+        setModalVisible(true); // Muestra el modal de éxito
       } catch (error) {
-        setMensajeModal('Error al actualizar el perfil.');
+        setMensajeModal('Error al actualizar el perfil.'); // Muestra un mensaje de error si algo falla
+        setModalVisible(true); // Muestra el modal de error
       }
     }
   };
 
+  // Función para validar la seguridad de la contraseña
   const validarContraseña = (contraseña) => {
+    // Expresión regular para verificar que la contraseña tenga al menos 8 caracteres, incluyendo mayúsculas, minúsculas y números
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    return regex.test(contraseña);
+    return regex.test(contraseña); // Retorna verdadero si la contraseña cumple con la expresión regular
   };
 
+  // Función para manejar el cambio de contraseña
   const handleChangePassword = async (e) => {
-    e.preventDefault();
-    const user = auth.currentUser;
+    e.preventDefault(); // Previene la acción por defecto del formulario de envío
+    const user = auth.currentUser; // Obtiene el usuario actualmente autenticado
+
+    // Verifica si la nueva contraseña cumple con los requisitos de seguridad
     if (!validarContraseña(newPassword)) {
-      setMensajeModal('La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas y números.');
-      return;
+      setMensajeContraseña('La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas y números.');
+      return; // Detiene el proceso si la contraseña no es válida
     }
+
+    // Verifica si la nueva contraseña es igual a la contraseña actual
     if (currentPassword === newPassword) {
-      setMensajeModal('La nueva contraseña no puede ser igual a la contraseña actual.');
-      return;
+      setMensajeContraseña('La nueva contraseña no puede ser igual a la contraseña actual.');
+      return; // Detiene el proceso si las contraseñas son iguales
     }
+
     try {
+      // Credenciales para reautenticar al usuario
       const credential = EmailAuthProvider.credential(user.email, currentPassword);
-      await reauthenticateWithCredential(user, credential);
-      await updatePassword(user, newPassword);
-      setMensajeModal('Contraseña actualizada correctamente.');
-      setShowChangePassword(false);
-      setNewPassword('');
-      setCurrentPassword('');
+      await reauthenticateWithCredential(user, credential); // Reautentica al usuario con la contraseña actual
+      await updatePassword(user, newPassword); // Actualiza la contraseña del usuario en Firebase Auth
+      setMensajeContraseña('Contraseña actualizada correctamente.'); // Muestra un mensaje de éxito
+      setShowChangePassword(false); // Cierra el modal de cambio de contraseña
+      setModalVisible(true); // Muestra el modal de éxito
+      setNewPassword(''); // Limpia el campo de la nueva contraseña
+      setCurrentPassword(''); // Limpia el campo de la contraseña actual
     } catch (error) {
+      // Manejo de errores específicos de autenticación
       if (error.code === 'auth/wrong-password') {
-        setMensajeModal('La contraseña actual es incorrecta.');
+        setMensajeContraseña('La contraseña actual es incorrecta.');
       } else if (error.code === 'auth/invalid-credential') {
-        setMensajeModal('Las credenciales proporcionadas no son válidas. Por favor, inténtalo de nuevo.');
+        setMensajeContraseña('Las credenciales proporcionadas no son válidas. Por favor, inténtalo de nuevo.');
       } else {
-        setMensajeModal('Error al actualizar la contraseña. Por favor, inténtalo de nuevo más tarde.');
+        setMensajeContraseña('Error al actualizar la contraseña. Por favor, inténtalo de nuevo más tarde.');
       }
     }
   };
 
+  // Función para abrir el modal de cambio de contraseña
   const openChangePasswordModal = () => {
-    setMensajeModal('');
-    setNewPassword('');
-    setCurrentPassword('');
-    setShowChangePassword(true);
+    setMensajeContraseña(''); // Limpia cualquier mensaje previo
+    setNewPassword(''); // Limpia el campo de la nueva contraseña
+    setCurrentPassword(''); // Limpia el campo de la contraseña actual
+    setShowChangePassword(true); // Muestra el modal de cambio de contraseña
   };
 
+  // Función para cerrar el modal
+  const closeModal = () => {
+    setModalVisible(false); // Oculta el modal
+  };
+
+  // Mostrar mensaje de carga si no se han cargado los datos del usuario
   if (!Object.keys(datosUsuario).length) {
-    return <p>Cargando...</p>;
+    return <p>Cargando...</p>; // Muestra "Cargando..." si datosUsuario está vacío
   }
 
-  const esEditable = (campo) => modoEdicion && !['nombre', 'fechaNacimiento', 'email', 'tipoUsuario'].includes(campo);
+  // Función para verificar si un campo es editable
+  const esEditable = (campo) => 
+    // Retorna verdadero si el campo está en modo de edición y no es uno de los campos no editables (nombre, fechaNacimiento, email, tipoUsuario)
+    modoEdicion && !['nombre', 'fechaNacimiento', 'email', 'tipoUsuario'].includes(campo);
 
   return (
     <div className="contenedor-perfil">
-      <h2>Perfil de Usuario</h2>
+      <h2>Perfil de Usuario</h2> {/* Título de la sección de perfil */}
       <div className="detalles-perfil">
+        {/* Muestra cada campo del perfil */}
         {[
           { label: 'Nombre', value: datosUsuario.nombre, name: 'nombre', type: 'text' },
           { label: 'Fecha de Nacimiento', value: datosUsuario.fechaNacimiento, name: 'fechaNacimiento', type: 'date' },
@@ -148,6 +179,7 @@ const Perfil = () => {
           <div key={item.name} className={`item-perfil ${index % 2 === 0 ? 'par' : 'impar'}`}>
             <label>{item.label}:</label>
             {esEditable(item.name) ? (
+              // Si el campo es editable, renderiza el campo como un input o un select basado en su tipo
               item.type === 'select' ? (
                 <select name={item.name} value={formularioDatos[item.name]} onChange={handleChange}>
                   {item.options.map(option => (
@@ -160,10 +192,12 @@ const Perfil = () => {
                 <input type={item.type} name={item.name} value={formularioDatos[item.name]} onChange={handleChange} />
               )
             ) : (
+              // Si el campo no es editable, renderiza el campo como input deshabilitado
               <input type={item.type} name={item.name} value={formularioDatos[item.name]} disabled />
             )}
           </div>
         ))}
+        {/* Botones para guardar o editar el perfil y cambiar la contraseña */}
         <div className="acciones-perfil">
           {modoEdicion ? (
             <button onClick={handleGuardar} className="boton-guardar">Guardar</button>
@@ -175,11 +209,12 @@ const Perfil = () => {
           )}
         </div>
       </div>
+      {/* Modal para cambiar la contraseña */}
       {showChangePassword && (
         <div className="modal">
           <div className="modal-content">
-            <span className="close" onClick={() => setShowChangePassword(false)}>&times;</span>
-            <h3>Cambiar Contraseña</h3>
+            <span className="close" onClick={() => setShowChangePassword(false)}>&times;</span> {/* Cierra el modal */}
+            <h3>Cambiar Contraseña</h3> {/* Título del modal */}
             <form onSubmit={handleChangePassword}>
               <div className="password-container">
                 <label>Contraseña Actual:</label>
@@ -199,9 +234,19 @@ const Perfil = () => {
                   required
                 />
               </div>
-              {mensajeModal && <p className={`mensaje ${mensajeModal.includes('Error') ? 'error' : 'exito'}`}>{mensajeModal}</p>}
-              <button type="submit" className="boton-guardar">Guardar</button>
+              {mensajeContraseña && <p className="mensaje-error">{mensajeContraseña}</p>} {/* Muestra mensaje modal */}
+              <button type="submit" className="boton-guardar">Guardar</button> {/* Botón para guardar la nueva contraseña */}
             </form>
+          </div>
+        </div>
+      )}
+      {/* Modal para mostrar mensajes */}
+      {modalVisible && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={closeModal}>&times;</span>
+            <p>{mensajeModal}</p>
+            <button onClick={closeModal} className="boton-guardar">OK</button>
           </div>
         </div>
       )}

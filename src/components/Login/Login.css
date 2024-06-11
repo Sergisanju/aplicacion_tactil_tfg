@@ -1,3 +1,7 @@
+/* Importa la fuente Roboto desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* Estilos para el contenedor del login */
 .login-container {
   display: flex;
   justify-content: center;
@@ -8,6 +12,7 @@
   box-sizing: border-box;
 }
 
+/* Estilos para la caja de login */
 .login-box {
   width: 100%;
   max-width: 400px;
@@ -19,17 +24,25 @@
   box-sizing: border-box;
 }
 
+/* Estilos para el título de la caja de login */
 .login-box h2 {
   text-align: center;
   margin-bottom: 20px;
+  font-family: 'Roboto', sans-serif; /* Fuente Roboto */
+  font-weight: 700; /* Peso de la fuente más grueso */
+  font-size: 28px; /* Tamaño de la fuente */
+  color: #333; /* Color del texto */
 }
 
+/* Estilos para los mensajes de error */
 .error {
   color: red;
   text-align: center;
   margin-bottom: 15px;
+  font-family: 'Roboto', sans-serif; /* Fuente Roboto */
 }
 
+/* Estilos para los elementos del formulario */
 form div {
   margin-bottom: 15px;
 }
@@ -38,6 +51,7 @@ form label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
+  font-family: 'Roboto', sans-serif; /* Fuente Roboto */
 }
 
 form input {
@@ -46,12 +60,15 @@ form input {
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 5px;
+  font-family: 'Roboto', sans-serif; /* Fuente Roboto */
 }
 
+/* Estilos para el contenedor de la contraseña */
 .password-container {
   position: relative;
 }
 
+/* Estilos para el ícono de toggle de la contraseña */
 .password-toggle-icon {
   position: absolute;
   right: 10px;
@@ -64,6 +81,7 @@ form input {
   height: 20px;
 }
 
+/* Estilos para el botón de login */
 .login-button {
   width: 100%;
   padding: 10px;
@@ -73,16 +91,21 @@ form input {
   border-radius: 5px;
   cursor: pointer;
   margin-bottom: 10px;
+  font-family: 'Roboto', sans-serif; /* Fuente Roboto */
+  font-size: 18px; /* Tamaño de la fuente */
+  font-weight: 700; /* Peso de la fuente más grueso */
 }
 
+/* Estilos para el botón de login cuando se pasa el mouse */
 .login-button:hover {
   background-color: #0056b3;
 }
 
+/* Estilos para el botón de login con Google */
 .google-login-button {
   width: 100%;
   padding: 10px;
-  background-color: #db4437;
+  background-color: #622620;
   color: white;
   border: none;
   border-radius: 5px;
@@ -91,26 +114,34 @@ form input {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: 'Roboto', sans-serif; /* Fuente Roboto */
+  font-size: 18px; /* Tamaño de la fuente */
+  font-weight: 700; /* Peso de la fuente más grueso */
 }
 
+/* Estilos para el botón de login con Google cuando se pasa el mouse */
 .google-login-button:hover {
   background-color: #c33d2e;
 }
 
+/* Estilos para el ícono de Google */
 .google-icon {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   margin-right: 10px;
 }
 
+/* Estilos para el footer de la caja de login */
 .login-footer {
   text-align: center;
 }
 
 .login-footer p {
   margin: 10px 0;
+  font-family: 'Roboto', sans-serif; /* Fuente Roboto */
 }
 
+/* Estilos responsivos */
 @media (max-width: 600px) {
   .login-box {
     padding: 10px;
@@ -120,7 +151,7 @@ form input {
     padding: 8px;
   }
 
-  .login-button {
+  .login-button, .google-login-button {
     padding: 8px;
   }
 }

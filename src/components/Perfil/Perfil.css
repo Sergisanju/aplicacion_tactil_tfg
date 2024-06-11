@@ -18,13 +18,17 @@
   margin-bottom: 20px;
 }
 
-.mensaje.exito {
+.mensaje-exito {
   color: green;
 }
 
-.mensaje.error {
-  color: red;
+/* Estilo para el mensaje de error en el modal de cambio de contraseña */
+.mensaje-error {
+  color: red; /* Define el color del texto como rojo */
+  text-align: center; /* Centra el texto */
+  margin-top: 10px; /* Añade un poco de espacio por encima */
 }
+
 
 .detalles-perfil {
   display: flex;
@@ -38,14 +42,6 @@
   align-items: center;
   padding: 10px;
   border-radius: 5px;
-}
-
-.item-perfil.par {
-  background-color: #f9f9f9;
-}
-
-.item-perfil.impar {
-  background-color: #fff;
 }
 
 .item-perfil label {
@@ -98,19 +94,19 @@
 }
 
 .boton-editar {
-  background-color: #007bff;
-}
-
-.boton-editar:hover {
-  background-color: #0056b3;
-}
-
-.boton-cambiar-contrasena {
   background-color: #ffc107;
 }
 
+.boton-editar:hover {
+  background-color: #ab8101;
+}
+
+.boton-cambiar-contrasena {
+  background-color: #007bff;
+}
+
 .boton-cambiar-contrasena:hover {
-  background-color: #e0a800;
+  background-color: #0056b3;
 }
 
 .modal {
@@ -135,6 +131,22 @@
   max-width: 500px;
   width: 100%;
   position: relative;
+}
+
+.modal-content p {
+  font-size: 24px; /* Tamaño de la fuente más grande */
+  color: #333; /* Color de texto más oscuro */
+  text-align: center; /* Centra el texto */
+  margin-bottom: 20px; /* Espacio inferior para el texto */
+}
+
+
+.modal-content .mensaje-exito{
+  color: green;
+}
+
+.modal-content .mensaje-error{
+  color: red;
 }
 
 .close {

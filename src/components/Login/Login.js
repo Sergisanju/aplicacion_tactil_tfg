@@ -6,20 +6,23 @@ import { auth, firestore } from '../../firebase-config';
 import './Login.css';
 import verIcon from '../../assets/images/ver.png';
 import noVerIcon from '../../assets/images/nover.png';
-import googleIcon from '../../assets/images/google-icon.png'; // Asegúrate de tener un ícono de Google en esta ruta
+import googleIcon from '../../assets/images/google-icon.png'; 
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const navigate = useNavigate();
+  // Estados locales para manejar los datos del formulario y otros estados
+  const [email, setEmail] = useState(''); // Almacena el email ingresado por el usuario
+  const [password, setPassword] = useState(''); // Almacena la contraseña ingresada por el usuario
+  const [error, setError] = useState(''); // Almacena mensajes de error
+  const [passwordVisible, setPasswordVisible] = useState(false); // Controla la visibilidad de la contraseña
+  const navigate = useNavigate(); // Hook para navegación programática
 
+  // Función para manejar el inicio de sesión con email y contraseña
   const handleLogin = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Previene la acción por defecto del formulario
+
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      const userCredential = await signInWithEmailAndPassword(auth, email, password); // Inicia sesión con email y contraseña
+      const user = userCredential.user; // Obtiene el usuario autenticado
 
       // Verificar si el usuario está registrado en Firestore
       const userDoc = await getDoc(doc(firestore, "users", user.uid));
@@ -41,12 +44,13 @@ const Login = () => {
     }
   };
 
+  // Función para manejar el inicio de sesión con Google
   const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
+    const provider = new GoogleAuthProvider(); // Crea un nuevo proveedor de autenticación de Google
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      
+      const result = await signInWithPopup(auth, provider); // Inicia sesión con Google
+      const user = result.user; // Obtiene el usuario autenticado
+
       // Verificar si el usuario está registrado en Firestore
       const userDoc = await getDoc(doc(firestore, "users", user.uid));
       if (!userDoc.exists()) {
@@ -69,16 +73,18 @@ const Login = () => {
     }
   };
 
+  // Función para alternar la visibilidad de la contraseña
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
+    setPasswordVisible(!passwordVisible); // Alterna entre mostrar y ocultar la contraseña
   };
 
   return (
     <div className="login-container">
       <div className="login-box">
-        <h2>Iniciar Sesión</h2>
-        {error && <p className="error">{error}</p>}
+        <h2>Iniciar Sesión</h2> {/* Título del formulario */}
+        {error && <p className="error">{error}</p>} {/* Muestra mensajes de error si existen */}
         <form onSubmit={handleLogin}>
+          {/* Campo de email */}
           <div>
             <label>Email</label>
             <input
@@ -88,6 +94,7 @@ const Login = () => {
               required
             />
           </div>
+          {/* Campo de contraseña con visibilidad alternable */}
           <div className="password-container">
             <label>Contraseña</label>
             <input
@@ -100,15 +107,15 @@ const Login = () => {
               <img src={passwordVisible ? noVerIcon : verIcon} alt="Toggle visibility" />
             </span>
           </div>
-          <button type="submit" className="login-button">Iniciar Sesión</button>
+          <button type="submit" className="login-button">Iniciar Sesión</button> {/* Botón para enviar el formulario */}
         </form>
         <button onClick={handleGoogleLogin} className="google-login-button">
           <img src={googleIcon} alt="Google icon" className="google-icon" />
-          Continuar con Google
+          Continuar con Google {/* Botón para iniciar sesión con Google */}
         </button>
         <div className="login-footer">
-          <p>¿No tienes una cuenta? <Link to="/registro">Regístrate</Link>.</p>
-          <p><Link to="/login/restablecer-contrasena">¿Olvidaste tu contraseña?</Link></p>
+          <p>¿No tienes una cuenta? <Link to="/registro">Regístrate</Link>.</p> {/* Enlace a la página de registro */}
+          <p><Link to="/login/restablecer-contrasena">¿Olvidaste tu contraseña?</Link></p> {/* Enlace a la página de restablecimiento de contraseña */}
         </div>
       </div>
     </div>
