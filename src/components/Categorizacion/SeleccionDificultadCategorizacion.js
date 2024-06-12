@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import './SeleccionDificultad.css';
+import './SeleccionDificultadCategorizacion.css';
 
 const SeleccionDeDificultad = () => {
   const { nivel } = useParams();

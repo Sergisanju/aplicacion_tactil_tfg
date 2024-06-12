@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './SeleccionNivel.css';
+import './SeleccionNivelCategorizacion.css';
 
 const SeleccionDeNivel = () => {
   return (

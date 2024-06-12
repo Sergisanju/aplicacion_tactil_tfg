@@ -1,0 +1,119 @@
+/* Estilos para los títulos */
+h1, h2 {
+  font-family: 'Roboto', sans-serif; /* Aplica la fuente Roboto a los títulos */
+  color: #000; /* Color del texto */
+}
+
+h1 {
+  font-size: 36px; /* Tamaño de fuente grande para el título principal */
+  font-weight: bold; /* Texto en negrita */
+  margin-bottom: 10px; /* Espacio inferior */
+}
+
+h2 {
+  font-size: 32px; /* Tamaño de fuente */
+  margin-bottom: 20px; /* Espacio inferior */
+}
+
+/* Contenedor principal para la selección de dificultad */
+.contenedor-dificultad-seleccion {
+  text-align: center; /* Centra el contenido horizontalmente */
+  padding: 20px; /* Espaciado interno */
+}
+
+/* Contenedor para los botones de dificultad */
+.dificultad-botones {
+  display: flex; /* Muestra los botones en una fila */
+  justify-content: center; /* Centra los botones */
+  gap: 20px; /* Espaciado entre botones */
+  margin-top: 20px; /* Espaciado superior */
+}
+
+/* Botones de dificultad */
+.dificultad-boton {
+  padding: 10px 20px; /* Espaciado interno del botón */
+  font-size: 28px; /* Tamaño de la fuente */
+  border: none; /* Sin bordes */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Cursor de puntero al pasar sobre el botón */
+  transition: background-color 0.3s; /* Transición suave para el color de fondo */
+  height: 100px; /* Altura de los botones */
+  width: 200px; /* Anchura de los botones */
+}
+
+/* Botones de dificultad específicos */
+.dificultad-boton.facil {
+  background-color: #4caf50; /* Verde para fácil */
+}
+
+.dificultad-boton.medio {
+  background-color: #ff9800; /* Naranja para medio */
+}
+
+.dificultad-boton.dificil {
+  background-color: #f44336; /* Rojo para difícil */
+}
+
+/* Efecto hover para los botones */
+.dificultad-boton:hover {
+  opacity: 0.8; /* Reduce la opacidad al pasar sobre el botón */
+}
+
+/* Estilos para la superposición del modal */
+.modal-overlay {
+  position: fixed; /* Fija el modal en la ventana */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+  display: flex;
+  justify-content: center; /* Centra el modal horizontalmente */
+  align-items: center; /* Centra el modal verticalmente */
+  z-index: 1000; /* Asegura que el modal esté sobre otros elementos */
+}
+
+/* Estilos para el contenido del modal */
+.modal-content {
+  background-color: #fff; /* Fondo blanco */
+  padding: 20px; /* Espaciado interno */
+  border-radius: 8px; /* Bordes redondeados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para profundidad */
+  text-align: center; /* Centra el texto */
+  z-index: 1001; /* Asegura que el contenido del modal esté sobre la superposición */
+}
+
+.modal-content h2 {
+  margin-bottom: 20px; /* Espaciado inferior */
+  font-family: 'Roboto', sans-serif; /* Fuente Roboto */
+}
+
+.modal-content p {
+  margin-bottom: 10px; /* Espaciado inferior */
+}
+
+/* Botones del modal */
+.modal-content button {
+  padding: 10px 20px; /* Tamaño del botón */
+  font-size: 18px; /* Tamaño de la fuente */
+  color: white; /* Texto blanco */
+  border: none; /* Sin bordes */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Cursor de puntero */
+  transition: background-color 0.3s; /* Transición suave para el color de fondo */
+  margin: 5px; /* Espaciado alrededor del botón */
+}
+
+/* Botón aceptar */
+.modal-content button.aceptar {
+  background-color: #28a745; /* Verde para aceptar */
+}
+
+/* Botón volver */
+.modal-content button.volver {
+  background-color: #dc3545; /* Rojo para volver */
+}
+
+.modal-content button:hover {
+  opacity: 0.8; /* Reduce la opacidad al pasar sobre el botón */
+}

@@ -1,0 +1,54 @@
+/* Contenedor principal de los resultados */
+.resultados-container {
+  display: flex; /* Flexbox para organizar el contenido */
+  flex-direction: column; /* Alinea los elementos en columna */
+  align-items: center; /* Centra el contenido horizontalmente */
+  padding: 20px; /* Espaciado interno */
+  height: 100vh; /* Altura completa de la ventana */
+  background-color: #f0e4d7; /* Color de fondo */
+}
+
+/* Estilo para la lista de resultados */
+.resultados-lista {
+  list-style: none; /* Elimina las viñetas */
+  padding: 0; /* Elimina el padding */
+  width: 100%; /* Ancho completo */
+  max-width: 600px; /* Ancho máximo para la lista */
+}
+
+/* Estilo para cada elemento de la lista de resultados */
+.resultado-items {
+  background-color: #ffffff; /* Color de fondo blanco */
+  padding: 20px; /* Espaciado interno */
+  margin-bottom: 20px; /* Espaciado inferior */
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+  text-align: left; /* Alineación del texto a la izquierda */
+}
+
+/* Estilo para los títulos de los elementos */
+.resultado-items h2 {
+  margin-top: 0; /* Sin margen superior */
+  font-size: 28px; /* Tamaño de fuente más grande */
+  color: #007bff; /* Color azul */
+  text-align: center; /* Alineación del texto al centro */
+}
+
+/* Estilo para los párrafos dentro de los elementos */
+.resultado-items p {
+  margin: 10px 0; /* Espaciado vertical */
+  font-size: 20px; /* Tamaño de fuente más grande */
+  color: #333; /* Color del texto */
+}
+
+/* Enlace estilizado para el nombre de la categoría */
+.resultado-items h2 a {
+  text-decoration: none; /* Sin subrayado */
+  color: inherit; /* Mantiene el color del texto */
+  transition: color 0.3s; /* Transición suave para el cambio de color */
+}
+
+/* Cambia el color del enlace al pasar el cursor */
+.resultado-items h2 a:hover {
+  color: #0056b3; /* Color azul más oscuro */
+}

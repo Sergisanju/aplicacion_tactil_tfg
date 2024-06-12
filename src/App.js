@@ -6,15 +6,16 @@ import { firestore } from './firebase-config';
 import app from './firebase-config';
 import Inicio from './components/Inicio/Inicio';
 import Header from './components/Header/Header';
-import SeleccionDeCategoria from './components/CartasMemoria/SeleccionCategoria';
-import SeleccionDeNivel from './components/CartasMemoria/SeleccionNivel';
-import SeleccionDeDificultad from './components/CartasMemoria/SeleccionDificultad';
+import SeleccionDeCategoria from './components/CartasMemoria/SeleccionCategoriaCartas';
+import SeleccionDeNivel from './components/CartasMemoria/SeleccionNivelCartas';
+import SeleccionDeDificultad from './components/CartasMemoria/SeleccionDificultadCartas';
 import JuegoDeMemoria from './components/CartasMemoria/CartasMemoria';
 import Login from './components/Login/Login';
 import RestablecerContrasena from './components/Login/RestablecerContrasena';
 import Perfil from './components/Perfil/Perfil';
 import Registro from './components/Registro/Registro';
-import Resultados from './components/CartasMemoria/Resultados';
+import Resultados from './components/CartasMemoria/ResultadosCartas';
+import JuegosEvaluados from './components/HistorialEvaluacion/JuegosEvaluados';
 import HistorialEvaluacion from './components/HistorialEvaluacion/HistorialEvaluacion';
 import EvaluacionUsuarios from './components/AnalisisDeDatos/EvaluacionUsuarios';
 import AnalisisDeDatos from './components/AnalisisDeDatos/AnalisisDeDatos';
@@ -23,8 +24,8 @@ import GestionJuegos from './components/Gestion/GestionJuegos';
 import FormularioUsuario from './components/Gestion/FormularioUsuario';
 import './App.css';
 import JuegoDeCategorizacion from './components/Categorizacion/Categorizacion';
-import SeleccionNivelCategorizacion from './components/Categorizacion/SeleccionNivel';
-import SeleccionDificultadCategorizacion from './components/Categorizacion/SeleccionDificultad';
+import SeleccionNivelCategorizacion from './components/Categorizacion/SeleccionNivelCategorizacion';
+import SeleccionDificultadCategorizacion from './components/Categorizacion/SeleccionDificultadCategorizacion';
 import JuegoDeSecuenciacion from './components/Secuenciacion/Secuenciacion';
 import SeleccionCategoriaSecuenciacion from './components/Secuenciacion/SeleccionCategoria';
 import SeleccionNivelSecuenciacion from './components/Secuenciacion/SeleccionNivel';
@@ -66,8 +67,10 @@ const App = () => {
       <Route path="/registro" element={!estaAutenticado ? <Registro /> : <Navigate to="/" />} />
       {/* Ruta de perfil, depende de la autenticación */}
       <Route path="/perfil" element={estaAutenticado ? <Perfil /> : <Navigate to="/login" />} />
+      {/* Ruta de historial de evaluacion usuario, depende de la autenticación */}
+      <Route path="/historial-evaluacion" element={estaAutenticado ? <JuegosEvaluados /> : <Navigate to="/login" />} />
       {/* Ruta de historial de evaluación, depende de la autenticación */}
-      <Route path="/historial-evaluacion" element={estaAutenticado ? <HistorialEvaluacion /> : <Navigate to="/login" />} />
+      <Route path="/historial-evaluacion/:juego" element={estaAutenticado ? <HistorialEvaluacion /> : <Navigate to="/login" />} />
       
       {/* Rutas para el juego de cartas de memoria, solo accesible para jugadores */}
       <Route

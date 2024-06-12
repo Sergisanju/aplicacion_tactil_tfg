@@ -1,62 +1,68 @@
+/* Estilo del contenedor principal */
 .historial-evaluacion-container {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .historial-evaluacion-container h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .resultados-list {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .resultado-item {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 10px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .resultado-item h2 {
-    margin: 0;
-    font-size: 1.2em;
-    color: #555;
-  }
-  
-  .resultado-item p {
-    margin: 5px 0;
-    color: #666;
-  }
-  
-  .resultado-item:hover {
-    background-color: #f1f1f1;
-  }
-  
-  @media (max-width: 600px) {
-    .historial-evaluacion-container {
-      padding: 10px;
-    }
-  
-    .resultado-item {
-      padding: 10px;
-    }
-  
-    .resultado-item h2 {
-      font-size: 1em;
-    }
-  
-    .resultado-item p {
-      font-size: 0.9em;
-    }
-  }
-  
+  padding: 40px;
+  background-color: #f0e4d7;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Título del contenedor */
+.historial-evaluacion-container h1 {
+  font-size: 32px;
+  margin-bottom: 30px;
+  color: #333;
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+}
+
+/* Lista de resultados */
+.resultados-list {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Elemento de la lista de resultados */
+.resultado-item {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo del título del resultado */
+.resultado-item h2 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  font-family: 'Roboto', sans-serif;
+  color: #007bff;
+}
+
+/* Estilo de los párrafos dentro del resultado */
+.resultado-item p {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Estilo del botón de exportar */
+.resultado-item button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.resultado-item button:hover {
+  background-color: #0056b3;
+}

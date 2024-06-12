@@ -1,148 +1,163 @@
-/* Estilos para el contenedor del juego de memoria */
+/* Contenedor principal del juego de memoria */
 .contenedor-juego-memoria {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  min-height: 100vh;
-  background-color: #f0e4d7; /* Cambiar el color de fondo */
+  display: flex; /* Organiza el contenido en una columna centrada */
+  flex-direction: column; /* Alinea los elementos en columna */
+  align-items: center; /* Centra los elementos horizontalmente */
+  padding: 20px; /* Añade espacio interior */
+  min-height: 100vh; /* Altura mínima igual a la altura de la ventana */
+  background-color: #f0e4d7; /* Color de fondo */
 }
 
+/* Título principal */
 h1 {
-  font-size: 36px;
-  margin-bottom: 20px;
+  font-size: 36px; /* Tamaño de fuente del título */
+  margin-bottom: 20px; /* Espaciado inferior */
+  font-family: 'Roboto', sans-serif; /* Aplica la fuente Roboto */
 }
 
+/* Tablero del juego de memoria */
 .tablero-juego {
-  display: grid;
-  grid-gap: 10px;
-  max-width: 1000px;
-  width: 100%;
-  margin-top: 20px; /* Ajustar el margen para acercar las cartas al título */
+  display: grid; 
+  grid-gap: 10px; /* Espaciado entre las cartas */
+  max-width: 1000px; /* Ancho máximo del tablero */
+  width: 100%; 
+  margin-top: 20px; /* Espaciado superior */
 }
 
+/* Estilos para cada carta */
 .carta-juego {
-  width: 150px;
-  height: 220px;
-  perspective: 1000px;
-  cursor: pointer;
-  position: relative;
-  margin: auto; /* Centrar las cartas */
+  width: 150px; /* Ancho de la carta */
+  height: 220px; /* Altura de la carta */
+  perspective: 1000px; /* Permite el efecto 3D de rotación */
+  position: relative; /* Posiciona la carta de manera relativa para manejar la rotación */
+  margin: auto; /* Centra las cartas en su contenedor */
 }
 
+/* La clase 'volteada' aplica la rotación para voltear la carta */
 .carta-juego.volteada .cara-frontal,
 .carta-juego.emparejada .cara-frontal,
 .carta-juego.incorrecta .cara-frontal {
-  transform: rotateY(0);
+  transform: rotateY(0); /* Muestra la cara frontal de la carta al voltear */
 }
 
+/* Oculta la cara trasera cuando la carta está volteada */
 .carta-juego.volteada .cara-trasera,
 .carta-juego.emparejada .cara-trasera,
 .carta-juego.incorrecta .cara-trasera {
-  transform: rotateY(180deg);
+  transform: rotateY(180deg); /* Oculta la cara trasera cuando la carta está volteada */
 }
 
+/* Estilos generales para la cara frontal y trasera de la carta */
 .carta-juego .cara-frontal,
 .carta-juego .cara-trasera {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  backface-visibility: hidden;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%; /* La cara toma el ancho completo de la carta */
+  height: 100%; /* La cara toma la altura completa de la carta */
+  position: absolute; /* Posiciona cada cara de forma absoluta dentro de la carta */
+  backface-visibility: hidden; /* Oculta la cara que está detrás para el efecto 3D */
+  border-radius: 10px; /* Bordes redondeados */
+  display: flex; /* Usa Flexbox para centrar el contenido dentro de la cara */
+  align-items: center; /* Centra el contenido verticalmente */
+  justify-content: center; /* Centra el contenido horizontalmente */
+  font-size: 24px; /* Tamaño de fuente para el texto dentro de la carta */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad a la carta */
 }
 
+/* Estilos específicos para la cara frontal */
 .carta-juego .cara-frontal {
-  background: #ffffff;
-  color: #000000;
-  transform: rotateY(180deg);
+  background: #ffffff; /* Fondo blanco */
+  color: #000000; /* Texto negro */
+  transform: rotateY(180deg); /* Inicialmente oculta la cara frontal, se verá después de voltear */
 }
 
+/* Estilos específicos para la cara trasera */
 .carta-juego .cara-trasera {
-  background: #00a2ff;
-  color: #ffffff;
-  font-size: 64px; /* Aumentar el tamaño de fuente para el signo de interrogación */
+  background: #00a2ff; /* Fondo azul */
+  color: #ffffff; /* Texto blanco */
+  font-size: 64px; /* Tamaño grande para el signo de interrogación */
 }
 
+/* Estilos para las imágenes dentro de las cartas */
 .carta-juego img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Asegurar que la imagen cubra toda la carta */
-  border-radius: 10px; /* Asegurar que la imagen se ajuste a la forma de la carta */
+  width: 100%; /* La imagen ocupa el ancho completo de la carta */
+  height: 100%; /* La imagen ocupa la altura completa de la carta */
+  object-fit: cover; /* Asegura que la imagen cubra toda la carta sin distorsión */
+  border-radius: 10px; /* Bordes redondeados para la imagen */
 }
 
+/* Bordes verdes para las cartas emparejadas */
 .carta-juego.emparejada .cara-frontal {
-  border: 5px solid green;
+  border: 5px solid green; 
 }
 
+/* Bordes rojos para las cartas incorrectas */
 .carta-juego.incorrecta .cara-frontal {
-  border: 5px solid red;
+  border: 5px solid red; 
 }
 
+/* Estilos para la superposición del modal */
 .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 1000;
+  position: fixed; /* Fija el modal en la pantalla */
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semi-transparente */
+  z-index: 1000; /* Asegura que el modal esté sobre otros elementos */
 }
 
+/* Estilos para el contenido del modal */
 .modal-contenido {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
-  width: 90%;
-  animation: slide-down 0.3s ease-out;
+  background: white; /* Fondo blanco */
+  padding: 30px; /* Espaciado interno */
+  border-radius: 12px; /* Bordes redondeados */
+  text-align: center; /* Centra el texto */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
+  max-width: 400px; /* Ancho máximo del modal */
+  width: 90%; /* Ancho flexible */
+  animation: slide-down 0.3s ease-out; /* Animación de deslizamiento hacia abajo */
 }
 
+/* Animación de deslizamiento hacia abajo para el modal */
 @keyframes slide-down {
   from {
-    transform: translateY(-50px);
-    opacity: 0;
+    transform: translateY(-50px); /* Inicia desplazado hacia arriba */
+    opacity: 0; /* Inicia invisible */
   }
   to {
-    transform: translateY(0);
-    opacity: 1;
+    transform: translateY(0); /* Termina en su posición final */
+    opacity: 1; /* Termina visible */
   }
 }
 
+/* Título dentro del modal */
 .modal-contenido h2 {
-  margin-top: 0;
-  font-size: 24px;
-  color: #333;
+  margin-top: 0; 
+  font-size: 24px; 
+  color: #333; 
 }
 
+/* Texto dentro del modal */
 .modal-contenido p {
-  font-size: 18px;
-  color: #666;
+  font-size: 18px; 
+  color: #666; 
 }
 
+/* Botones dentro del modal */
 .modal-contenido button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  margin-top: 20px; /* Espaciado superior */
+  padding: 10px 20px; /* Espaciado interno */
+  font-size: 16px; /* Tamaño de fuente */
+  background-color: #4CAF50; /* Fondo verde */
+  color: white; /* Texto blanco */
+  border: none; /* Sin bordes */
+  border-radius: 5px; /* Bordes redondeados */
+  transition: background-color 0.3s ease; /* Transición suave para el color */
 }
 
+/* Hover para los botones dentro del modal */
 .modal-contenido button:hover {
-  background-color: #45a049;
+  background-color: #45a049; 
 }
-
-

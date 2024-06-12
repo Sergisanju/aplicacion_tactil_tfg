@@ -1,0 +1,63 @@
+/* Estilo del contenedor principal */
+.juegos-evaluados-container {
+  padding: 40px;
+  background-color: #f0e4d7; /* Color de fondo uniforme */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh; /* Ocupa toda la altura de la ventana */
+  box-sizing: border-box; /* Incluye padding y borde en el cálculo de la altura */
+}
+
+/* Título del contenedor */
+.juegos-evaluados-container h1 {
+  font-size: 32px;
+  margin-bottom: 30px;
+  color: #000000;
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+}
+
+/* Estilo del grid de botones */
+.juegos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 500px; /* Ancho máximo para el grid */
+  align-items: center; /* Centra los botones en el grid */
+}
+
+/* Botón individual */
+.juego-button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 15px 30px; /* Tamaño del botón */
+  font-size: 20px; /* Tamaño de la fuente */
+  border-radius: 6px; /* Bordes redondeados */
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s; /* Efecto de transición */
+  width: 100%;
+  text-align: center; /* Alineación del texto */
+  margin: 10px 0; /* Margen para espaciado vertical */
+}
+
+/* Efecto hover para el botón */
+.juego-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-3px); /* Efecto de elevación al pasar el mouse */
+}
+
+/* Elimina la lista de estilo de lista y márgenes de los elementos */
+.juegos-list {
+  list-style: none; /* Elimina el estilo de puntos */
+  padding: 0; /* Elimina el padding */
+  margin: 0; /* Elimina el margen */
+  width: 100%; /* Asegura que ocupe todo el ancho disponible */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra los elementos de la lista */
+}

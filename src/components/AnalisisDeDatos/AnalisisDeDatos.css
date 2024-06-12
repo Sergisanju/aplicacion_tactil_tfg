@@ -1,61 +1,94 @@
 .analista-usuarios-container {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .analista-usuarios-container h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .error {
-    color: red;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .lista-usuarios {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .usuario-item {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .usuario-item p {
-    margin: 0;
-    font-size: 18px;
-    color: #333;
-  }
-  
-  .boton-ver-evaluaciones,
-  .boton-exportar-datos {
-    background-color: #007bff;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .boton-ver-evaluaciones:hover,
-  .boton-exportar-datos:hover {
-    background-color: #0056b3;
-  }
-  
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Cambia la fuente del encabezado "Usuarios Asociados" */
+.analista-usuarios-container h1 {
+  font-family: 'Roboto', sans-serif; /* Cambia la fuente a Roboto */
+  font-size: 26px; /* Ajusta el tamaño de la fuente */
+  margin-bottom: 20px;
+  color: #000000; /* Cambia el color del texto */
+  text-align: center;/* Centrado*/
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.lista-usuarios {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.usuario-item {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.usuario-item p {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.boton-ver-evaluaciones{
+  background-color: #e2751b;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px; /* Reducir el tamaño de la fuente */
+  margin: 4px 2px;
+  border-radius: 4px;
+}
+.boton-exportar-datos {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px; /* Reducir el tamaño de la fuente */
+  margin: 4px 2px;
+  border-radius: 4px;
+}
+
+.boton-ver-evaluaciones:hover{
+  background-color: #c76514;
+}
+.boton-exportar-datos:hover {
+  background-color: #0056b3;
+}
+
+/* Estilo para el botón "Exportar Todos los Datos" */
+.boton-exportar-todos {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 10px 20px; /* Ajusta el padding para hacerlo más pequeño */
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  font-size: 14px; /* Reduce el tamaño de la fuente */
+  margin: 10px 0; /* Ajusta el margen para centrarlo */
+  width: 200px;
+  border-radius: 4px;
+}
+
+.boton-exportar-todos:hover {
+  background-color: #0056b3;
+}

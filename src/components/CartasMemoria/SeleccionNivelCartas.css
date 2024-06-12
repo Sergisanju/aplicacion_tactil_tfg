@@ -1,0 +1,91 @@
+/* Estilos para el contenedor de selección de nivel */
+.contenedor-nivel-seleccion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  background-color: #f0e4d7; /* Cambiar el color de fondo */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Estilos para los títulos */
+h1, h2 {
+  font-family: 'Roboto', sans-serif; /* Aplicar Roboto */
+  color: #000; /* Color del texto */
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+/* Contenedor para los botones de nivel */
+.niveles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Estilos comunes para los botones */
+.nivel-boton {
+  color: #ffffff; /* Color del texto */
+  border: none;
+  padding: 15px 30px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 22px;
+  font-family: 'Roboto', sans-serif; /* Aplicar Roboto */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, transform 0.3s;
+  width: 100%; /* Botones del mismo ancho */
+  text-align: center;
+}
+
+/* Estilos específicos para cada botón */
+.nivel-boton:nth-child(1) {
+  background-color: #007bff; /* Color para el primer botón */
+}
+
+.nivel-boton:nth-child(2) {
+  background-color: #28a745; /* Color para el segundo botón */
+}
+
+.nivel-boton:nth-child(3) {
+  background-color: #ffc107; /* Color para el tercer botón */
+  color: #000; /* Texto negro para contraste */
+}
+
+.nivel-boton:nth-child(4) {
+  background-color: #dc3545; /* Color para el cuarto botón */
+}
+
+/* Estilos para el hover de los botones */
+.nivel-boton:hover {
+  transform: translateY(-2px);
+}
+
+/* Colores de hover específicos para cada botón */
+.nivel-boton:nth-child(1):hover {
+  background-color: #0056b3; /* Hover para el primer botón */
+}
+
+.nivel-boton:nth-child(2):hover {
+  background-color: #218838; /* Hover para el segundo botón */
+}
+
+.nivel-boton:nth-child(3):hover {
+  background-color: #e0a800; /* Hover para el tercer botón */
+}
+
+.nivel-boton:nth-child(4):hover {
+  background-color: #c82333; /* Hover para el cuarto botón */
+}

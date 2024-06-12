@@ -1,28 +1,39 @@
-/* Estilos generales para el componente Inicio */
 /* Estilos generales para el documento */
 body {
   margin: 0;
   padding: 0;
-  background-color: #f0e4d7; /* Mismo color de fondo */
-  font-family: Arial, sans-serif;
+  background-color: #f0e4d7; /* Color de fondo */
+  font-family: Arial, sans-serif; /* Fuente general */
 }
 
+/* Contenedor principal del componente Inicio */
 .contenedor-inicio {
   text-align: center;
   padding: 20px;
   background-color: #f0e4d7;
 }
 
+/* Contenedor para el título del componente Inicio */
 .contenedor-titulo-inicio {
   margin-bottom: 30px;
 }
 
+/* Estilo del título del componente Inicio */
+.contenedor-titulo-inicio h1 {
+  font-size: 36px; /* Tamaño de la fuente aumentado */
+  color: #333; /* Color del texto */
+  font-family: 'Roboto', sans-serif; /* Fuente a Roboto */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Sombra suave */
+}
+
+/* Contenedor para la selección de juegos */
 .seleccion-juego-inicio {
   display: flex;
   justify-content: center;
-  gap: 40px;
+  gap: 40px; /* Ajusta la separación entre los juegos */
 }
 
+/* Carta individual para cada juego */
 .carta-juego-inicio {
   display: flex;
   flex-direction: column;
@@ -31,42 +42,61 @@ body {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  transition: transform 0.3s;
-  width: 250px; /* Ajuste del ancho del contenedor */
+  transition: transform 0.3s, box-shadow 0.3s;
+  width: 320px; /* Ajuste del ancho del contenedor */
+  height: 250px; /* Ajuste de la altura del contenedor */
+  justify-content: space-between; /* Distribuye el contenido */
 }
 
+/* Efecto de hover para la carta del juego */
 .carta-juego-inicio:hover {
   transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
+/* Estilo de la imagen dentro de la carta del juego */
 .carta-juego-inicio img {
-  width: 100%; /* Ajuste del ancho de la imagen para llenar el contenedor */
-  height: auto;
+  width: 100%; /* Ajusta el ancho de la imagen para llenar el contenedor */
+  height: 180px; /* Establece la altura fija */
   border-radius: 10px;
-  margin-bottom: 10px;
+  object-fit: cover; /* Asegura que la imagen se ajuste correctamente */
 }
 
+/* Estilo del contenedor para el contenido variable */
+.carta-juego-inicio .contenido {
+  flex-grow: 1; /* Permite que el contenido variable ocupe todo el espacio disponible */
+  display: flex;
+  justify-content: center; /* Centra el contenido variable verticalmente */
+  align-items: center;
+  margin: 10px 0; /* Ajusta el margen entre contenido variable y otros elementos */
+}
+
+/* Estilo del botón dentro de la carta del juego */
 .carta-juego-inicio button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
+  background-color: #007bff; /* Color de fondo del botón */
+  color: white; /* Color del texto del botón */
+  padding: 12px 24px; /* Ajusta el padding del botón */
   border: none;
   border-radius: 5px;
   cursor: pointer;
   text-align: center;
   transition: background-color 0.3s;
-  width: 100%; /* Asegurar que el botón llene el ancho del contenedor */
+  width: 100%; /* Asegura que el botón llene el ancho del contenedor */
+  font-size: 18px; /* Aumenta el tamaño de la fuente del botón */
 }
 
+/* Efecto de hover para el botón */
 .carta-juego-inicio button:hover {
   background-color: #0056b3;
 }
 
+/* Estilo del botón deshabilitado */
 .carta-juego-inicio button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
 
+/* Estilos de la cabecera de la aplicación */
 .app-header {
   display: flex;
   justify-content: space-between;
@@ -77,17 +107,20 @@ body {
   box-shadow: 0 4px 8px rgba(121, 119, 119, 0.2);
 }
 
+/* Estilo del título en la cabecera */
 .app-title h1 {
   margin: 0;
   font-size: 24px;
 }
 
+/* Contenedor para la navegación en la cabecera */
 .app-nav {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* Estilo de los elementos de navegación */
 .nav-item {
   display: flex;
   align-items: center;
@@ -100,17 +133,20 @@ body {
   font-size: 16px;
 }
 
+/* Estilo de hover y activo para los elementos de navegación */
 .nav-item:hover,
 .nav-item.active {
   background-color: #666;
 }
 
+/* Estilo de los iconos de navegación */
 .nav-icon {
   width: 30px;
   height: 30px;
   margin-right: 10px;
 }
 
+/* Estilo del botón de cerrar sesión */
 .sign-out-button {
   background: none;
   border: none;
@@ -125,10 +161,12 @@ body {
   transition: background-color 0.3s;
 }
 
+/* Estilo de hover para el botón de cerrar sesión */
 .sign-out-button:hover {
   background-color: #666;
 }
 
+/* Estilos para la superposición del modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -142,6 +180,7 @@ body {
   z-index: 1000;
 }
 
+/* Estilos para el contenido del modal */
 .modal-content {
   background-color: #fff;
   padding: 20px;
@@ -151,14 +190,17 @@ body {
   z-index: 1001;
 }
 
+/* Estilo para el título del modal */
 .modal-content h2 {
   margin-bottom: 20px;
 }
 
+/* Estilo para los párrafos del modal */
 .modal-content p {
   margin-bottom: 10px;
 }
 
+/* Estilo para los botones dentro del modal */
 .modal-content button {
   padding: 10px 20px;
   background-color: #007bff;
@@ -170,6 +212,7 @@ body {
   margin: 5px;
 }
 
+/* Efecto de hover para los botones del modal */
 .modal-content button:hover {
   background-color: #0056b3;
 }
