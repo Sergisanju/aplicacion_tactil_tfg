@@ -79,17 +79,36 @@ h1 {
   margin-bottom: 10px;
 }
 
-.modal-content button {
+/* Contenedor para los botones del modal */
+.modal-content .botones-modal {
+  display: flex;
+  justify-content: space-between; /* Espacio entre los botones */
+  gap: 10px; /* Espaciado entre los botones */
+}
+
+/* Botones dentro del modal */
+.modal-content .botones-modal button {
   padding: 10px 20px;
-  background-color: #007bff;
+  font-size: 16px;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin: 5px;
 }
 
-.modal-content button:hover {
-  background-color: #0056b3;
+.modal-content .botones-modal .volver {
+  background-color: #f44336; /* Rojo para Volver */
+}
+
+.modal-content .botones-modal .volver:hover {
+  background-color: #d32f2f; /* Rojo oscuro al pasar el cursor */
+}
+
+.modal-content .botones-modal .aceptar {
+  background-color: #4caf50; /* Verde para Aceptar */
+}
+
+.modal-content .botones-modal .aceptar:hover {
+  background-color: #388e3c; /* Verde oscuro al pasar el cursor */
 }

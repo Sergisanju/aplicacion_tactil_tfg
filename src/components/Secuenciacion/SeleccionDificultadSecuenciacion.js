@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import './SeleccionDificultad.css';
+import './SeleccionDificultadSecuenciacion.css';
 
 const SeleccionDeDificultad = () => {
   const { categoria, nivel } = useParams();
@@ -46,8 +46,8 @@ const SeleccionDeDificultad = () => {
             <p>Categoría: {categoria}</p>
             <p>Nivel: {nivel}</p>
             <p>Dificultad: {dificultadSeleccionada}</p>
-            <button onClick={aceptarParametrosJuego}>Aceptar</button>
             <button onClick={volverAtras}>Volver</button>
+            <button onClick={aceptarParametrosJuego}>Aceptar</button>
           </div>
         </div>
       )}

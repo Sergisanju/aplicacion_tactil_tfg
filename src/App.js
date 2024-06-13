@@ -29,7 +29,7 @@ import SeleccionDificultadCategorizacion from './components/Categorizacion/Selec
 import JuegoDeSecuenciacion from './components/Secuenciacion/Secuenciacion';
 import SeleccionCategoriaSecuenciacion from './components/Secuenciacion/SeleccionCategoria';
 import SeleccionNivelSecuenciacion from './components/Secuenciacion/SeleccionNivel';
-import SeleccionDificultadSecuenciacion from './components/Secuenciacion/SeleccionDificultad';
+import SeleccionDificultadSecuenciacion from './components/Secuenciacion/SeleccionDificultadSecuenciacion';
 
 const App = () => {
   const [estaAutenticado, setEstaAutenticado] = useState(false); // Estado de autenticación del usuario
