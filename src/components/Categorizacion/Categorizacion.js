@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { getFirestore, collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import './Categorizacion.css';
@@ -9,8 +9,8 @@ const Categorizacion = () => {
   const [elementos, setElementos] = useState([]);
   const [posicionInicial, setPosicionInicial] = useState({});
   const [elementoActual, setElementoActual] = useState(null);
-  const [posicion, setPosicion] = useState({ x: 0, y: 0 });
   const [arrastrando, setArrastrando] = useState(false);
+  const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState(null);
   const firestore = getFirestore();
 
@@ -34,7 +34,7 @@ const Categorizacion = () => {
               if (dificultad === 'Medio') return el.dificultad <= 1;
               if (dificultad === 'Dificil') return el.dificultad <= 2;
               return false;
-            }).slice(0, 3); // Selecciona 3 elementos de acuerdo con la dificultad
+            }).slice(0, 3);
             elementosFiltrados.forEach(el => {
               elementosData.push({
                 ...el,
@@ -69,9 +69,9 @@ const Categorizacion = () => {
         const allElementos = await Promise.all(elementosPromises);
         const elementosConPosicion = allElementos.flat().map((elemento, index) => ({
           ...elemento,
-          id: index, // Añade un identificador único para cada elemento
-          posicion: { x: 0, y: 0 }, // Inicializa la posición del elemento
-          visible: true, // Controla la visibilidad del elemento
+          id: index,
+          posicion: { x: 0, y: 0 },
+          visible: true,
         }));
         setElementos(elementosConPosicion);
       } catch (error) {
@@ -84,42 +84,51 @@ const Categorizacion = () => {
   }, [firestore, nivel, dificultad]);
 
   const manejarArrastreInicio = (e, elemento) => {
+    e.preventDefault();
     const clientX = e.clientX || (e.touches && e.touches[0].clientX);
     const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-    setPosicion({ x: clientX, y: clientY });
     setElementoActual(elemento);
     setArrastrando(true);
     setPosicionInicial({
-      x: e.target.getBoundingClientRect().left,
-      y: e.target.getBoundingClientRect().top,
+      x: clientX - elemento.posicion.x,
+      y: clientY - elemento.posicion.y,
     });
+    setMensaje(''); // Limpiar el mensaje al comenzar a arrastrar
   };
 
-  const manejarArrastre = (e) => {
-    if (arrastrando) {
+  const manejarArrastre = useCallback((e) => {
+    e.preventDefault(); // Necesario para dispositivos táctiles
+    if (arrastrando && elementoActual) {
       const clientX = e.clientX || (e.touches && e.touches[0].clientX);
       const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-      setPosicion({ x: clientX, y: clientY });
+      setElementos((elementos) =>
+        elementos.map((el) =>
+          el.id === elementoActual.id
+            ? { ...el, posicion: { x: clientX - posicionInicial.x, y: clientY - posicionInicial.y } }
+            : el
+        )
+      );
     }
-  };
+  }, [arrastrando, elementoActual, posicionInicial]);
 
   const manejarSoltar = (e, categoria) => {
     e.preventDefault();
     if (arrastrando && elementoActual) {
-      if (elementoActual.categoria === categoria) {
-        setElementos(elementos =>
-          elementos.map(el =>
+      const dropTarget = e.target.closest('.categoria');
+      if (dropTarget && dropTarget.getAttribute('data-categoria') === categoria) {
+        setElementos((elementos) =>
+          elementos.map((el) =>
             el.id === elementoActual.id ? { ...el, visible: false } : el
           )
         );
-        alert('Correcto!');
+        setMensaje('¡Correcto!');
       } else {
-        setElementos(elementos =>
-          elementos.map(el =>
-            el.id === elementoActual.id ? { ...el, posicion: { ...posicionInicial } } : el
+        setElementos((elementos) =>
+          elementos.map((el) =>
+            el.id === elementoActual.id ? { ...el, posicion: { x: 0, y: 0 } } : el
           )
         );
-        alert('Incorrecto!');
+        setMensaje('¡Incorrecto!');
       }
       setElementoActual(null);
       setArrastrando(false);
@@ -127,25 +136,31 @@ const Categorizacion = () => {
   };
 
   useEffect(() => {
-    if (arrastrando) {
-      document.addEventListener('mousemove', manejarArrastre);
-      document.addEventListener('touchmove', manejarArrastre);
-      document.addEventListener('mouseup', () => setArrastrando(false));
-      document.addEventListener('touchend', () => setArrastrando(false));
-    } else {
+    const handleMouseUp = () => setArrastrando(false);
+    const handleTouchEnd = () => setArrastrando(false);
+
+    const addEventListeners = () => {
+      document.addEventListener('mousemove', manejarArrastre, { passive: false });
+      document.addEventListener('touchmove', manejarArrastre, { passive: false });
+      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchend', handleTouchEnd);
+    };
+
+    const removeEventListeners = () => {
       document.removeEventListener('mousemove', manejarArrastre);
       document.removeEventListener('touchmove', manejarArrastre);
-      document.removeEventListener('mouseup', () => setArrastrando(false));
-      document.removeEventListener('touchend', () => setArrastrando(false));
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+
+    if (arrastrando) {
+      addEventListeners();
+    } else {
+      removeEventListeners();
     }
 
-    return () => {
-      document.removeEventListener('mousemove', manejarArrastre);
-      document.removeEventListener('touchmove', manejarArrastre);
-      document.removeEventListener('mouseup', () => setArrastrando(false));
-      document.removeEventListener('touchend', () => setArrastrando(false));
-    };
-  }, [arrastrando]);
+    return () => removeEventListeners();
+  }, [arrastrando, manejarArrastre]);
 
   return (
     <div className="contenedor-categorizacion">
@@ -159,6 +174,7 @@ const Categorizacion = () => {
               <div
                 key={categoria}
                 className="categoria"
+                data-categoria={categoria}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => manejarSoltar(e, categoria)}
               >
@@ -170,17 +186,14 @@ const Categorizacion = () => {
             {elementos.map((elemento) => (
               <div
                 key={elemento.id}
-                className={`elemento ${arrastrando && elementoActual === elemento ? 'arrastrando' : ''}`}
-                style={arrastrando && elementoActual === elemento ? {
+                className={`elemento ${arrastrando && elementoActual && elementoActual.id === elemento.id ? 'arrastrando' : ''}`}
+                style={{
                   position: 'absolute',
-                  left: posicion.x,
-                  top: posicion.y,
-                  zIndex: 1000,
-                } : {
-                  position: 'relative',
-                  left: elemento.posicion.x,
-                  top: elemento.posicion.y,
+                  left: `${elemento.posicion.x}px`,
+                  top: `${elemento.posicion.y}px`,
                   display: elemento.visible ? 'block' : 'none',
+                  zIndex: arrastrando && elementoActual && elementoActual.id === elemento.id ? 1000 : 'auto',
+                  touchAction: 'none',
                 }}
                 onMouseDown={(e) => manejarArrastreInicio(e, elemento)}
                 onTouchStart={(e) => manejarArrastreInicio(e, elemento)}
@@ -189,6 +202,7 @@ const Categorizacion = () => {
               </div>
             ))}
           </div>
+          {mensaje && <div className="mensaje">{mensaje}</div>}
         </>
       )}
     </div>

@@ -27,8 +27,7 @@ import JuegoDeCategorizacion from './components/Categorizacion/Categorizacion';
 import SeleccionNivelCategorizacion from './components/Categorizacion/SeleccionNivelCategorizacion';
 import SeleccionDificultadCategorizacion from './components/Categorizacion/SeleccionDificultadCategorizacion';
 import JuegoDeSecuenciacion from './components/Secuenciacion/Secuenciacion';
-import SeleccionCategoriaSecuenciacion from './components/Secuenciacion/SeleccionCategoria';
-import SeleccionNivelSecuenciacion from './components/Secuenciacion/SeleccionNivel';
+import SeleccionCategoriaSecuenciacion from './components/Secuenciacion/SeleccionCategoriaSecuenciacion';
 import SeleccionDificultadSecuenciacion from './components/Secuenciacion/SeleccionDificultadSecuenciacion';
 
 const App = () => {
@@ -132,17 +131,11 @@ const App = () => {
       <Route
         path="/secuenciacion/:categoria"
         element={
-          estaAutenticado && rolUsuario === 'Jugador' ? <SeleccionNivelSecuenciacion /> : <Navigate to="/login" />
-        }
-      />
-      <Route
-        path="/secuenciacion/:categoria/:nivel"
-        element={
           estaAutenticado && rolUsuario === 'Jugador' ? <SeleccionDificultadSecuenciacion /> : <Navigate to="/login" />
         }
       />
       <Route
-        path="/secuenciacion/:categoria/:nivel/:dificultad"
+        path="/secuenciacion/:categoria/:dificultad"
         element={
           estaAutenticado && rolUsuario === 'Jugador' ? <JuegoDeSecuenciacion /> : <Navigate to="/login" />
         }

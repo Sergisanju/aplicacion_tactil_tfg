@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
-import './SeleccionCategoria.css';
+import './SeleccionCategoriaSecuenciacion.css';
 
 const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './SeleccionDificultadSecuenciacion.css';
 
 const SeleccionDeDificultad = () => {
-  const { categoria, nivel } = useParams();
+  const { categoria} = useParams();
   const navigate = useNavigate();
   const dificultades = ['Facil', 'Medio', 'Dificil'];
   const [dificultadSeleccionada, setDificultadSeleccionada] = useState(null);
@@ -16,7 +16,7 @@ const SeleccionDeDificultad = () => {
 
   const aceptarParametrosJuego = () => {
     setMostrarModalConfirmacion(false);
-    navigate(`/cartas-memoria/${categoria}/${nivel}/${dificultadSeleccionada}`);
+    navigate(`/secuenciacion/${categoria}/${dificultadSeleccionada}`);
   };
 
   const volverAtras = () => {
@@ -44,10 +44,9 @@ const SeleccionDeDificultad = () => {
           <div className="modal-content">
             <h2>Confirmar Parámetros del Juego</h2>
             <p>Categoría: {categoria}</p>
-            <p>Nivel: {nivel}</p>
             <p>Dificultad: {dificultadSeleccionada}</p>
-            <button onClick={volverAtras}>Volver</button>
-            <button onClick={aceptarParametrosJuego}>Aceptar</button>
+            <button className="volver" onClick={volverAtras}>Volver</button>
+            <button className="aceptar" onClick={aceptarParametrosJuego}>Aceptar</button>
           </div>
         </div>
       )}

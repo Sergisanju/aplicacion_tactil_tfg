@@ -49,66 +49,60 @@ h1 {
 
 /* Estilos para la superposición del modal */
 .modal-overlay {
-  position: fixed;
+  position: fixed; /* Fija el modal en la ventana */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
   display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+  justify-content: center; /* Centra el modal horizontalmente */
+  align-items: center; /* Centra el modal verticalmente */
+  z-index: 1000; /* Asegura que el modal esté sobre otros elementos */
 }
 
 /* Estilos para el contenido del modal */
 .modal-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  z-index: 1001;
+  background-color: #fff; /* Fondo blanco */
+  padding: 20px; /* Espaciado interno */
+  border-radius: 8px; /* Bordes redondeados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para profundidad */
+  text-align: center; /* Centra el texto */
+  z-index: 1001; /* Asegura que el contenido del modal esté sobre la superposición */
 }
 
 .modal-content h2 {
-  margin-bottom: 20px;
+  margin-bottom: 20px; /* Espaciado inferior */
+  font-family: 'Roboto', sans-serif; /* Fuente Roboto */
 }
 
 .modal-content p {
-  margin-bottom: 10px;
+  margin-bottom: 10px; /* Espaciado inferior */
 }
 
-/* Contenedor para los botones del modal */
-.modal-content .botones-modal {
-  display: flex;
-  justify-content: space-between; /* Espacio entre los botones */
-  gap: 10px; /* Espaciado entre los botones */
+/* Botones del modal */
+.modal-content button {
+  padding: 10px 20px; /* Tamaño del botón */
+  font-size: 18px; /* Tamaño de la fuente */
+  color: white; /* Texto blanco */
+  border: none; /* Sin bordes */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Cursor de puntero */
+  transition: background-color 0.3s; /* Transición suave para el color de fondo */
+  margin: 5px; /* Espaciado alrededor del botón */
 }
 
-/* Botones dentro del modal */
-.modal-content .botones-modal button {
-  padding: 10px 20px;
-  font-size: 16px;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+/* Botón aceptar */
+.modal-content button.aceptar {
+  background-color: #28a745; /* Verde para aceptar */
 }
 
-.modal-content .botones-modal .volver {
-  background-color: #f44336; /* Rojo para Volver */
+/* Botón volver */
+.modal-content button.volver {
+  background-color: #dc3545; /* Rojo para volver */
 }
 
-.modal-content .botones-modal .volver:hover {
-  background-color: #d32f2f; /* Rojo oscuro al pasar el cursor */
+.modal-content button:hover {
+  opacity: 0.8; /* Reduce la opacidad al pasar sobre el botón */
 }
 
-.modal-content .botones-modal .aceptar {
-  background-color: #4caf50; /* Verde para Aceptar */
-}
-
-.modal-content .botones-modal .aceptar:hover {
-  background-color: #388e3c; /* Verde oscuro al pasar el cursor */
-}

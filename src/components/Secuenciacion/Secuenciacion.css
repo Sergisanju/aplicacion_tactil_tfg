@@ -1,86 +1,61 @@
-/* Estilos para el contenedor del juego de memoria */
-.contenedor-juego-memoria {
+.contenedor-juego-secuenciacion {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  min-height: 100vh;
-  background-color: #f0e4d7; /* Cambiar el color de fondo */
+  margin-top: 20px;
 }
 
-h1 {
-  font-size: 36px;
+.titulo-secuenciacion {
+  font-size: 2rem;
+  font-weight: bold;
   margin-bottom: 20px;
+  color: #333;
+  text-align: center;
 }
 
-.tablero-juego {
-  display: grid;
-  grid-gap: 10px;
-  max-width: 1000px;
-  width: 100%;
-  margin-top: 20px; /* Ajustar el margen para acercar las cartas al título */
-}
-
-.carta-juego {
-  width: 150px;
-  height: 220px;
-  perspective: 1000px;
-  cursor: pointer;
-  position: relative;
-  margin: auto; /* Centrar las cartas */
-}
-
-.carta-juego.volteada .cara-frontal,
-.carta-juego.emparejada .cara-frontal,
-.carta-juego.incorrecta .cara-frontal {
-  transform: rotateY(0);
-}
-
-.carta-juego.volteada .cara-trasera,
-.carta-juego.emparejada .cara-trasera,
-.carta-juego.incorrecta .cara-trasera {
-  transform: rotateY(180deg);
-}
-
-.carta-juego .cara-frontal,
-.carta-juego .cara-trasera {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  backface-visibility: hidden;
-  border-radius: 10px;
+.tablero-secuenciacion {
   display: flex;
+  flex-direction: column;
+  gap: 20px;
   align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.carta-juego .cara-frontal {
-  background: #ffffff;
-  color: #000000;
-  transform: rotateY(180deg);
+.elemento-secuenciacion {
+  padding: 20px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  text-align: center;
+  width: 300px;
+  transition: transform 0.2s;
 }
 
-.carta-juego .cara-trasera {
-  background: #00a2ff;
-  color: #ffffff;
-  font-size: 64px; /* Aumentar el tamaño de fuente para el signo de interrogación */
+.elemento-secuenciacion:hover {
+  transform: scale(1.05);
 }
 
-.carta-juego img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Asegurar que la imagen cubra toda la carta */
-  border-radius: 10px; /* Asegurar que la imagen se ajuste a la forma de la carta */
+.elemento-secuenciacion.seleccionado {
+  border: 2px solid #ffeb3b;
+  background-color: #ff9800;
 }
 
-.carta-juego.emparejada .cara-frontal {
-  border: 5px solid green;
+.retroalimentacion {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
 }
 
-.carta-juego.incorrecta .cara-frontal {
-  border: 5px solid red;
+.retroalimentacion.correcto {
+  color: #fff;
+  background-color: #4caf50;
 }
 
-
+.retroalimentacion.incorrecto {
+  color: #fff;
+  background-color: #f44336;
+}
