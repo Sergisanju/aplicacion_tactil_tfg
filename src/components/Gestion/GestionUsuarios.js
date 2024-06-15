@@ -1,233 +1,145 @@
 import React, { useEffect, useState } from 'react';
-import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './GestionUsuarios.css';
-import ConfirmacionEliminacion from './ConfirmacionEliminacion';
-import FormularioNuevoUsuario from './FormularioNuevoUsuario';
 
 const GestionUsuarios = () => {
-  const [usuarios, setUsuarios] = useState([]);
-  const [analistas, setAnalistas] = useState([]);
-  const [jugadores, setJugadores] = useState([]);
-  const [busqueda, setBusqueda] = useState('');
-  const [selectedAnalista, setSelectedAnalista] = useState(null);
-  const [selectedJugadores, setSelectedJugadores] = useState([]);
-  const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
-  const [nuevoUsuario, setNuevoUsuario] = useState({
-    nombre: '',
-    email: '',
-    password: '',
-    tipoUsuario: 'Analista', // or 'Jugador'
-    fechaNacimiento: '', // nuevo campo
-  });
-  const [mostrarFormularioNuevoUsuario, setMostrarFormularioNuevoUsuario] = useState(false);
-  const firestore = getFirestore();
-  const auth = getAuth();
-  const usuarioActual = auth.currentUser;
+  const [usuarios, setUsuarios] = useState([]); // Estado para almacenar todos los usuarios
+  const [analistas, setAnalistas] = useState([]); // Estado para almacenar analistas
+  const [jugadores, setJugadores] = useState([]); // Estado para almacenar jugadores
+  const [busqueda, setBusqueda] = useState(''); // Estado para el término de búsqueda
+  const [usuarioAEliminar, setUsuarioAEliminar] = useState(null); // Estado para el usuario a eliminar
+  const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false); // Estado para mostrar el modal de eliminación
+  const navigate = useNavigate(); // Hook de navegación de React Router
+  const firestore = getFirestore(); // Instancia de Firestore
+  const auth = getAuth(); // Instancia de autenticación de Firebase
+  const usuarioActual = auth.currentUser; // Usuario autenticado actualmente
 
+  // Obtener la lista de usuarios cuando el componente se monta
   useEffect(() => {
     const obtenerUsuarios = async () => {
       try {
-        const usuariosCollection = collection(firestore, 'users');
-        const usuariosSnapshot = await getDocs(usuariosCollection);
-        const listaUsuarios = usuariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        const analistas = listaUsuarios.filter(user => user.tipoUsuario === 'Analista' && user.email !== usuarioActual.email);
-        const jugadores = listaUsuarios.filter(user => user.tipoUsuario === 'Jugador');
-        setUsuarios(listaUsuarios);
-        setAnalistas(analistas);
-        setJugadores(jugadores);
+        const usuariosCollection = collection(firestore, 'users'); // Referencia a la colección 'users' en Firestore
+        const usuariosSnapshot = await getDocs(usuariosCollection); // Obtiene documentos de la colección
+        const listaUsuarios = usuariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); // Mapea los documentos a un array de usuarios
+        const analistas = listaUsuarios.filter(user => user.tipoUsuario === 'Analista' && user.email !== usuarioActual.email); // Filtra analistas
+        const jugadores = listaUsuarios.filter(user => user.tipoUsuario === 'Jugador'); // Filtra jugadores
+        setUsuarios(listaUsuarios); // Actualiza el estado con todos los usuarios
+        setAnalistas(analistas); // Actualiza el estado con los analistas
+        setJugadores(jugadores); // Actualiza el estado con los jugadores
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching users:", error); // Manejo de errores
       }
     };
 
-    obtenerUsuarios();
-  }, [firestore, usuarioActual.email]);
+    obtenerUsuarios(); 
+  }, [firestore, usuarioActual.email]); // Dependencias actualizadas
 
-  const manejarAgregarUsuario = async () => {
-    try {
-      const { nombre, email, password, tipoUsuario, fechaNacimiento } = nuevoUsuario;
-
-      // Llamar a la función de Firebase para agregar el usuario
-      const response = await fetch('https://us-central1-aplicacion-tactil-tfg.cloudfunctions.net/api/add-user', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ nombre, email, password, tipoUsuario, fechaNacimiento }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text(); // Capture error response text
-        throw new Error('Network response was not ok: ' + errorText);
-      }
-
-      const { uid } = await response.json();
-
-      const newUser = {
-        id: uid,
-        nombre,
-        email,
-        tipoUsuario,
-        fechaNacimiento,
-      };
-
-      setUsuarios([...usuarios, newUser]);
-      if (tipoUsuario === 'Analista') {
-        setAnalistas([...analistas, newUser]);
-      } else {
-        setJugadores([...jugadores, newUser]);
-      }
-
-      // Limpiar el formulario y cerrar el modal
-      setNuevoUsuario({ nombre: '', email: '', password: '', tipoUsuario: 'Analista', fechaNacimiento: '' });
-      setMostrarFormularioNuevoUsuario(false);
-      alert('Usuario agregado correctamente.');
-    } catch (error) {
-      console.error("Error agregando el usuario: ", error);
-      alert('Error agregando el usuario: ' + error.message);
-    }
-  };
-
+  // Maneja la eliminación de un usuario
   const manejarEliminarUsuario = async (id) => {
     try {
-      console.log('Deleting user with ID:', id);
+      // Verificar si el documento del usuario existe en Firestore
       const usuarioDoc = await getDoc(doc(firestore, 'users', id));
       if (usuarioDoc.exists()) {
-        const uid = id; // Use the Firestore document ID as the UID
+        const uid = id; // Usa el ID del documento de Firestore como UID
 
+        // Validación del UID
         if (!uid || typeof uid !== 'string' || uid.length > 128) {
-          throw new Error('Invalid UID');
+          throw new Error('UID inválido'); // Lanza un error si el UID no es válido
         }
 
-        console.log('Deleting user with UID:', uid); // Debugging line
-
-        // Eliminar usuario de Firestore
-        await deleteDoc(doc(firestore, 'users', id));
-
-        // Llamar a la función de Firebase para eliminar al usuario de la autenticación
-        const response = await fetch('https://us-central1-aplicacion-tactil-tfg.cloudfunctions.net/api/delete-user', {
+        // Llamada a la función de Firebase para eliminar el usuario de la autenticación y de Firestore
+        const response = await fetch('https://us-central1-aplicacion-tactil-tfg.cloudfunctions.net/api/eliminar-usuario', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ uid }),
+          body: JSON.stringify({ uid }), // Envía el UID en el cuerpo de la solicitud
         });
 
+        // Verificar la respuesta
         if (!response.ok) {
-          const errorText = await response.text(); // Capture error response text
-          throw new Error('Network response was not ok: ' + errorText);
+          const errorText = await response.text(); // Captura el texto de error de la respuesta
+          throw new Error('Respuesta incorrecta: ' + errorText); // Lanza un error si la respuesta no es correcta
         }
 
+        // Actualiza el estado eliminando el usuario
         setUsuarios(usuarios.filter(usuario => usuario.id !== id));
         setAnalistas(analistas.filter(analista => analista.id !== id));
         setJugadores(jugadores.filter(jugador => jugador.id !== id));
 
-        // Cerrar el modal
+        setMostrarModalEliminacion(false); // Cerrar el modal de eliminación
         setUsuarioAEliminar(null);
-        alert('Usuario eliminado correctamente.');
       } else {
-        throw new Error('User document does not exist');
+        throw new Error('El documento del usuario no existe'); 
       }
     } catch (error) {
       console.error("Error eliminando el usuario: ", error);
-      alert('Error eliminando el usuario: ' + error.message);
     }
   };
 
-  const manejarSeleccionarAnalista = async (id) => {
-    setSelectedAnalista(id);
-    const analistaDoc = await getDoc(doc(firestore, 'users', id));
-    if (analistaDoc.exists()) {
-      const data = analistaDoc.data();
-      setSelectedJugadores(data.asociados || []);
-    }
-  };
-
-  const manejarSeleccionarJugador = (id) => {
-    setSelectedJugadores(prevState =>
-      prevState.includes(id) ? prevState.filter(jId => jId !== id) : [...prevState, id]
-    );
-  };
-
-  const manejarGuardarAsociaciones = async () => {
-    if (selectedAnalista) {
-      const analistaDoc = doc(firestore, 'users', selectedAnalista);
-      await updateDoc(analistaDoc, { asociados: selectedJugadores });
-      setSelectedAnalista(null);
-      setSelectedJugadores([]);
-      alert('Asociaciones guardadas correctamente.');
-    }
-  };
-
+  // Filtra usuarios según el término de búsqueda
   const filtrarUsuarios = (usuarios, busqueda) => {
     return usuarios.filter(usuario => 
       usuario.nombre.toLowerCase().includes(busqueda.toLowerCase())
-    );
+    ); // Retorna usuarios cuyo nombre incluye el término de búsqueda
   };
 
   return (
     <div className="contenedor-gestion-usuarios">
       <h1>Gestión de Usuarios</h1>
-      <input
-        type="text"
-        placeholder="Buscar usuario"
-        value={busqueda}
-        onChange={(e) => setBusqueda(e.target.value)}
-      />
-      <button onClick={() => setMostrarFormularioNuevoUsuario(true)} className="boton-agregar-usuario">Agregar Usuario</button>
-      {mostrarFormularioNuevoUsuario && (
-        <FormularioNuevoUsuario
-          nuevoUsuario={nuevoUsuario}
-          setNuevoUsuario={setNuevoUsuario}
-          manejarAgregarUsuario={manejarAgregarUsuario}
-          onClose={() => setMostrarFormularioNuevoUsuario(false)}
+      <div className="barra-busqueda-agregar">
+        <input
+          type="text"
+          placeholder="Buscar usuario"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          className="campo-busqueda-gestion"
         />
-      )}
+        <button onClick={() => navigate('/gestion-usuarios/nuevo')} className="boton-agregar-usuario-gestion">Agregar Usuario</button>
+      </div>
       <div className="lista-usuarios">
         <h2>Analistas</h2>
         {filtrarUsuarios(analistas, busqueda).map(analista => (
-          <div key={analista.id} className="usuario-item">
+          <div key={analista.id} className="usuario-item-gestion">
             <p>{analista.nombre}</p>
-            <Link to={`/gestion-usuarios/${analista.id}/editar`} className="boton-editar">Editar</Link>
-            <button onClick={() => setUsuarioAEliminar(analista.id)} className="boton-eliminar">Eliminar</button>
-            <button onClick={() => manejarSeleccionarAnalista(analista.id)} className="boton-seleccionar">Seleccionar</button>
+            <div className="botones-usuario-gestion">
+              <Link to={`/gestion-usuarios/${analista.id}/editar`} className="boton-editar-admin-gestion">Editar</Link>
+              <button onClick={() => {
+                setUsuarioAEliminar(analista.id);
+                setMostrarModalEliminacion(true);
+              }} className="boton-eliminar-admin-gestion">Eliminar</button>
+              <button onClick={() => navigate(`/gestion-usuarios/${analista.id}/asociar`)} className="boton-seleccionar-admin-gestion">Seleccionar</button>
+            </div>
           </div>
         ))}
       </div>
-      {selectedAnalista && (
-        <div className="asociar-usuarios">
-          <h2>Asociar Jugadores al Analista Seleccionado</h2>
-          {filtrarUsuarios(jugadores, busqueda).map(jugador => (
-            <div key={jugador.id} className="usuario-item">
-              <p>{jugador.nombre}</p>
-              <input
-                type="checkbox"
-                checked={selectedJugadores.includes(jugador.id)}
-                onChange={() => manejarSeleccionarJugador(jugador.id)}
-              />
-            </div>
-          ))}
-          <button onClick={manejarGuardarAsociaciones} className="boton-guardar">Guardar Asociaciones</button>
-        </div>
-      )}
       <div className="lista-usuarios">
         <h2>Jugadores</h2>
         {filtrarUsuarios(jugadores, busqueda).map(usuario => (
-          <div key={usuario.id} className="usuario-item">
+          <div key={usuario.id} className="usuario-item-gestion">
             <p>{usuario.nombre}</p>
-            <Link to={`/gestion-usuarios/${usuario.id}/editar`} className="boton-editar">Editar</Link>
-            <button onClick={() => setUsuarioAEliminar(usuario.id)} className="boton-eliminar">Eliminar</button>
+            <div className="botones-usuario-gestion">
+              <Link to={`/gestion-usuarios/${usuario.id}/editar`} className="boton-editar-admin-gestion">Editar</Link>
+              <button onClick={() => {
+                setUsuarioAEliminar(usuario.id);
+                setMostrarModalEliminacion(true);
+              }} className="boton-eliminar-admin-gestion">Eliminar</button>
+            </div>
           </div>
         ))}
       </div>
-      {usuarioAEliminar && (
-        <ConfirmacionEliminacion
-          usuarioId={usuarioAEliminar}
-          onClose={() => setUsuarioAEliminar(null)}
-          onConfirm={() => manejarEliminarUsuario(usuarioAEliminar)}
-        />
+
+      {/* Modal de confirmación de eliminación */}
+      {mostrarModalEliminacion && (
+        <div className="modal-eliminar-overlay-gestion">
+          <div className="modal-eliminar-content-gestion">
+            <p>¿Estás seguro de que deseas eliminar este usuario?</p>
+            <button onClick={() => setMostrarModalEliminacion(false)}>Cancelar</button>
+            <button onClick={() => manejarEliminarUsuario(usuarioAEliminar)}>Eliminar</button>
+          </div>
+        </div>
       )}
     </div>
   );

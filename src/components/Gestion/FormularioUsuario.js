@@ -68,7 +68,7 @@ const FormularioUsuario = () => {
 
     if (password) {
       try {
-        const response = await fetch('https://us-central1-aplicacion-tactil-tfg.cloudfunctions.net/api/change-password', {
+        const response = await fetch('https://us-central1-aplicacion-tactil-tfg.cloudfunctions.net/api/cambiar-contrasena', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -79,10 +79,10 @@ const FormularioUsuario = () => {
           }),
         });
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Respuesta incorrecta');
         }
       } catch (error) {
-        console.error('Error changing password:', error);
+        console.error('Error cambiando la contraseña:', error);
       }
     }
 

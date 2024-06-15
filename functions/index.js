@@ -14,33 +14,43 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post('/change-password', async (req, res) => {
+app.post('/cambiar-contrasena', async (req, res) => {
   const { uid, newPassword } = req.body;
   try {
     await admin.auth().updateUser(uid, { password: newPassword });
-    res.status(200).send('Password updated successfully');
+    res.status(200).send('Contraseña actualizada correctamente.');
   } catch (error) {
-    console.error('Error updating password:', error);
-    res.status(500).send('Error updating password: ' + error.message);
+    console.error('Error actualizando contraseña:', error);
+    res.status(500).send('Error actualizando contraseña: ' + error.message);
   }
 });
 
-app.post('/delete-user', async (req, res) => {
+// Función en la nube para eliminar un usuario
+app.post('/eliminar-usuario', async (req, res) => {
   const { uid } = req.body;
+
+  // Validación del UID
   if (!uid || typeof uid !== 'string' || uid.length > 128) {
-    return res.status(400).send('Invalid UID');
+    return res.status(400).send('UID inválido');
   }
+
   try {
-    console.log('Deleting user with UID:', uid); // Debugging line
+    // Eliminar usuario de la autenticación de Firebase
     await admin.auth().deleteUser(uid);
-    res.status(200).send('User deleted successfully');
+
+    // Eliminar usuario de Firestore
+    const userDocRef = admin.firestore().collection('users').doc(uid);
+    await userDocRef.delete();
+
+    res.status(200).send('Usuario eliminado correctamente');
   } catch (error) {
-    console.error('Error deleting user:', error);
-    res.status(500).send('Error deleting user: ' + error.message);
+    console.error('Error eliminando usuario:', error);
+    res.status(500).send('Error eliminando usuario: ' + error.message);
   }
 });
 
-app.post('/add-user', async (req, res) => {
+
+app.post('/agregar-usuario', async (req, res) => {
   const { nombre, email, password, tipoUsuario, fechaNacimiento } = req.body;
   if (!nombre || !email || !password || !tipoUsuario || !fechaNacimiento) {
     return res.status(400).send('Missing fields');
@@ -63,8 +73,8 @@ app.post('/add-user', async (req, res) => {
 
     res.status(200).json({ uid: userRecord.uid });
   } catch (error) {
-    console.error('Error adding user:', error);
-    res.status(500).send('Error adding user: ' + error.message);
+    console.error('Error añadiendo usuario:', error);
+    res.status(500).send('Error añadiendo usuario: ' + error.message);
   }
 });
 

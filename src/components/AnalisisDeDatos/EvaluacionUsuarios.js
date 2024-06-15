@@ -50,8 +50,8 @@ const EvaluacionUsuarios = () => {
 
         setResultados(resultadosList); // Actualiza el estado con los resultados obtenidos
       } catch (error) {
-        console.error("Error fetching resultados:", error); // Muestra el error en la consola
-        setError(error.message); // Actualiza el estado de error
+        console.error("Error fetching resultados:", error); 
+        setError(error.message); 
       }
     };
 

@@ -20,8 +20,9 @@ import HistorialEvaluacion from './components/HistorialEvaluacion/HistorialEvalu
 import EvaluacionUsuarios from './components/AnalisisDeDatos/EvaluacionUsuarios';
 import AnalisisDeDatos from './components/AnalisisDeDatos/AnalisisDeDatos';
 import GestionUsuarios from './components/Gestion/GestionUsuarios';
-import GestionJuegos from './components/Gestion/GestionJuegos';
 import FormularioUsuario from './components/Gestion/FormularioUsuario';
+import AgregarUsuario from './components/Gestion/AgregarUsuario';
+import AsociarJugadores from './components/Gestion/AsociarJugadores';
 import './App.css';
 import JuegoDeCategorizacion from './components/Categorizacion/Categorizacion';
 import SeleccionNivelCategorizacion from './components/Categorizacion/SeleccionNivelCategorizacion';
@@ -153,16 +154,16 @@ const App = () => {
         element={estaAutenticado && rolUsuario === 'Admin' ? <GestionUsuarios /> : <Navigate to="/login" />}
       />
       <Route
-        path="/gestion-juegos"
-        element={estaAutenticado && rolUsuario === 'Admin' ? <GestionJuegos /> : <Navigate to="/login" />}
-      />
-      <Route
         path="/gestion-usuarios/nuevo"
-        element={estaAutenticado && rolUsuario === 'Admin' ? <FormularioUsuario /> : <Navigate to="/login" />}
+        element={estaAutenticado && rolUsuario === 'Admin' ? <AgregarUsuario /> : <Navigate to="/login" />}
       />
       <Route
         path="/gestion-usuarios/:id/editar"
         element={estaAutenticado && rolUsuario === 'Admin' ? <FormularioUsuario /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/gestion-usuarios/:id/asociar"
+        element={estaAutenticado && rolUsuario === 'Admin' ? <AsociarJugadores /> : <Navigate to="/login" />}
       />
       
       {/* Rutas de análisis de datos, solo accesible para analistas */}

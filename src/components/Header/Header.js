@@ -12,7 +12,6 @@ import loginIcon from '../../assets/images/login-icon.png';
 import historialEvaluacionIcon from '../../assets/images/historial-evaluacion-icon.png';
 import usuariosIcon from '../../assets/images/usuarios-icon.png';
 import analisisIcon from '../../assets/images/analisis-icon.png';
-import gestionJuegosIcon from '../../assets/images/gestion-juegos-icon.png';
 
 const Header = () => {
   // Estados locales
@@ -113,10 +112,6 @@ const Header = () => {
             <NavLink to="/gestion-usuarios" className="nav-item" activeclassname="active">
               <img src={usuariosIcon} alt="Gestión de Usuarios" className="nav-icon" />
               <span>Gestión de Usuarios</span>
-            </NavLink>
-            <NavLink to="/gestion-juegos" className="nav-item" activeclassname="active">
-              <img src={gestionJuegosIcon} alt="Gestión de Juegos" className="nav-icon" />
-              <span>Gestión de Juegos</span>
             </NavLink>
           </>
         )}
