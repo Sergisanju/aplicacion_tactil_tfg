@@ -1,9 +1,11 @@
+/* GestionUsuarios.css */
+
 /* Contenedor principal */
 .contenedor-gestion-usuarios {
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  max-width: 1200px; /* Ajustado para ocupar mayor ancho */
+  max-width: 1200px;
   margin: 20px auto;
   font-family: Arial, sans-serif;
 }
@@ -25,7 +27,7 @@ h1 {
 
 /* Campo de búsqueda */
 .campo-busqueda-gestion {
-  width: 70%; /* Ajustado para mayor amplitud */
+  width: 70%;
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ddd;
@@ -34,7 +36,7 @@ h1 {
 
 /* Botón de agregar usuario */
 .boton-agregar-usuario-gestion {
-  width: 28%; /* Ajustado para mayor amplitud */
+  width: 28%;
   padding: 10px 15px;
   background-color: #007bff;
   color: white;
@@ -55,11 +57,11 @@ h1 {
   align-items: center;
   justify-content: space-between;
   padding: 15px;
-  border: 1px solid #ddd; /* Borde más visible */
-  border-radius: 8px; /* Bordes redondeados */
-  background-color: white; /* Fondo blanco para contraste */
-  margin-bottom: 10px; /* Espacio entre ítems */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: white;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s;
 }
 
@@ -77,14 +79,15 @@ h1 {
 /* Botones */
 .boton-editar-admin-gestion,
 .boton-eliminar-admin-gestion,
-.boton-seleccionar-admin-gestion {
+.boton-seleccionar-admin-gestion,
+.boton-aprobar-analista-gestion {
   padding: 5px 10px;
   font-size: 14px;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  text-decoration: none; /* Remueve el subrayado */
+  text-decoration: none;
 }
 
 .boton-editar-admin-gestion {
@@ -99,15 +102,28 @@ h1 {
   background-color: #007bff;
 }
 
+.boton-aprobar-analista-gestion {
+  background-color: #28a745;
+}
+
 .boton-editar-admin-gestion:hover,
 .boton-eliminar-admin-gestion:hover,
 .boton-seleccionar-admin-gestion:hover,
+.boton-aprobar-analista-gestion:hover,
 .boton-agregar-usuario-gestion:hover {
   opacity: 0.8;
 }
 
+/* Estilo para estado pendiente */
+.pendiente {
+  color: red;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
 /* Estilos para el modal */
-.modal-eliminar-overlay-gestion {
+.modal-eliminar-overlay-gestion,
+.modal-aprobar-overlay-gestion {
   position: fixed;
   top: 0;
   left: 0;
@@ -120,7 +136,8 @@ h1 {
   z-index: 1000;
 }
 
-.modal-eliminar-content-gestion {
+.modal-eliminar-content-gestion,
+.modal-aprobar-content-gestion {
   background: white;
   padding: 30px;
   border-radius: 8px;
@@ -129,16 +146,16 @@ h1 {
   animation: modalFadeIn 0.5s;
 }
 
-.modal-eliminar-content-gestion p {
+.modal-eliminar-content-gestion p,
+.modal-aprobar-content-gestion p {
   margin: 0 0 20px;
   font-size: 20px;
   color: #333;
 }
 
-.modal-eliminar-content-gestion button {
+.modal-eliminar-content-gestion button,
+.modal-aprobar-content-gestion button {
   padding: 8px 16px;
-  background: #007bff;
-  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -146,15 +163,20 @@ h1 {
   font-size: 14px;
 }
 
-.modal-eliminar-content-gestion button:first-child {
-  background: #007bff;
+.modal-eliminar-content-gestion .boton-confirmar-modal-gestion,
+.modal-aprobar-content-gestion .boton-confirmar-modal-gestion {
+  background: #157200;
+  color: white;
 }
 
-.modal-eliminar-content-gestion button:last-child {
-  background: #dc3545;
+.modal-eliminar-content-gestion .boton-cancelar-modal-gestion,
+.modal-aprobar-content-gestion .boton-cancelar-modal-gestion {
+  background: #6c757d;
+  color: white;
 }
 
-.modal-eliminar-content-gestion button:hover {
+.modal-eliminar-content-gestion button:hover,
+.modal-aprobar-content-gestion button:hover {
   opacity: 0.8;
 }
 

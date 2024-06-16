@@ -1,26 +1,153 @@
+/* FormularioUsuario.css */
+
+/* Contenedor principal del formulario */
 .contenedor-formulario-usuario {
-    padding: 20px;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  input,
-  select,
-  textarea {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  button {
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-  }
-  
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo del título */
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Estilo del formulario */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Estilo de cada entrada del formulario */
+form div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilo de los labels */
+label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+/* Estilo de los inputs, selects y textareas */
+input,
+select,
+textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* Estilo del botón de guardar */
+.boton-guardar-formulario {
+  width: 100%;
+  padding: 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.boton-guardar-formulario:hover {
+  background-color: #218838;
+}
+
+/* Estilo del acordeón para usuarios asociados */
+.acordeon {
+  margin-bottom: 15px;
+}
+
+.boton-acordeon {
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  text-align: left;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.boton-acordeon:hover {
+  background-color: #0069d9;
+}
+
+.panel {
+  display: none;
+  overflow: hidden;
+}
+
+.panel.activo {
+  display: block;
+}
+
+/* Estilo para la lista de usuarios asociados */
+.lista-asociados {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lista-asociados li {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Estilo para el mensaje de no asociados */
+.mensaje-no-asociados {
+  padding: 10px;
+  text-align: center;
+  color: #888;
+}
+
+/* Estilo para el modal */
+.modal-guardar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-guardar-content {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.modal-guardar-content p {
+  margin: 0 0 20px;
+  font-size: 20px;
+  color: #333;
+}
+
+.modal-guardar-content button {
+  padding: 10px 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.modal-guardar-content button:hover {
+  background: #218838;
+}

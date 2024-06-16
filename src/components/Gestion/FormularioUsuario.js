@@ -4,9 +4,12 @@ import { getFirestore, doc, getDoc, updateDoc, collection, getDocs, query, where
 import './FormularioUsuario.css';
 
 const FormularioUsuario = () => {
+  // Obtener ID de los parámetros de la URL
   const { id } = useParams();
   const navigate = useNavigate();
   const firestore = getFirestore();
+
+  // Estados del formulario y datos del usuario
   const [usuario, setUsuario] = useState(null);
   const [nombre, setNombre] = useState('');
   const [fechaNacimiento, setFechaNacimiento] = useState('');
@@ -18,10 +21,11 @@ const FormularioUsuario = () => {
   const [intereses, setIntereses] = useState('');
   const [biografia, setBiografia] = useState('');
   const [password, setPassword] = useState('');
-  const [, setAsociados] = useState([]);
-  const [jugadores, setJugadores] = useState([]);
-  const [selectedJugadores, setSelectedJugadores] = useState([]);
+  const [jugadores, setJugadores] = useState([]); // Lista de jugadores asociados
+  const [mostrandoModal, setMostrandoModal] = useState(false); // Estado del modal de confirmación
+  const [cargando, setCargando] = useState(false); // Estado de carga
 
+  // Obtener datos del usuario al montar el componente
   useEffect(() => {
     const obtenerUsuario = async () => {
       const usuarioDoc = await getDoc(doc(firestore, 'users', id));
@@ -37,12 +41,12 @@ const FormularioUsuario = () => {
         setGenero(data.genero || '');
         setIntereses(data.intereses || '');
         setBiografia(data.biografia || '');
-        setAsociados(data.asociados || []);
+
+        // Si es un analista, obtener los jugadores asociados
         if (data.tipoUsuario === 'Analista') {
           const jugadoresSnapshot = await getDocs(query(collection(firestore, 'users'), where('tipoUsuario', '==', 'Jugador')));
           const listaJugadores = jugadoresSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           setJugadores(listaJugadores);
-          setSelectedJugadores(data.asociados || []);
         }
       }
     };
@@ -50,24 +54,27 @@ const FormularioUsuario = () => {
     obtenerUsuario();
   }, [firestore, id]);
 
+  // Manejar envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const usuarioRef = doc(firestore, 'users', id);
-    await updateDoc(usuarioRef, {
-      nombre,
-      fechaNacimiento,
-      email,
-      tipoUsuario,
-      telefono,
-      direccion,
-      genero,
-      intereses,
-      biografia,
-      asociados: selectedJugadores
-    });
+    setCargando(true);
+    try {
+      // Actualizar documento en Firestore
+      const usuarioRef = doc(firestore, 'users', id);
+      await updateDoc(usuarioRef, {
+        nombre,
+        fechaNacimiento,
+        email,
+        tipoUsuario,
+        telefono,
+        direccion,
+        genero,
+        intereses,
+        biografia
+      });
 
-    if (password) {
-      try {
+      // Cambiar contraseña si se ha proporcionado
+      if (password) {
         const response = await fetch('https://us-central1-aplicacion-tactil-tfg.cloudfunctions.net/api/cambiar-contrasena', {
           method: 'POST',
           headers: {
@@ -81,18 +88,14 @@ const FormularioUsuario = () => {
         if (!response.ok) {
           throw new Error('Respuesta incorrecta');
         }
-      } catch (error) {
-        console.error('Error cambiando la contraseña:', error);
       }
+
+      setCargando(false);
+      setMostrandoModal(true);
+    } catch (error) {
+      console.error('Error cambiando la contraseña:', error);
+      setCargando(false);
     }
-
-    navigate('/gestion-usuarios');
-  };
-
-  const manejarSeleccionarJugador = (id) => {
-    setSelectedJugadores(prevState =>
-      prevState.includes(id) ? prevState.filter(jId => jId !== id) : [...prevState, id]
-    );
   };
 
   if (!usuario) {
@@ -100,7 +103,7 @@ const FormularioUsuario = () => {
   }
 
   return (
-    <div className="contenedor-formulario">
+    <div className="contenedor-formulario-usuario">
       <h2>Editar Usuario</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -186,22 +189,36 @@ const FormularioUsuario = () => {
           />
         </div>
         {tipoUsuario === 'Analista' && (
-          <div className="asociar-usuarios">
-            <h3>Usuarios Asociados</h3>
-            {jugadores.map(jugador => (
-              <div key={jugador.id} className="usuario-item">
-                <p>{jugador.nombre}</p>
-                <input
-                  type="checkbox"
-                  checked={selectedJugadores.includes(jugador.id)}
-                  onChange={() => manejarSeleccionarJugador(jugador.id)}
-                />
-              </div>
-            ))}
+          <div className="acordeon">
+            <button type="button" className="boton-acordeon" onClick={() => document.getElementById("panel-usuarios").classList.toggle("activo")}>
+              Usuarios Asociados
+            </button>
+            <div id="panel-usuarios" className="panel">
+              {usuario.asociados.length === 0 ? (
+                <p className="mensaje-no-asociados">No hay usuarios asociados</p>
+              ) : (
+                <ul className="lista-asociados">
+                  {usuario.asociados.map(jugadorId => {
+                    const jugador = jugadores.find(j => j.id === jugadorId);
+                    return jugador ? <li key={jugador.id}>{jugador.nombre}</li> : null;
+                  })}
+                </ul>
+              )}
+            </div>
           </div>
         )}
-        <button type="submit" className="boton-guardar">Guardar</button>
+        <button type="submit" className="boton-guardar-formulario">Guardar</button>
       </form>
+
+      {/* Modal de confirmación */}
+      {mostrandoModal && (
+        <div className="modal-guardar-overlay">
+          <div className="modal-guardar-content">
+            <p>{cargando ? "Guardando..." : "Usuario modificado correctamente."}</p>
+            {!cargando && <button onClick={() => navigate('/gestion-usuarios')}>Aceptar</button>}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -10,9 +10,9 @@ const AgregarUsuario = () => {
     tipoUsuario: 'Analista',
     fechaNacimiento: ''
   });
-  const [cargando, setCargando] = useState(false); // Estado para el indicador de carga
-  const [mensajeModal, setMensajeModal] = useState(''); // Estado para el mensaje del modal
-  const [mostrarModal, setMostrarModal] = useState(false); // Estado para mostrar el modal
+  const [cargando, setCargando] = useState(false);
+  const [mensajeModal, setMensajeModal] = useState('');
+  const [mostrarModal, setMostrarModal] = useState(false);
   const navigate = useNavigate();
 
   const manejarCambio = (e) => {
@@ -22,39 +22,45 @@ const AgregarUsuario = () => {
 
   const manejarEnvio = async (e) => {
     e.preventDefault();
-    setCargando(true); // Iniciar el estado de carga
-    setMensajeModal('Cargando...'); // Mostrar mensaje de carga en el modal
-    setMostrarModal(true); // Mostrar el modal
+    setCargando(true);
+    setMensajeModal('Cargando...');
+    setMostrarModal(true);
     try {
       const { nombre, email, password, tipoUsuario, fechaNacimiento } = formulario;
 
-      // Llamada a la función de Firebase para agregar el usuario
       const response = await fetch('https://us-central1-aplicacion-tactil-tfg.cloudfunctions.net/api/agregar-usuario', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nombre, email, password, tipoUsuario, fechaNacimiento }), // Envía los datos en el cuerpo de la solicitud
+        body: JSON.stringify({ 
+          nombre, 
+          email, 
+          password, 
+          tipoUsuario, 
+          fechaNacimiento,
+          aprobado: true // Se agrega el campo aprobado con valor true
+        }),
       });
 
       if (!response.ok) {
-        const errorText = await response.text(); // Captura el texto de error de la respuesta
-        throw new Error('Respuesta incorrecta: ' + errorText); // Lanza un error si la respuesta no es correcta
+        const errorText = await response.text();
+        throw new Error('Respuesta incorrecta: ' + errorText);
       }
 
-      setMensajeModal('Usuario agregado correctamente'); // Cambiar el mensaje del modal
-      setCargando(false); // Detener el estado de carga
+      setMensajeModal('Usuario agregado correctamente');
+      setCargando(false);
     } catch (error) {
       console.error("Error agregando el usuario: ", error);
-      setMensajeModal('Error agregando el usuario: ' + error.message); // Mostrar mensaje de error
-      setCargando(false); // Detener el estado de carga
+      setMensajeModal('Error agregando el usuario: ' + error.message);
+      setCargando(false);
     }
   };
 
   const cerrarModal = () => {
     setMostrarModal(false);
     if (!cargando) {
-      navigate('/gestion-usuarios'); // Redirige a la gestión de usuarios
+      navigate('/gestion-usuarios');
     }
   };
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getFirestore, collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
 import './GestionUsuarios.css';
@@ -10,7 +10,9 @@ const GestionUsuarios = () => {
   const [jugadores, setJugadores] = useState([]); // Estado para almacenar jugadores
   const [busqueda, setBusqueda] = useState(''); // Estado para el término de búsqueda
   const [usuarioAEliminar, setUsuarioAEliminar] = useState(null); // Estado para el usuario a eliminar
+  const [usuarioAAprobar, setUsuarioAAprobar] = useState(null); // Estado para el usuario a aprobar
   const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false); // Estado para mostrar el modal de eliminación
+  const [mostrarModalAprobacion, setMostrarModalAprobacion] = useState(false); // Estado para mostrar el modal de aprobación
   const navigate = useNavigate(); // Hook de navegación de React Router
   const firestore = getFirestore(); // Instancia de Firestore
   const auth = getAuth(); // Instancia de autenticación de Firebase
@@ -79,6 +81,22 @@ const GestionUsuarios = () => {
     }
   };
 
+  // Maneja la aprobación de un analista
+  const manejarAprobarUsuario = async (id) => {
+    try {
+      const usuarioRef = doc(firestore, 'users', id); // Referencia al documento del usuario en Firestore
+      await updateDoc(usuarioRef, { aprobado: true }); // Actualiza el campo 'aprobado' en Firestore
+
+      // Actualiza el estado localmente para reflejar la aprobación sin recargar la página
+      setAnalistas(analistas.map(analista => analista.id === id ? { ...analista, aprobado: true } : analista));
+
+      setMostrarModalAprobacion(false); // Cerrar el modal de aprobación
+      setUsuarioAAprobar(null);
+    } catch (error) {
+      console.error("Error aprobando el usuario: ", error);
+    }
+  };
+
   // Filtra usuarios según el término de búsqueda
   const filtrarUsuarios = (usuarios, busqueda) => {
     return usuarios.filter(usuario => 
@@ -103,13 +121,24 @@ const GestionUsuarios = () => {
         <h2>Analistas</h2>
         {filtrarUsuarios(analistas, busqueda).map(analista => (
           <div key={analista.id} className="usuario-item-gestion">
-            <p>{analista.nombre}</p>
+            <p>
+              {analista.nombre}
+              {!analista.aprobado && <span className="pendiente"> (Pendiente)</span>}
+            </p>
             <div className="botones-usuario-gestion">
               <Link to={`/gestion-usuarios/${analista.id}/editar`} className="boton-editar-admin-gestion">Editar</Link>
               <button onClick={() => {
                 setUsuarioAEliminar(analista.id);
                 setMostrarModalEliminacion(true);
               }} className="boton-eliminar-admin-gestion">Eliminar</button>
+              {!analista.aprobado && (
+                <button onClick={() => {
+                  setUsuarioAAprobar(analista.id);
+                  setMostrarModalAprobacion(true);
+                }} className="boton-aprobar-analista-gestion">
+                  Aprobar
+                </button>
+              )}
               <button onClick={() => navigate(`/gestion-usuarios/${analista.id}/asociar`)} className="boton-seleccionar-admin-gestion">Seleccionar</button>
             </div>
           </div>
@@ -136,8 +165,19 @@ const GestionUsuarios = () => {
         <div className="modal-eliminar-overlay-gestion">
           <div className="modal-eliminar-content-gestion">
             <p>¿Estás seguro de que deseas eliminar este usuario?</p>
-            <button onClick={() => setMostrarModalEliminacion(false)}>Cancelar</button>
-            <button onClick={() => manejarEliminarUsuario(usuarioAEliminar)}>Eliminar</button>
+            <button onClick={() => setMostrarModalEliminacion(false)} className="boton-cancelar-modal-gestion">Cancelar</button>
+            <button onClick={() => manejarEliminarUsuario(usuarioAEliminar)} className="boton-confirmar-modal-gestion">Eliminar</button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmación de aprobación */}
+      {mostrarModalAprobacion && (
+        <div className="modal-aprobar-overlay-gestion">
+          <div className="modal-aprobar-content-gestion">
+            <p>¿Estás seguro de que deseas aprobar este analista?</p>
+            <button onClick={() => setMostrarModalAprobacion(false)} className="boton-cancelar-modal-gestion">Cancelar</button>
+            <button onClick={() => manejarAprobarUsuario(usuarioAAprobar)} className="boton-confirmar-modal-gestion">Aprobar</button>
           </div>
         </div>
       )}
