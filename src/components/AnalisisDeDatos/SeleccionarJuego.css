@@ -1,0 +1,29 @@
+.seleccionar-juego-container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.lista-juegos {
+  display: flex;
+  flex-direction: column; /* Cambiar a columna para disposición vertical */
+  align-items: center; /* Centrar los botones horizontalmente */
+  gap: 20px; /* Espaciado entre botones */
+}
+
+.boton-juego {
+  padding: 15px 30px;
+  font-size: 25px;
+  background-color: #3752fe;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  width: 400px; /* Establecer un ancho fijo para los botones */
+  height: 75px;
+  text-align: center; /* Centrar el texto en los botones */
+}
+
+.boton-juego:hover {
+  background-color: #1f36ce;
+}

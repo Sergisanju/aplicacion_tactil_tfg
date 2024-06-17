@@ -5,30 +5,25 @@ import { getAuth } from 'firebase/auth';
 import './CartasMemoria.css';
 
 const JuegoDeMemoria = () => {
-  // Obtiene los parámetros de categoría, nivel y dificultad desde la URL
-  const { categoria, nivel, dificultad } = useParams();
-  // Extrae el número de pares del parámetro 'nivel'
-  const pares = parseInt(nivel.split('-')[0]);
+  const { categoria, nivel, dificultad } = useParams(); // Obtiene los parámetros de la URL
+  const pares = parseInt(nivel.split('-')[0]); // Extrae el número de pares desde el parámetro 'nivel'
 
-  // Estados para el juego
-  const [datosDelJuego, setDatosDelJuego] = useState(null); // Guarda los datos del juego (pares de cartas)
-  const [cartasSeleccionadas, setCartasSeleccionadas] = useState([]); // Guarda los índices de las cartas seleccionadas
-  const [paresAcertados, setParesAcertados] = useState([]); // Guarda los índices de las cartas emparejadas
-  const [paresIncorrectos, setParesIncorrectos] = useState([]); // Guarda los índices de las cartas incorrectas
-  const [error, setError] = useState(null); // Guarda el mensaje de error, si ocurre alguno
-  const [horaDeInicio, setHoraDeInicio] = useState(null); // Guarda la hora de inicio del juego
-  const [intentos, setIntentos] = useState(0); // Guarda el conteo de intentos totales
-  const [intentosCorrectos, setIntentosCorrectos] = useState(0); // Guarda el conteo de intentos correctos
-  const [intentosIncorrectos, setIntentosIncorrectos] = useState(0); // Guarda el conteo de intentos incorrectos
-  const [mostrarModal, setMostrarModal] = useState(false); // Controla la visibilidad del modal
+  const [datosDelJuego, setDatosDelJuego] = useState(null); // Datos del juego (pares de cartas)
+  const [cartasSeleccionadas, setCartasSeleccionadas] = useState([]); // Índices de cartas seleccionadas
+  const [paresAcertados, setParesAcertados] = useState([]); // Índices de pares acertados
+  const [paresIncorrectos, setParesIncorrectos] = useState([]); // Índices de pares incorrectos
+  const [error, setError] = useState(null); // Mensaje de error
+  const [horaDeInicio, setHoraDeInicio] = useState(null); // Hora de inicio del juego
+  const [intentos, setIntentos] = useState(1); // Contador de intentos, inicia en 1 para la primera carta
+  const [aciertos, setAciertos] = useState(1); // Contador de aciertos, inicia en 1 por el primer intento correcto
+  const [errores, setErrores] = useState(0); // Contador de errores
+  const [mostrarModal, setMostrarModal] = useState(false); // Estado del modal de finalización
 
-  // Inicializa Firestore y la autenticación de Firebase
-  const firestore = getFirestore();
-  const auth = getAuth();
-  // Hook de navegación para redirigir a otras rutas
-  let navigate = useNavigate();
+  const firestore = getFirestore(); // Instancia de Firestore
+  const auth = getAuth(); // Instancia de autenticación de Firebase
+  const navigate = useNavigate(); // Hook para la navegación programática
 
-  // Filtra los datos del juego según la dificultad seleccionada
+  // Filtra los datos del juego por dificultad
   const filtrarPorDificultad = useCallback((data, dificultad) => {
     switch (dificultad.toLowerCase()) {
       case 'facil':
@@ -42,7 +37,7 @@ const JuegoDeMemoria = () => {
     }
   }, []);
 
-  // Selecciona un número específico de pares de la data barajada
+  // Selecciona un número específico de pares de la data
   const seleccionarPares = useCallback((data, pares) => {
     const datosBarajados = barajarArray(data);
     return datosBarajados.slice(0, pares);
@@ -54,22 +49,22 @@ const JuegoDeMemoria = () => {
   };
 
   useEffect(() => {
+    // Función para obtener los datos del juego desde Firestore
     const obtenerDatosDelJuego = async () => {
       try {
-        // Obtiene la referencia al documento de la categoría del juego en Firestore
+        // Referencia al documento de la categoría en Firestore
         const docRef = doc(firestore, 'juegos', 'cartas_de_memoria', 'categorias', categoria);
-        // Obtiene el documento de Firestore
-        const docSnap = await getDoc(docRef);
+        const docSnap = await getDoc(docRef); // Obtiene el documento
 
         if (docSnap.exists()) {
           const datosArchivo = docSnap.data(); // Datos del documento
           const datosCategoria = datosArchivo[categoria]; // Datos específicos de la categoría
 
           if (datosCategoria && datosCategoria.data) {
-            // Filtra y selecciona pares de cartas según la dificultad
+            // Filtra los datos y selecciona los pares
             const datosFiltrados = filtrarPorDificultad(datosCategoria.data, dificultad);
             const paresSeleccionados = seleccionarPares(datosFiltrados, pares);
-            // Duplica los pares y los baraja
+            // Duplica los pares seleccionados y los baraja
             const paresDuplicados = duplicarPares(paresSeleccionados);
             setDatosDelJuego(barajarArray(paresDuplicados));
             setHoraDeInicio(Date.now()); // Establece la hora de inicio del juego
@@ -81,7 +76,7 @@ const JuegoDeMemoria = () => {
         }
       } catch (error) {
         console.error("Error al obtener datos del juego:", error);
-        setError(error.message);
+        setError(error.message); // Guarda el mensaje de error
       }
     };
 
@@ -100,34 +95,33 @@ const JuegoDeMemoria = () => {
 
   // Maneja el clic en una carta
   const manejarClicEnCarta = (index) => {
-    // Evita más de dos cartas seleccionadas y cartas ya emparejadas o seleccionadas
     if (cartasSeleccionadas.length === 2 || cartasSeleccionadas.includes(index) || paresAcertados.includes(index)) return;
 
-    // Agrega la carta seleccionada al estado
     const nuevasCartasSeleccionadas = [...cartasSeleccionadas, index];
     setCartasSeleccionadas(nuevasCartasSeleccionadas);
-    setIntentos(intentos + 1); // Incrementa el contador de intentos
+    
+    // Incrementa intentos cada vez que se selecciona una carta
+    setIntentos(prevIntentos => prevIntentos + 1);
 
     if (nuevasCartasSeleccionadas.length === 2) {
       const [primerIndex, segundoIndex] = nuevasCartasSeleccionadas;
       const primeraCarta = datosDelJuego[primerIndex];
       const segundaCarta = datosDelJuego[segundoIndex];
-      // Verifica si las cartas seleccionadas son un par correcto
+
       if (primeraCarta.nombre === segundaCarta.nombre && primeraCarta.type !== segundaCarta.type) {
-        setParesAcertados([...paresAcertados, primerIndex, segundoIndex]);
-        setIntentosCorrectos(intentosCorrectos + 1); // Incrementa el contador de intentos correctos
+        setParesAcertados(prevParesAcertados => [...prevParesAcertados, primerIndex, segundoIndex]);
+        setAciertos(prevAciertos => prevAciertos + 1); // Incrementa el contador de aciertos
         setTimeout(() => {
           setCartasSeleccionadas([]);
           // Verifica si el juego ha terminado
           if (paresAcertados.length + 2 === datosDelJuego.length) {
-            guardarResultadosDelJuego(Date.now()); // Guarda los resultados del juego
-            setMostrarModal(true); // Muestra el modal de finalización
+            guardarResultadosDelJuego(Date.now());
+            setMostrarModal(true);
           }
         }, 1000);
       } else {
-        // Si las cartas no coinciden, las marca como incorrectas temporalmente
         setParesIncorrectos([primerIndex, segundoIndex]);
-        setIntentosIncorrectos(intentosIncorrectos + 1); // Incrementa el contador de intentos incorrectos
+        setErrores(prevErrores => prevErrores + 1); // Incrementa el contador de errores
         setTimeout(() => {
           setCartasSeleccionadas([]);
           setParesIncorrectos([]);
@@ -142,24 +136,24 @@ const JuegoDeMemoria = () => {
   // Guarda los resultados del juego en Firestore
   const guardarResultadosDelJuego = async (horaDeFinActual) => {
     const duracionDelJuegoMs = horaDeFinActual - horaDeInicio;
-    const duracionDelJuegoSegundos = Math.floor(duracionDelJuegoMs / 1000); // Duración en segundos
+    const duracionDelJuegoSegundos = Math.floor(duracionDelJuegoMs / 1000); // Convierte la duración a segundos
     const usuario = auth.currentUser;
     const resultado = {
       categoria,
       nivel,
       dificultad,
       intentos,
-      aciertos: intentosCorrectos,
-      errores: intentosIncorrectos,
-      duracion: duracionDelJuegoSegundos, // Guardar la duración en segundos
+      aciertos,
+      errores,
+      duracion: duracionDelJuegoSegundos,
       timestamp: new Date().toISOString(),
-      jugadorId: usuario ? usuario.email : 'anonimo', // Guardar el correo electrónico
-      sessionId: sessionId // Guardar el ID de la sesión de juego
+      jugadorId: usuario ? usuario.email : 'anonimo', // Guarda el correo electrónico del usuario
+      sessionId: sessionId // Guarda el ID de la sesión de juego
     };
     try {
-      // Referencia a la colección de resultados del usuario
       const usuarioDocRef = collection(firestore, `ResultadosJuegos/cartas_de_memoria/usuarios/${usuario.uid}/resultados`);
       await addDoc(usuarioDocRef, resultado);
+      console.log('Resultados del juego guardados con éxito');
     } catch (error) {
       console.error('Error al guardar los resultados del juego:', error);
     }
@@ -173,7 +167,7 @@ const JuegoDeMemoria = () => {
   // Cierra el modal y navega a la página de resultados
   const cerrarModal = () => {
     setMostrarModal(false);
-    navigate(`/resultados/${sessionId}`); // Navega a la página de resultados con el ID de la sesión
+    navigate(`/cartas-memoria/resultados/${sessionId}`); // Navega a la página de resultados con el ID de la sesión
   };
 
   return (

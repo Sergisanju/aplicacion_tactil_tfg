@@ -10,7 +10,6 @@ const Categorizacion = () => {
   const [posicionInicial, setPosicionInicial] = useState({});
   const [elementoActual, setElementoActual] = useState(null);
   const [arrastrando, setArrastrando] = useState(false);
-  const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState(null);
   const firestore = getFirestore();
 
@@ -70,7 +69,8 @@ const Categorizacion = () => {
         const elementosConPosicion = allElementos.flat().map((elemento, index) => ({
           ...elemento,
           id: index,
-          posicion: { x: 0, y: 0 },
+          posicion: { x: 10 + (index % 3) * 150, y: 10 + Math.floor(index / 3) * 60 },
+          posicionInicial: { x: 10 + (index % 3) * 150, y: 10 + Math.floor(index / 3) * 60 }, // Guardar la posición inicial
           visible: true,
         }));
         setElementos(elementosConPosicion);
@@ -84,7 +84,6 @@ const Categorizacion = () => {
   }, [firestore, nivel, dificultad]);
 
   const manejarArrastreInicio = (e, elemento) => {
-    e.preventDefault();
     const clientX = e.clientX || (e.touches && e.touches[0].clientX);
     const clientY = e.clientY || (e.touches && e.touches[0].clientY);
     setElementoActual(elemento);
@@ -93,11 +92,9 @@ const Categorizacion = () => {
       x: clientX - elemento.posicion.x,
       y: clientY - elemento.posicion.y,
     });
-    setMensaje(''); // Limpiar el mensaje al comenzar a arrastrar
   };
 
   const manejarArrastre = useCallback((e) => {
-    e.preventDefault(); // Necesario para dispositivos táctiles
     if (arrastrando && elementoActual) {
       const clientX = e.clientX || (e.touches && e.touches[0].clientX);
       const clientY = e.clientY || (e.touches && e.touches[0].clientY);
@@ -111,24 +108,29 @@ const Categorizacion = () => {
     }
   }, [arrastrando, elementoActual, posicionInicial]);
 
-  const manejarSoltar = (e, categoria) => {
-    e.preventDefault();
+  const manejarSoltar = (e) => {
     if (arrastrando && elementoActual) {
-      const dropTarget = e.target.closest('.categoria');
-      if (dropTarget && dropTarget.getAttribute('data-categoria') === categoria) {
-        setElementos((elementos) =>
-          elementos.map((el) =>
-            el.id === elementoActual.id ? { ...el, visible: false } : el
-          )
-        );
-        setMensaje('¡Correcto!');
-      } else {
-        setElementos((elementos) =>
-          elementos.map((el) =>
-            el.id === elementoActual.id ? { ...el, posicion: { x: 0, y: 0 } } : el
-          )
-        );
-        setMensaje('¡Incorrecto!');
+      const clientX = e.clientX !== undefined ? e.clientX : e.changedTouches[0].clientX;
+      const clientY = e.clientY !== undefined ? e.clientY : e.changedTouches[0].clientY;
+      if (Number.isFinite(clientX) && Number.isFinite(clientY)) {
+        const dropTarget = document.elementFromPoint(clientX, clientY);
+        if (dropTarget) {
+          const categoria = dropTarget.closest('.categoria')?.getAttribute('data-categoria');
+          if (categoria === elementoActual.categoria) {
+            setElementos((elementos) =>
+              elementos.map((el) =>
+                el.id === elementoActual.id ? { ...el, visible: false } : el
+              )
+            );
+          } else {
+            // Regresar a la posición inicial
+            setElementos((elementos) =>
+              elementos.map((el) =>
+                el.id === elementoActual.id ? { ...el, posicion: el.posicionInicial } : el
+              )
+            );
+          }
+        }
       }
       setElementoActual(null);
       setArrastrando(false);
@@ -136,8 +138,8 @@ const Categorizacion = () => {
   };
 
   useEffect(() => {
-    const handleMouseUp = () => setArrastrando(false);
-    const handleTouchEnd = () => setArrastrando(false);
+    const handleMouseUp = manejarSoltar;
+    const handleTouchEnd = manejarSoltar;
 
     const addEventListeners = () => {
       document.addEventListener('mousemove', manejarArrastre, { passive: false });
@@ -160,7 +162,7 @@ const Categorizacion = () => {
     }
 
     return () => removeEventListeners();
-  }, [arrastrando, manejarArrastre]);
+  }, [arrastrando, manejarArrastre, manejarSoltar]);
 
   return (
     <div className="contenedor-categorizacion">
@@ -175,8 +177,6 @@ const Categorizacion = () => {
                 key={categoria}
                 className="categoria"
                 data-categoria={categoria}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => manejarSoltar(e, categoria)}
               >
                 {categoria}
               </div>
@@ -188,7 +188,6 @@ const Categorizacion = () => {
                 key={elemento.id}
                 className={`elemento ${arrastrando && elementoActual && elementoActual.id === elemento.id ? 'arrastrando' : ''}`}
                 style={{
-                  position: 'absolute',
                   left: `${elemento.posicion.x}px`,
                   top: `${elemento.posicion.y}px`,
                   display: elemento.visible ? 'block' : 'none',
@@ -202,7 +201,6 @@ const Categorizacion = () => {
               </div>
             ))}
           </div>
-          {mensaje && <div className="mensaje">{mensaje}</div>}
         </>
       )}
     </div>

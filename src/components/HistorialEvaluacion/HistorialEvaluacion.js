@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import './HistorialEvaluacion.css'; 
+
 const HistorialEvaluacion = () => {
   const { juego } = useParams(); // Obtiene el nombre del juego desde la URL
   const [resultados, setResultados] = useState([]); // Estado para almacenar los resultados
@@ -49,9 +50,48 @@ const HistorialEvaluacion = () => {
   // Convierte el nombre del juego de snake_case a Título De Juego
   const formatearNombreJuego = (nombreJuego) => {
     return nombreJuego
-      .split('_')
-      .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
-      .join(' ');
+      .split('_') // Divide el string en palabras separadas por guiones bajos
+      .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1).toLowerCase()) // Capitaliza la primera letra de cada palabra
+      .join(' '); // Une las palabras con espacios
+  };
+
+  // Renderiza resultados según el tipo de juego
+  const renderizarResultado = (resultado) => {
+    if (juego === 'secuenciacion') {
+      return (
+        <>
+          <h2>{formatearNombreJuego(resultado.categoria)}</h2>
+          <p>Dificultad: {resultado.dificultad}</p> {/* Campo específico de secuenciación */}
+          <p>Intentos: {resultado.intentos}</p>
+          {resultado.duracion && <p>Duración: {convertirSegundosAMinutosSegundos(resultado.duracion)}</p>}
+          <p>Fecha: {new Date(resultado.timestamp).toLocaleString()}</p>
+        </>
+      );
+    } else if (juego === 'categorizacion') {
+      return (
+        <>
+          <h2>{resultado.categoria}</h2>
+          <p>Número de Categorías: {resultado.num_categorias}</p>
+          <p>Número de Items: {resultado.num_items}</p>
+          <p>Intentos: {resultado.intentos}</p>
+          {resultado.duracion && <p>Duración: {convertirSegundosAMinutosSegundos(resultado.duracion)}</p>}
+          <p>Fecha: {new Date(resultado.timestamp).toLocaleString()}</p>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <h2>{resultado.categoria}</h2>
+          <p>Nivel: {resultado.nivel}</p>
+          <p>Dificultad: {resultado.dificultad}</p>
+          <p>Intentos: {resultado.intentos}</p>
+          <p>Aciertos: {resultado.aciertos}</p>
+          <p>Errores: {resultado.errores}</p>
+          {resultado.duracion && <p>Duración: {convertirSegundosAMinutosSegundos(resultado.duracion)}</p>}
+          <p>Fecha: {new Date(resultado.timestamp).toLocaleString()}</p>
+        </>
+      );
+    }
   };
 
   return (
@@ -63,14 +103,7 @@ const HistorialEvaluacion = () => {
         <ul className="resultados-list">
           {resultados.map((resultado) => (
             <li key={resultado.id} className="resultado-item">
-              <h2>{resultado.categoria}</h2>
-              <p>Nivel: {resultado.nivel}</p>
-              <p>Dificultad: {resultado.dificultad}</p>
-              <p>Intentos: {resultado.intentos}</p>
-              <p>Aciertos: {resultado.aciertos}</p>
-              <p>Errores: {resultado.errores}</p>
-              <p>Duración: {convertirSegundosAMinutosSegundos(resultado.duracion)}</p>
-              <p>Fecha: {new Date(resultado.timestamp).toLocaleString()}</p>
+              {renderizarResultado(resultado)} {/* Llama a la función para renderizar resultados específicos */}
             </li>
           ))}
         </ul>

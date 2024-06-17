@@ -11,7 +11,6 @@ const AnalisisDeDatos = () => {
   const auth = getAuth(); // Obtiene la instancia de autenticación de Firebase
   const usuarioActual = auth.currentUser; // Obtiene el usuario autenticado actualmente
 
-  // useEffect se ejecuta al montar el componente para obtener los usuarios asociados
   useEffect(() => {
     const obtenerUsuarios = async () => {
       try {
@@ -20,30 +19,24 @@ const AnalisisDeDatos = () => {
           return;
         }
 
-        // Obtiene el documento del usuario analista autenticado desde Firestore
         const analistaDoc = await getDoc(doc(firestore, 'users', usuarioActual.uid));
         if (!analistaDoc.exists()) { // Verifica si el documento existe
           setError('No se encontró el documento del usuario analista');
           return;
         }
 
-        // Extrae la lista de IDs de usuarios asociados del documento del analista
         const asociados = analistaDoc.data().asociados || []; // Obtiene la lista de IDs o un array vacío
         if (asociados.length === 0) { // Verifica si hay usuarios asociados
           setError('No hay usuarios asociados');
           return;
         }
 
-        // Crea una consulta para obtener los documentos de los usuarios asociados usando sus IDs
         const usuariosQuery = query(
           collection(firestore, 'users'), // Accede a la colección 'users' en Firestore
           where('__name__', 'in', asociados) // Filtra por IDs que están en la lista 'asociados'
         );
 
-        // Ejecuta la consulta y obtiene un snapshot de los documentos que coinciden
         const usuariosSnapshot = await getDocs(usuariosQuery);
-
-        // Convierte el snapshot en una lista de objetos de usuario
         const listaUsuarios = usuariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setUsuarios(listaUsuarios); // Actualiza el estado con la lista de usuarios obtenidos
       } catch (error) {
@@ -55,19 +48,25 @@ const AnalisisDeDatos = () => {
     obtenerUsuarios(); 
   }, [firestore, usuarioActual]); // Dependencias: ejecuta este efecto cuando 'firestore' o 'usuarioActual' cambian
 
-  // Función para obtener datos de un usuario específico
   const obtenerDatosUsuario = async (usuarioId) => {
     try {
-      // Obtiene el documento del usuario por ID desde Firestore
       const usuarioDoc = await getDoc(doc(firestore, 'users', usuarioId));
 
       if (!usuarioDoc.exists()) { // Verifica si el documento existe
         throw new Error('Usuario no encontrado');
       }
 
-      // Obtiene las evaluaciones del usuario desde Firestore
-      const evaluacionesSnapshot = await getDocs(collection(firestore, `ResultadosJuegos/cartas_de_memoria/usuarios/${usuarioId}/resultados`));
-      const evaluaciones = evaluacionesSnapshot.docs.map(doc => doc.data());
+      // Obtiene las evaluaciones de cada juego
+      const juegos = ['cartas_de_memoria', 'secuenciacion', 'categorizacion'];
+      let evaluaciones = [];
+
+      for (const juego of juegos) {
+        const evaluacionesSnapshot = await getDocs(collection(firestore, `ResultadosJuegos/${juego}/usuarios/${usuarioId}/resultados`));
+        evaluaciones = [
+          ...evaluaciones,
+          ...evaluacionesSnapshot.docs.map(doc => ({ juego, ...doc.data() })) // Agrega el campo `juego` a cada evaluación
+        ];
+      }
 
       return {
         ...usuarioDoc.data(), // Datos básicos del usuario
@@ -82,7 +81,7 @@ const AnalisisDeDatos = () => {
   // Convierte los datos de los usuarios a formato CSV
   const convertirDatosACSV = (datosUsuarios) => {
     // Encabezado del CSV
-    let csvContent = 'Nombre,Email,Categoría,Nivel,Dificultad,Intentos,Aciertos,Errores,Duración,Fecha\n';
+    let csvContent = 'Nombre,Email,Juego,Categoría,Dificultad,Intentos,Aciertos,Errores,Duración,Fecha\n';
 
     // Agrega los datos de cada usuario al CSV
     datosUsuarios.forEach(datosUsuario => {
@@ -90,24 +89,35 @@ const AnalisisDeDatos = () => {
 
       //Iteramos sobre cada evaluacion y sus valores/resultados
       evaluaciones.forEach(evaluacion => { 
-        const { categoria, nivel, dificultad, intentos, aciertos, errores, duracion, timestamp } = evaluacion;
+        const { juego, categoria, dificultad, intentos, aciertos, errores, duracion, timestamp } = evaluacion;
         const fecha = new Date(timestamp).toLocaleString(); // Convierte la fecha a formato local
-        //Añadimos los valores a la fila separados por comas
-        csvContent += `${nombre},${email},${categoria},${nivel},${dificultad},${intentos},${aciertos},${errores},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
+
+        // Añade los valores a la fila según el tipo de juego
+        switch (juego) {
+          case 'cartas_de_memoria':
+            csvContent += `${nombre},${email},${juego},${categoria},${dificultad},${intentos},${aciertos},${errores},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
+            break;
+          case 'secuenciacion':
+            csvContent += `${nombre},${email},${juego},${categoria},${dificultad},${intentos},,,${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
+            break;
+          case 'categorizacion':
+            csvContent += `${nombre},${email},${juego},${categoria},${dificultad},${intentos},,,${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
+            break;
+          default:
+            break;
+        }
       });
     });
 
     return csvContent; // Devuelve el contenido en formato CSV
   };
 
-  // Convierte segundos a formato minutos:segundos
   const convertirSegundosAMinutosSegundos = (segundos) => {
     const minutos = Math.floor(segundos / 60); // Calcula los minutos
     const segundosRestantes = segundos % 60; // Calcula los segundos restantes
     return `${minutos < 10 ? '0' : ''}${minutos}:${segundosRestantes < 10 ? '0' : ''}${segundosRestantes}`; // Formatea en mm:ss
   };
 
-  // Exporta los datos de un usuario específico a un archivo CSV
   const exportarDatos = async (usuarioId) => {
     try {
       const datosUsuario = await obtenerDatosUsuario(usuarioId); // Obtiene los datos del usuario
@@ -116,9 +126,7 @@ const AnalisisDeDatos = () => {
       const { nombre } = datosUsuario;
       const nombreArchivo = nombre.toLowerCase().replace(/ /g, '_'); // Genera el nombre del archivo
 
-      // Crear un Blob(objeto que representa un archivo de datos) con el contenido CSV y el tipo correcto con codificacion utf-8 para caracteres especiales
       const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
-
       const link = document.createElement('a'); //Crea un elemento de enlace en el DOM
       link.href = URL.createObjectURL(blob); // Crea un enlace al Blob (archivo), es una URL temporal
       link.setAttribute('download', `resultados_${nombreArchivo}.csv`); // Nombre del archivo
@@ -131,7 +139,6 @@ const AnalisisDeDatos = () => {
     }
   };
 
-  // Exporta los datos de todos los usuarios a un archivo CSV
   const exportarTodosLosDatos = async () => {
     try {
       //Obtiene todos los datos de todos los usuarios esperando a que todas las promesas se completen
@@ -141,7 +148,6 @@ const AnalisisDeDatos = () => {
 
       const csvContent = convertirDatosACSV(datosUsuarios); // Convierte los datos a CSV
 
-      // Crear un Blob con el contenido CSV y el tipo correcto
       const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
 
       const link = document.createElement('a');

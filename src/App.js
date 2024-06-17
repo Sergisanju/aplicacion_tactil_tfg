@@ -14,11 +14,12 @@ import Login from './components/Login/Login';
 import RestablecerContrasena from './components/Login/RestablecerContrasena';
 import Perfil from './components/Perfil/Perfil';
 import Registro from './components/Registro/Registro';
-import Resultados from './components/CartasMemoria/ResultadosCartas';
+import ResultadosCartas from './components/CartasMemoria/ResultadosCartas';
 import JuegosEvaluados from './components/HistorialEvaluacion/JuegosEvaluados';
 import HistorialEvaluacion from './components/HistorialEvaluacion/HistorialEvaluacion';
 import EvaluacionUsuarios from './components/AnalisisDeDatos/EvaluacionUsuarios';
 import AnalisisDeDatos from './components/AnalisisDeDatos/AnalisisDeDatos';
+import SeleccionarJuegoAnalisis from './components/AnalisisDeDatos/SeleccionarJuego';
 import GestionUsuarios from './components/Gestion/GestionUsuarios';
 import FormularioUsuario from './components/Gestion/FormularioUsuario';
 import AgregarUsuario from './components/Gestion/AgregarUsuario';
@@ -27,9 +28,11 @@ import './App.css';
 import JuegoDeCategorizacion from './components/Categorizacion/Categorizacion';
 import SeleccionNivelCategorizacion from './components/Categorizacion/SeleccionNivelCategorizacion';
 import SeleccionDificultadCategorizacion from './components/Categorizacion/SeleccionDificultadCategorizacion';
+import ResultadosCategorizacion from './components/Categorizacion/ResultadosCategorizacion';
 import JuegoDeSecuenciacion from './components/Secuenciacion/Secuenciacion';
 import SeleccionCategoriaSecuenciacion from './components/Secuenciacion/SeleccionCategoriaSecuenciacion';
 import SeleccionDificultadSecuenciacion from './components/Secuenciacion/SeleccionDificultadSecuenciacion';
+import ResultadosSecuenciacion from './components/Secuenciacion/ResultadosSecuenciacion';
 
 const App = () => {
   const [estaAutenticado, setEstaAutenticado] = useState(false); // Estado de autenticación del usuario
@@ -144,8 +147,18 @@ const App = () => {
       
       {/* Ruta para ver resultados, solo accesible para jugadores */}
       <Route
-        path="/resultados/:sessionId"
-        element={estaAutenticado && rolUsuario === 'Jugador' ? <Resultados /> : <Navigate to="/login" />}
+        path="/cartas-memoria/resultados/:sessionId"
+        element={estaAutenticado && rolUsuario === 'Jugador' ? <ResultadosCartas /> : <Navigate to="/login" />}
+      />
+      {/* Ruta para ver resultados, solo accesible para jugadores */}
+      <Route
+        path="/categorizacion/resultados/:sessionId"
+        element={estaAutenticado && rolUsuario === 'Jugador' ? <ResultadosCategorizacion /> : <Navigate to="/login" />}
+      />
+      {/* Ruta para ver resultados, solo accesible para jugadores */}
+      <Route
+        path="/secuenciacion/resultados/:sessionId"
+        element={estaAutenticado && rolUsuario === 'Jugador' ? <ResultadosSecuenciacion /> : <Navigate to="/login" />}
       />
       
       {/* Rutas de gestión, solo accesible para administradores */}
@@ -173,6 +186,10 @@ const App = () => {
       />
       <Route
         path="/analisis-datos/:usuarioId/evaluaciones"
+        element={estaAutenticado && rolUsuario === 'Analista' ? <SeleccionarJuegoAnalisis /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/analisis-datos/:usuarioId/evaluaciones/:juego"
         element={estaAutenticado && rolUsuario === 'Analista' ? <EvaluacionUsuarios /> : <Navigate to="/login" />}
       />
       

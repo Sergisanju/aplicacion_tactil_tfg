@@ -5,7 +5,7 @@ import { getAuth } from 'firebase/auth';
 import './EvaluacionUsuarios.css';
 
 const EvaluacionUsuarios = () => {
-  const { usuarioId } = useParams(); // Obtiene el ID del usuario desde la URL
+  const { usuarioId, juego } = useParams(); // Obtiene el ID del usuario y el juego desde la URL
   const [resultados, setResultados] = useState([]); // Estado para almacenar los resultados de las evaluaciones
   const [error, setError] = useState(null); // Estado para almacenar cualquier error
   const firestore = getFirestore(); // Instancia de Firestore
@@ -26,37 +26,28 @@ const EvaluacionUsuarios = () => {
         }
 
         if (analistaDoc.data().tipoUsuario !== 'Analista') {
-          throw new Error("User is not an analyst"); // Verifica si el usuario actual es un analista
+          throw new Error("Usuario no es analista"); // Verifica si el usuario actual es un analista
         }
 
         // Verificar que el usuarioId está en la lista de asociados del analista
         const asociados = analistaDoc.data().asociados || [];
         if (!asociados.includes(usuarioId)) {
-          throw new Error("User not associated with this analyst"); // Verifica si el usuario está asociado con el analista
+          throw new Error("Usuario no asociado con el analista"); // Verifica si el usuario está asociado con el analista
         }
 
-        // Obtener resultados del usuario asociado de diferentes juegos
-        const juegos = ['cartas_de_memoria', 'categorizacion']; // Lista de juegos
-        let resultadosList = [];
-
-        for (const juego of juegos) {
-          const resultadosCollectionRef = collection(firestore, `ResultadosJuegos/${juego}/usuarios/${usuarioId}/resultados`);
-          const querySnapshot = await getDocs(resultadosCollectionRef);
-
-          querySnapshot.forEach((doc) => {
-            resultadosList.push({ id: doc.id, ...doc.data(), juego }); // Incluye el nombre del juego en los datos
-          });
-        }
-
+        // Obtener resultados del usuario asociado del juego especificado
+        const resultadosCollectionRef = collection(firestore, `ResultadosJuegos/${juego}/usuarios/${usuarioId}/resultados`);
+        const querySnapshot = await getDocs(resultadosCollectionRef);
+        const resultadosList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), juego }));
         setResultados(resultadosList); // Actualiza el estado con los resultados obtenidos
       } catch (error) {
-        console.error("Error fetching resultados:", error); 
-        setError(error.message); 
+        console.error("Error fetching resultados:", error);
+        setError(error.message);
       }
     };
 
     fetchResultados(); // Llama a la función para obtener los resultados cuando el componente se monta
-  }, [firestore, usuarioActual, usuarioId]); // Ejecuta el efecto cuando cambian firestore, usuarioActual, o usuarioId
+  }, [firestore, usuarioActual, usuarioId, juego]); // Ejecuta el efecto cuando cambian firestore, usuarioActual, usuarioId o juego
 
   // Función para formatear el nombre del juego
   const formatearNombreJuego = (nombreJuego) => {
@@ -83,10 +74,24 @@ const EvaluacionUsuarios = () => {
       const { nombre, email } = usuarioDoc.data(); // Obtiene el nombre y email del usuario
       const { categoria, nivel, dificultad, intentos, aciertos, errores, duracion, timestamp, juego } = resultado; // Desestructura los datos del resultado, incluyendo el juego
       const fecha = new Date(timestamp).toLocaleString(); // Convierte la fecha a formato local
-      const csvContent = `Nombre,Email,Juego,Categoría,Nivel,Dificultad,Intentos,Aciertos,Errores,Duración,Fecha\n${nombre},${email},${formatearNombreJuego(juego)},${categoria},${nivel},${dificultad},${intentos},${aciertos},${errores},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
 
-      // Formatear el nombre del archivo
-      const nombreArchivo = `${nombre.toLowerCase().replace(/ /g, '_')}_${juego}`;
+      // Define el contenido CSV según el tipo de juego
+      let csvContent = '';
+      let nombreArchivo = `${nombre.toLowerCase().replace(/ /g, '_')}_${juego}`;
+
+      switch (juego) {
+        case 'cartas_de_memoria':
+          csvContent = `Nombre,Email,Juego,Categoría,Nivel,Dificultad,Intentos,Aciertos,Errores,Duración,Fecha\n${nombre},${email},${formatearNombreJuego(juego)},${categoria},${nivel},${dificultad},${intentos},${aciertos},${errores},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
+          break;
+        case 'secuenciacion':
+          csvContent = `Nombre,Email,Juego,Categoría,Dificultad,Intentos,Duración,Fecha\n${nombre},${email},${formatearNombreJuego(juego)},${categoria},${dificultad},${intentos},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
+          break;
+        case 'categorizacion':
+          csvContent = `Nombre,Email,Juego,Categoría,Dificultad,Intentos,Aciertos,Errores,Duración,Fecha\n${nombre},${email},${formatearNombreJuego(juego)},${categoria},${dificultad},${intentos},${aciertos},${errores},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
+          break;
+        default:
+          throw new Error('Tipo de juego no soportado para exportación');
+      }
 
       // Crear un Blob con el contenido CSV y el tipo correcto
       const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -103,6 +108,49 @@ const EvaluacionUsuarios = () => {
     }
   };
 
+  // Renderiza la información específica para cada juego
+  const renderizarResultado = (resultado) => {
+    switch (resultado.juego) {
+      case 'cartas_de_memoria':
+        return (
+          <>
+            <p>Categoría: {resultado.categoria}</p>
+            <p>Nivel: {resultado.nivel}</p>
+            <p>Dificultad: {resultado.dificultad}</p>
+            <p>Intentos: {resultado.intentos}</p>
+            <p>Aciertos: {resultado.aciertos}</p>
+            <p>Errores: {resultado.errores}</p>
+            <p>Duración: {convertirSegundosAMinutosSegundos(resultado.duracion)}</p>
+            <p>Fecha: {new Date(resultado.timestamp).toLocaleString()}</p>
+          </>
+        );
+      case 'secuenciacion':
+        return (
+          <>
+            <p>Categoría: {resultado.categoria}</p>
+            <p>Dificultad: {resultado.dificultad}</p>
+            <p>Intentos: {resultado.intentos}</p>
+            <p>Duración: {convertirSegundosAMinutosSegundos(resultado.duracion)}</p>
+            <p>Fecha: {new Date(resultado.timestamp).toLocaleString()}</p>
+          </>
+        );
+      case 'categorizacion':
+        return (
+          <>
+            <p>Categoría: {resultado.categoria}</p>
+            <p>Dificultad: {resultado.dificultad}</p>
+            <p>Intentos: {resultado.intentos}</p>
+            <p>Aciertos: {resultado.aciertos}</p>
+            <p>Errores: {resultado.errores}</p>
+            <p>Duración: {convertirSegundosAMinutosSegundos(resultado.duracion)}</p>
+            <p>Fecha: {new Date(resultado.timestamp).toLocaleString()}</p>
+          </>
+        );
+      default:
+        return <p>Datos no disponibles para este juego</p>;
+    }
+  };
+
   return (
     <div className="evaluacion-usuarios-container">
       <h1>Historial de Evaluación</h1>
@@ -112,15 +160,8 @@ const EvaluacionUsuarios = () => {
         <ul className="resultados-list">
           {resultados.map((resultado) => (
             <li key={resultado.id} className="resultado-item">
-              <h2>{formatearNombreJuego(resultado.juego)}</h2> {/* Aplica la función aquí */}
-              <p>Categoría: {resultado.categoria}</p>
-              <p>Nivel: {resultado.nivel}</p>
-              <p>Dificultad: {resultado.dificultad}</p>
-              <p>Intentos: {resultado.intentos}</p>
-              <p>Aciertos: {resultado.aciertos}</p>
-              <p>Errores: {resultado.errores}</p>
-              <p>Duración: {convertirSegundosAMinutosSegundos(resultado.duracion)}</p>
-              <p>Fecha: {new Date(resultado.timestamp).toLocaleString()}</p>
+              <h2>{formatearNombreJuego(resultado.juego)}</h2>
+              {renderizarResultado(resultado)} {/* Renderiza resultados específicos */}
               <button onClick={() => exportarResultado(resultado)}>Exportar</button>
             </li>
           ))}
