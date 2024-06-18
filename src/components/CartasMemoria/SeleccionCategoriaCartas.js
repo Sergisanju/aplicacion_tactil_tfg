@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
-import './SeleccionCategoriaCartas.css'; 
+import './SeleccionCategoriaCartas.css';
 
 // Función para capitalizar la primera letra de una cadena
 const capitalizeFirstLetter = (string) => {
@@ -37,9 +37,9 @@ const SeleccionCategoria = () => {
     const itemsPorFila = 2; // Número de elementos por fila
     for (let i = 0; i < categorias.length; i += itemsPorFila) {
       filas.push(
-        <div className="fila-categoria" key={i}>
+        <div className="seleccion-categoria__fila" key={i}>
           {categorias.slice(i, i + itemsPorFila).map((categoria) => (
-            <Link to={`/cartas-memoria/${categoria}`} key={categoria} className="boton-categoria">
+            <Link to={`/cartas-memoria/${categoria}`} key={categoria} className="seleccion-categoria__boton">
               {capitalizeFirstLetter(categoria)} {/* Muestra el nombre de la categoría con la primera letra en mayúscula */}
             </Link>
           ))}
@@ -50,11 +50,11 @@ const SeleccionCategoria = () => {
   };
 
   return (
-    <div className="contenedor-seleccion-categoria">
-      <h1>Cartas de memoria</h1> {/* Título principal */}
-      <h2>Escoge una categoría</h2> {/* Subtítulo */}
+    <div className="seleccion-categoria__contenedor">
+      <h1 className="seleccion-categoria__titulo-principal">Cartas de memoria</h1> {/* Título principal */}
+      <h2 className="seleccion-categoria__subtitulo">Escoge una categoría</h2> {/* Subtítulo */}
       {categorias.length > 0 ? (
-        <div className="categorias">
+        <div className="seleccion-categoria__categorias">
           {renderizarFilasDeCategorias()} {/* Renderiza las filas de categorías */}
         </div>
       ) : (

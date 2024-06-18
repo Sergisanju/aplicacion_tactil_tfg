@@ -1,11 +1,20 @@
-/* Categorizacion.css */
-
 .contenedor-categorizacion {
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #fdf0e4;
   padding: 20px;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.juego {
+  display: flex;
+  justify-content: center; /* Cambiar a center */
+  align-items: flex-start; /* Alineación vertical al inicio */
+  width: 100%;
+  max-width: 1200px; /* Ajustar según tu diseño */
+  gap: 40px; /* Espacio entre elementos y categorías */
 }
 
 .categorias {
@@ -13,48 +22,61 @@
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  margin-bottom: 20px;
+  flex: 1; /* Asegura que se distribuyan igualmente en el espacio disponible */
 }
 
 .categoria {
   background-color: #00BFFF;
   color: white;
-  width: 200px;
-  height: 80px;
+  width: 250px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50px;
-  font-size: 20px;
-  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 24px; /* Aumentar tamaño de letra */
+  font-family: 'Arial', sans-serif; /* Cambiar tipo de letra */
   text-align: center;
   word-break: break-word;
-  padding: 5px;
+  padding: 10px;
+  transition: background-color 0.3s ease;
 }
 
 .elementos {
   position: relative;
   width: 600px;
   height: 400px;
-  margin-bottom: 20px;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
 .elemento {
-  font-size: 20px;
-  font-family: 'Comic Sans MS', sans-serif;
-  padding: 10px;
+  font-size: 22px; /* Aumentar tamaño de letra */
+  font-family: 'Arial', sans-serif; /* Cambiar tipo de letra */
+  padding: 15px;
   cursor: grab;
-  position: absolute;
   background-color: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 100;
+  transition: background-color 0.3s ease, border 0.3s ease;
+  position: absolute;
 }
 
 .arrastrando {
   cursor: grabbing;
+}
+
+.incorrecto {
+  border: 5px solid red;
+}
+
+.correcto-categoria {
+  border: 5px solid #00791c;
+}
+
+.incorrecto-categoria {
+  border: 5px solid #ff0019;
 }

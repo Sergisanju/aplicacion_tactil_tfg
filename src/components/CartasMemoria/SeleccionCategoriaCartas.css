@@ -1,60 +1,61 @@
 /* Estilo del contenedor principal */
-.contenedor-seleccion-categoria {
-  padding: 40px;
+.seleccion-categoria__contenedor {
+  padding: 60px;
   background-color: #f0e4d7; /* Color de fondo */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center; /* Centra el texto */
+  min-height: 100vh; /* Asegura que cubre toda la altura de la ventana */
+  margin: 0; /* Elimina cualquier margen */
 }
 
 /* Título principal */
-.contenedor-seleccion-categoria h1 {
-  font-size: 32px;
-  margin-bottom: 20px;
+.seleccion-categoria__titulo-principal {
+  font-size: 36px; /* Aumenta el tamaño de fuente */
+  margin-bottom: 30px;
   color: #000000;
   font-family: 'Roboto', sans-serif;
 }
 
 /* Subtítulo */
-.contenedor-seleccion-categoria h2 {
-  font-size: 24px;
-  margin-bottom: 20px;
+.seleccion-categoria__subtitulo {
+  font-size: 28px; /* Aumenta el tamaño de fuente */
+  margin-bottom: 30px;
   color: #323232;
   font-family: 'Roboto', sans-serif;
 }
 
 /* Contenedor de categorías */
-.categorias {
+.seleccion-categoria__categorias {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 30px;
   align-items: center;
 }
 
 /* Estilo de cada fila de categorías */
-.fila-categoria {
+.seleccion-categoria__fila {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 15px;
 }
 
 /* Estilo de cada botón de categoría */
-.boton-categoria {
+.seleccion-categoria__boton {
   background-color: #007bff;
   border: none;
   color: white;
-  padding: 10px 20px;
+  padding: 15px 25px; /* Aumenta el padding */
   text-decoration: none;
   font-family: 'Roboto', sans-serif; /* Fuente a Roboto para los botones */
-
-  font-size: 18px;
+  font-size: 20px; /* Aumenta el tamaño de fuente */
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
 }
 
 /* Efecto hover para los botones */
-.boton-categoria:hover {
+.seleccion-categoria__boton:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
 }

@@ -13,69 +13,97 @@ const Categorizacion = () => {
   const [error, setError] = useState(null);
   const firestore = getFirestore();
 
+  // Función para mezclar aleatoriamente una lista
+  const mezclarElementos = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  };
+
   useEffect(() => {
     const cargarDatos = async () => {
       try {
         const categoriasSnapshot = await getDocs(collection(firestore, 'juegos', 'categorizacion', 'categorias'));
-        const categoriasData = categoriasSnapshot.docs.map(doc => doc.id);
-        const categoriasSeleccionadas = categoriasData.slice(0, parseInt(nivel));
-        setCategorias(categoriasSeleccionadas);
+        const subcategoriasSnapshot = await getDocs(collection(firestore, 'juegos', 'categorizacion', 'subcategorias'));
 
-        const elementosPromises = categoriasSeleccionadas.map(async (category) => {
-          const elementosData = [];
-          const categoryRef = doc(firestore, 'juegos', 'categorizacion', 'categorias', category);
-          const categorySnapshot = await getDoc(categoryRef);
+        const categoriasData = categoriasSnapshot.docs.map(doc => ({
+          id: doc.id,
+          tipo: 'categoria'
+        }));
 
-          if (categorySnapshot.exists()) {
-            const data = categorySnapshot.data().data;
-            const elementosFiltrados = data.filter(el => {
+        const subcategoriasData = subcategoriasSnapshot.docs.map(doc => ({
+          id: doc.id,
+          tipo: 'subcategoria',
+          general: doc.id.split('_')[0]  // Obtener la categoría general de la subcategoría
+        }));
+
+        let seleccionables;
+        if (dificultad === 'Dificil') {
+          // Decidir aleatoriamente entre usar categorías o subcategorías
+          const usarCategorias = Math.random() < 0.5;
+          if (usarCategorias) {
+            seleccionables = categoriasData;
+          } else {
+            // Seleccionar una categoría general al azar
+            const subcategoriasGenerales = [...new Set(subcategoriasData.map(sub => sub.general))];
+            const generalSeleccionado = mezclarElementos(subcategoriasGenerales)[0];
+            seleccionables = subcategoriasData.filter(sub => sub.general === generalSeleccionado);
+          }
+        } else {
+          seleccionables = categoriasData;
+        }
+
+        seleccionables = mezclarElementos(seleccionables).slice(0, parseInt(nivel)); // Selección aleatoria coherente
+        setCategorias(seleccionables.map(c => c.id));
+
+        const elementosPromises = seleccionables.map(async (cat) => {
+          const { id, tipo } = cat;
+          let elementosData = [];
+          const ref = doc(firestore, 'juegos', 'categorizacion', tipo === 'categoria' ? 'categorias' : 'subcategorias', id);
+          const snapshot = await getDoc(ref);
+
+          if (snapshot.exists()) {
+            const data = snapshot.data().data;
+            let elementosFiltrados = data.filter(el => {
               if (dificultad === 'Facil') return el.dificultad === 0;
               if (dificultad === 'Medio') return el.dificultad <= 1;
               if (dificultad === 'Dificil') return el.dificultad <= 2;
               return false;
             }).slice(0, 3);
-            elementosFiltrados.forEach(el => {
-              elementosData.push({
-                ...el,
-                nombre: el.nombre,
-                categoria: category,
-              });
-            });
-          }
 
-          if (dificultad === 'Dificil') {
-            const subcategoriasRef = collection(firestore, 'juegos', 'categorizacion', 'subcategorias');
-            const subcategoriasSnapshot = await getDocs(subcategoriasRef);
+            elementosFiltrados = mezclarElementos(elementosFiltrados); // Mezclar elementos dentro de la categoría
 
-            subcategoriasSnapshot.docs.forEach(doc => {
-              if (doc.id.startsWith(`${category}_`)) {
-                const subcategoriaData = doc.data().data;
-                const subElementosFiltrados = subcategoriaData.filter(el => el.dificultad <= 2).slice(0, 3);
-                subElementosFiltrados.forEach(el => {
-                  elementosData.push({
-                    ...el,
-                    nombre: el.nombre,
-                    categoria: category,
-                  });
-                });
-              }
-            });
+            elementosData = elementosFiltrados.map(el => ({
+              ...el,
+              nombre: el.nombre,
+              categoria: id,
+            }));
           }
 
           return elementosData;
         });
 
-        const allElementos = await Promise.all(elementosPromises);
-        const elementosConPosicion = allElementos.flat().map((elemento, index) => ({
+        let allElementos = await Promise.all(elementosPromises);
+        allElementos = allElementos.flat();
+        allElementos = mezclarElementos(allElementos); // Desordenar los elementos
+
+        const elementosConPosicion = allElementos.map((elemento, index) => ({
           ...elemento,
           id: index,
-          posicion: { x: 10 + (index % 3) * 150, y: 10 + Math.floor(index / 3) * 60 },
-          posicionInicial: { x: 10 + (index % 3) * 150, y: 10 + Math.floor(index / 3) * 60 }, // Guardar la posición inicial
+          posicion: {
+            x: (index % 3) * 180 + 20,  // Ajustar posición horizontal
+            y: Math.floor(index / 3) * 120 + 80  // Ajustar posición vertical
+          },
+          posicionInicial: {
+            x: (index % 3) * 180 + 20,
+            y: Math.floor(index / 3) * 120 + 80
+          },
           visible: true,
         }));
         setElementos(elementosConPosicion);
       } catch (error) {
-        console.error("Error al cargar datos: ", error);
         setError(error.message);
       }
     };
@@ -112,26 +140,58 @@ const Categorizacion = () => {
     if (arrastrando && elementoActual) {
       const clientX = e.clientX !== undefined ? e.clientX : e.changedTouches[0].clientX;
       const clientY = e.clientY !== undefined ? e.clientY : e.changedTouches[0].clientY;
-      if (Number.isFinite(clientX) && Number.isFinite(clientY)) {
-        const dropTarget = document.elementFromPoint(clientX, clientY);
-        if (dropTarget) {
-          const categoria = dropTarget.closest('.categoria')?.getAttribute('data-categoria');
-          if (categoria === elementoActual.categoria) {
-            setElementos((elementos) =>
-              elementos.map((el) =>
-                el.id === elementoActual.id ? { ...el, visible: false } : el
-              )
-            );
-          } else {
-            // Regresar a la posición inicial
-            setElementos((elementos) =>
-              elementos.map((el) =>
-                el.id === elementoActual.id ? { ...el, posicion: el.posicionInicial } : el
-              )
-            );
-          }
+
+      const categoriasElementos = document.querySelectorAll('.categoria');
+      let categoriaDetectada = null;
+      categoriasElementos.forEach(categoriaElemento => {
+        const bounds = categoriaElemento.getBoundingClientRect();
+        if (clientX >= bounds.left && clientX <= bounds.right &&
+            clientY >= bounds.top && clientY <= bounds.bottom) {
+          categoriaDetectada = categoriaElemento.getAttribute('data-categoria');
         }
+      });
+
+      if (categoriaDetectada !== elementoActual.categoria) {
+        setElementos((elementos) =>
+          elementos.map((el) =>
+            el.id === elementoActual.id
+              ? { ...el, posicion: el.posicionInicial, className: 'incorrecto' }
+              : el
+          )
+        );
+        categoriasElementos.forEach(categoriaElemento => {
+          if (categoriaElemento.getAttribute('data-categoria') === categoriaDetectada) {
+            categoriaElemento.classList.add('incorrecto-categoria');
+            setTimeout(() => {
+              categoriaElemento.classList.remove('incorrecto-categoria');
+            }, 1000);
+          }
+        });
+        setTimeout(() => {
+          setElementos((elementos) =>
+            elementos.map((el) =>
+              el.id === elementoActual.id
+                ? { ...el, className: '' }
+                : el
+            )
+          );
+        }, 1000);
+      } else {
+        setElementos((elementos) =>
+          elementos.map((el) =>
+            el.id === elementoActual.id ? { ...el, visible: false } : el
+          )
+        );
+        categoriasElementos.forEach(categoriaElemento => {
+          if (categoriaElemento.getAttribute('data-categoria') === categoriaDetectada) {
+            categoriaElemento.classList.add('correcto-categoria');
+            setTimeout(() => {
+              categoriaElemento.classList.remove('correcto-categoria');
+            }, 1000);
+          }
+        });
       }
+
       setElementoActual(null);
       setArrastrando(false);
     }
@@ -142,7 +202,7 @@ const Categorizacion = () => {
     const handleTouchEnd = manejarSoltar;
 
     const addEventListeners = () => {
-      document.addEventListener('mousemove', manejarArrastre, { passive: false });
+      document.addEventListener('mousemove', manejarArrastre);
       document.addEventListener('touchmove', manejarArrastre, { passive: false });
       document.addEventListener('mouseup', handleMouseUp);
       document.addEventListener('touchend', handleTouchEnd);
@@ -170,23 +230,12 @@ const Categorizacion = () => {
       {error ? (
         <p>Error: {error}</p>
       ) : (
-        <>
-          <div className="categorias">
-            {categorias.map((categoria) => (
-              <div
-                key={categoria}
-                className="categoria"
-                data-categoria={categoria}
-              >
-                {categoria}
-              </div>
-            ))}
-          </div>
+        <div className="juego">
           <div className="elementos">
             {elementos.map((elemento) => (
               <div
                 key={elemento.id}
-                className={`elemento ${arrastrando && elementoActual && elementoActual.id === elemento.id ? 'arrastrando' : ''}`}
+                className={`elemento ${elemento.className || ''} ${arrastrando && elementoActual && elementoActual.id === elemento.id ? 'arrastrando' : ''}`}
                 style={{
                   left: `${elemento.posicion.x}px`,
                   top: `${elemento.posicion.y}px`,
@@ -201,7 +250,18 @@ const Categorizacion = () => {
               </div>
             ))}
           </div>
-        </>
+          <div className="categorias">
+            {categorias.map((categoria) => (
+              <div
+                key={categoria}
+                className="categoria"
+                data-categoria={categoria}
+              >
+                {categoria.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+              </div>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );
