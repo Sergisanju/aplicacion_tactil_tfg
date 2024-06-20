@@ -48,6 +48,24 @@ const JuegoDeMemoria = () => {
     return array.sort(() => Math.random() - 0.5);
   };
 
+  // Duplica los pares de cartas para el juego
+  const duplicarPares = useCallback((data) => {
+    let paresDuplicados = [];
+    data.forEach(item => {
+      if (categoria === 'colores') {
+        paresDuplicados.push({ ...item, type: 'color-visual' });
+        paresDuplicados.push({ ...item, type: 'color-textual' });
+      } else if (categoria === 'numeros') {
+        paresDuplicados.push({ ...item, type: 'numero-texto' });
+        paresDuplicados.push({ ...item, type: 'numero-numero' });
+      } else {
+        paresDuplicados.push({ ...item, type: 'text' });
+        paresDuplicados.push({ ...item, type: 'image' });
+      }
+    });
+    return paresDuplicados;
+  }, [categoria]);
+
   useEffect(() => {
     // Función para obtener los datos del juego desde Firestore
     const obtenerDatosDelJuego = async () => {
@@ -81,17 +99,7 @@ const JuegoDeMemoria = () => {
     };
 
     obtenerDatosDelJuego();
-  }, [categoria, dificultad, pares, firestore, filtrarPorDificultad, seleccionarPares]);
-
-  // Duplica los pares de cartas para el juego, uno con texto y otro con imagen
-  const duplicarPares = (data) => {
-    let paresDuplicados = [];
-    data.forEach(item => {
-      paresDuplicados.push({ ...item, type: 'text' });
-      paresDuplicados.push({ ...item, type: 'image' });
-    });
-    return paresDuplicados;
-  };
+  }, [categoria, dificultad, pares, firestore, filtrarPorDificultad, seleccionarPares, duplicarPares]);
 
   // Maneja el clic en una carta
   const manejarClicEnCarta = (index) => {
@@ -99,7 +107,7 @@ const JuegoDeMemoria = () => {
 
     const nuevasCartasSeleccionadas = [...cartasSeleccionadas, index];
     setCartasSeleccionadas(nuevasCartasSeleccionadas);
-    
+
     // Incrementa intentos cada vez que se selecciona una carta
     setIntentos(prevIntentos => prevIntentos + 1);
 
@@ -108,7 +116,12 @@ const JuegoDeMemoria = () => {
       const primeraCarta = datosDelJuego[primerIndex];
       const segundaCarta = datosDelJuego[segundoIndex];
 
-      if (primeraCarta.nombre === segundaCarta.nombre && primeraCarta.type !== segundaCarta.type) {
+      // Verifica coincidencia
+      const esCoincidencia = (categoria === 'colores' || categoria === 'numeros') ?
+        primeraCarta.nombre === segundaCarta.nombre && primeraCarta.type !== segundaCarta.type :
+        primeraCarta.nombre === segundaCarta.nombre && primeraCarta.type !== segundaCarta.type;
+
+      if (esCoincidencia) {
         setParesAcertados(prevParesAcertados => [...prevParesAcertados, primerIndex, segundoIndex]);
         setAciertos(prevAciertos => prevAciertos + 1); // Incrementa el contador de aciertos
         setTimeout(() => {
@@ -183,8 +196,11 @@ const JuegoDeMemoria = () => {
               className={`carta-juego ${cartasSeleccionadas.includes(index) ? 'volteada' : ''} ${paresAcertados.includes(index) ? 'emparejada' : ''} ${paresIncorrectos.includes(index) ? 'incorrecta' : ''}`}
               onClick={() => manejarClicEnCarta(index)}
             >
-              <div className="cara-frontal">
-                {item.type === 'text' ? item.nombre : <img src={item.imagenURL} alt={item.nombre} />}
+              <div className={`cara-frontal ${item.type === 'color-visual' ? `color ${item.nombre.toLowerCase()}` : ''}`}>
+                {item.type === 'text' || item.type === 'color-textual' ? item.nombre : 
+                item.type === 'numero-texto' ? item.nombre :
+                item.type === 'numero-numero' ? convertirTextoANumero(item.nombre) :
+                item.type === 'image' ? <img src={item.imagenURL} alt={item.nombre} /> : ''}
               </div>
               <div className="cara-trasera">?</div>
             </div>
@@ -204,6 +220,42 @@ const JuegoDeMemoria = () => {
       )}
     </div>
   );
+};
+
+const convertirTextoANumero = (texto) => {
+  const textoANumero = {
+    'uno': 1,
+    'dos': 2,
+    'tres': 3,
+    'cuatro': 4,
+    'cinco': 5,
+    'seis': 6,
+    'siete': 7,
+    'ocho': 8,
+    'nueve': 9,
+    'diez': 10,
+    'once': 11,
+    'doce': 12,
+    'trece': 13,
+    'catorce': 14,
+    'quince': 15,
+    'dieciséis': 16,
+    'diecisiete': 17,
+    'dieciocho': 18,
+    'diecinueve': 19,
+    'veinte': 20,
+    'veintiuno': 21,
+    'veintidós': 22,
+    'veintitrés': 23,
+    'veinticuatro': 24,
+    'veinticinco': 25,
+    'veintiséis': 26,
+    'veintisiete': 27,
+    'veintiocho': 28,
+    'veintinueve': 29,
+    'treinta': 30
+  };
+  return textoANumero[texto.toLowerCase()] || texto;
 };
 
 export default JuegoDeMemoria;

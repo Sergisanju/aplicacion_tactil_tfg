@@ -7,7 +7,6 @@ import './Secuenciacion.css';
 const JuegoDeSecuenciacion = () => {
   const { categoria, dificultad } = useParams(); // Obtener parámetros de la URL
   const [titulo, setTitulo] = useState(''); // Estado para el título del juego
-  const [datosDelJuego, setDatosDelJuego] = useState([]); // Estado para los datos del juego
   const [ordenCorrecto, setOrdenCorrecto] = useState([]); // Estado para el orden correcto
   const [ordenActual, setOrdenActual] = useState([]); // Estado para el orden actual de los elementos
   const [seleccion, setSeleccion] = useState([]); // Estado para el índice de elementos seleccionados
@@ -57,7 +56,6 @@ const JuegoDeSecuenciacion = () => {
               setOrdenCorrecto(datosSeleccionados); // Establecer el orden correcto
               // Barajar los datos aleatoriamente para el juego
               const datosAleatorios = datosSeleccionados.slice().sort(() => Math.random() - 0.5);
-              setDatosDelJuego(datosAleatorios); // Establecer los datos del juego
               setOrdenActual(datosAleatorios); // Inicializar el orden actual con los elementos barajados
               setInicioJuego(Date.now()); // Capturar el tiempo de inicio del juego
             } else {
@@ -104,13 +102,10 @@ const JuegoDeSecuenciacion = () => {
       setSeleccion([]);
       if (JSON.stringify(nuevoOrden) === JSON.stringify(ordenCorrecto)) {
         setRetroalimentacion('¡Correcto!');
+        guardarResultadosDelJuego()
         setMostrarModal(true); // Mostrar modal al acertar
-        setTimeout(() => {
-          setRetroalimentacion(null);
-          guardarResultadosDelJuego();
-        }, 1500);
       } else {
-        setRetroalimentacion('¡Incorrecto! Inténtalo de nuevo.');
+        setRetroalimentacion('¡Sigue buscando la secuencia correcta!.');
         setTimeout(() => setRetroalimentacion(null), 1500);
       }
     } else {
@@ -136,8 +131,6 @@ const JuegoDeSecuenciacion = () => {
     try {
       const usuarioDocRef = collection(firestore, `ResultadosJuegos/secuenciacion/usuarios/${usuario.uid}/resultados`);
       await addDoc(usuarioDocRef, resultado);
-      console.log('Resultados del juego guardados con éxito');
-      navigate(`/secuenciacion/resultados/${sessionId}`); // Navegar a la página de resultados con el ID de la sesión
     } catch (error) {
       console.error('Error al guardar los resultados del juego:', error);
     }

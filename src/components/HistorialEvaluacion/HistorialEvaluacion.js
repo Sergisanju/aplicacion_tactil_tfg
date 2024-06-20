@@ -55,6 +55,14 @@ const HistorialEvaluacion = () => {
       .join(' '); // Une las palabras con espacios
   };
 
+  // Formatea los nombres de categorías para ser más legibles
+  const formatearNombreCategoria = (nombre) => {
+    return nombre
+      .split('_')
+      .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+      .join(' ');
+  };
+
   // Renderiza resultados según el tipo de juego
   const renderizarResultado = (resultado) => {
     if (juego === 'secuenciacion') {
@@ -70,10 +78,10 @@ const HistorialEvaluacion = () => {
     } else if (juego === 'categorizacion') {
       return (
         <>
-          <h2>{resultado.categoria}</h2>
-          <p>Número de Categorías: {resultado.num_categorias}</p>
-          <p>Número de Items: {resultado.num_items}</p>
-          <p>Intentos: {resultado.intentos}</p>
+          <h2>Nivel: {resultado.nivel}</h2> {/* Nivel del juego */}
+          <p>Categorías: {resultado.categorias.map(formatearNombreCategoria).join(', ')}</p> {/* Categorías del juego */}
+          <p>Dificultad: {resultado.dificultad}</p> {/* Dificultad del juego */}
+          <p>Errores: {resultado.errores}</p> {/* Errores cometidos */}
           {resultado.duracion && <p>Duración: {convertirSegundosAMinutosSegundos(resultado.duracion)}</p>}
           <p>Fecha: {new Date(resultado.timestamp).toLocaleString()}</p>
         </>

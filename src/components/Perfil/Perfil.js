@@ -15,7 +15,7 @@ const Perfil = () => {
     telefono: '',
     direccion: '',
     genero: '',
-    intereses: '',
+    nivelEducativo: '',
     biografia: ''
   }); // Almacena los datos del formulario de edición
   const [mensajeModal, setMensajeModal] = useState(''); // Mensaje a mostrar en el modal
@@ -45,7 +45,7 @@ const Perfil = () => {
               telefono: userData.telefono || '',
               direccion: userData.direccion || '',
               genero: userData.genero || '',
-              intereses: userData.intereses || '',
+              nivelEducativo: userData.nivelEducativo || '',
               biografia: userData.biografia || ''
             });
           } else {
@@ -162,9 +162,8 @@ const Perfil = () => {
 
   return (
     <div className="contenedor-perfil">
-      <h2>Perfil de Usuario</h2> {/* Título de la sección de perfil */}
+      <h2>Perfil de Usuario</h2>
       <div className="detalles-perfil">
-        {/* Muestra cada campo del perfil */}
         {[
           { label: 'Nombre', value: datosUsuario.nombre, name: 'nombre', type: 'text' },
           { label: 'Fecha de Nacimiento', value: datosUsuario.fechaNacimiento, name: 'fechaNacimiento', type: 'date' },
@@ -173,13 +172,12 @@ const Perfil = () => {
           { label: 'Teléfono', value: datosUsuario.telefono, name: 'telefono', type: 'tel' },
           { label: 'Dirección', value: datosUsuario.direccion, name: 'direccion', type: 'text' },
           { label: 'Género', value: datosUsuario.genero, name: 'genero', type: 'select', options: ['Masculino', 'Femenino', 'Otro'] },
-          { label: 'Intereses', value: datosUsuario.intereses, name: 'intereses', type: 'text' },
+          { label: 'Nivel Educativo', value: datosUsuario.nivelEducativo, name: 'nivelEducativo', type: 'select', options: ['ESO', 'Bachillerato', 'Grado Superior', 'Grado Medio', 'Licenciatura', 'Doctorado', 'Sin estudios', 'Otro'] },
           { label: 'Biografía', value: datosUsuario.biografia, name: 'biografia', type: 'textarea' },
         ].map((item, index) => (
           <div key={item.name} className={`item-perfil ${index % 2 === 0 ? 'par' : 'impar'}`}>
             <label>{item.label}:</label>
             {esEditable(item.name) ? (
-              // Si el campo es editable, renderiza el campo como un input o un select basado en su tipo
               item.type === 'select' ? (
                 <select name={item.name} value={formularioDatos[item.name]} onChange={handleChange}>
                   {item.options.map(option => (
@@ -192,12 +190,10 @@ const Perfil = () => {
                 <input type={item.type} name={item.name} value={formularioDatos[item.name]} onChange={handleChange} />
               )
             ) : (
-              // Si el campo no es editable, renderiza el campo como input deshabilitado
               <input type={item.type} name={item.name} value={formularioDatos[item.name]} disabled />
             )}
           </div>
         ))}
-        {/* Botones para guardar o editar el perfil y cambiar la contraseña */}
         <div className="acciones-perfil">
           {modoEdicion ? (
             <button onClick={handleGuardar} className="boton-guardar">Guardar</button>
@@ -209,12 +205,11 @@ const Perfil = () => {
           )}
         </div>
       </div>
-      {/* Modal para cambiar la contraseña */}
       {showChangePassword && (
         <div className="modal">
           <div className="modal-content">
-            <span className="close" onClick={() => setShowChangePassword(false)}>&times;</span> {/* Cierra el modal */}
-            <h3>Cambiar Contraseña</h3> {/* Título del modal */}
+            <span className="close" onClick={() => setShowChangePassword(false)}>&times;</span>
+            <h3>Cambiar Contraseña</h3>
             <form onSubmit={handleChangePassword}>
               <div className="password-container">
                 <label>Contraseña Actual:</label>
@@ -234,13 +229,12 @@ const Perfil = () => {
                   required
                 />
               </div>
-              {mensajeContraseña && <p className="mensaje-error">{mensajeContraseña}</p>} {/* Muestra mensaje modal */}
-              <button type="submit" className="boton-guardar">Guardar</button> {/* Botón para guardar la nueva contraseña */}
+              {mensajeContraseña && <p className="mensaje-error">{mensajeContraseña}</p>}
+              <button type="submit" className="boton-guardar">Guardar</button>
             </form>
           </div>
         </div>
       )}
-      {/* Modal para mostrar mensajes */}
       {modalVisible && (
         <div className="modal">
           <div className="modal-content">

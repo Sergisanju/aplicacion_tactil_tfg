@@ -1,82 +1,123 @@
 .contenedor-categorizacion {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #fdf0e4;
-  padding: 20px;
-  height: 100vh;
-  box-sizing: border-box;
+  flex-direction: column; /* Alineación en columna */
+  align-items: center; /* Centra horizontalmente */
+  background-color: #fdf0e4; /* Color de fondo */
+  padding: 20px; /* Espaciado interno */
+  height: 100vh; /* Altura total de la ventana */
+  box-sizing: border-box; /* Incluye padding y border en el tamaño total */
 }
 
 .juego {
   display: flex;
-  justify-content: center; /* Cambiar a center */
-  align-items: flex-start; /* Alineación vertical al inicio */
+  justify-content: center; /* Centra horizontalmente el contenido */
+  align-items: flex-start; /* Alinea al inicio vertical */
   width: 100%;
-  max-width: 1200px; /* Ajustar según tu diseño */
-  gap: 40px; /* Espacio entre elementos y categorías */
+  max-width: 1200px; /* Ancho máximo del contenedor */
+  gap: 40px; /* Espacio entre los contenedores de elementos y categorías */
 }
 
-.categorias {
+.categorias-categorizacion {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  flex: 1; /* Asegura que se distribuyan igualmente en el espacio disponible */
+  flex-direction: column; /* Organización en columna */
+  align-items: center; /* Centra horizontalmente */
+  gap: 10px; /* Espacio entre categorías */
+  flex: 2; /* Flexibilidad para ocupar el espacio disponible */
+  /*añadir par que esten mas abajo*/
+  margin-top: 35px;
 }
 
 .categoria {
-  background-color: #00BFFF;
-  color: white;
-  width: 250px;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50px;
-  font-size: 24px; /* Aumentar tamaño de letra */
-  font-family: 'Arial', sans-serif; /* Cambiar tipo de letra */
-  text-align: center;
-  word-break: break-word;
-  padding: 10px;
-  transition: background-color 0.3s ease;
+  background-color: #00BFFF; /* Color de fondo azul */
+  color: white; /* Color del texto blanco */
+  width: 300px; /* Ancho fijo */
+  height: 90px; /* Altura fija */
+  display: flex; /* Usa Flexbox para centrar contenido */
+  align-items: center; /* Centra verticalmente */
+  justify-content: center; /* Centra horizontalmente */
+  border-radius: 50px; /* Bordes redondeados */
+  font-size: 28px; /* Tamaño de fuente */
+  font-family: 'Arial', sans-serif; /* Tipo de fuente */
+  text-align: center; /* Texto centrado */
+  word-break: break-word; /* Rompe palabras largas */
+  padding: 20px; /* Espaciado interno */
+  transition: background-color 0.3s ease; /* Transición de color suave */
 }
 
-.elementos {
-  position: relative;
-  width: 600px;
-  height: 400px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+.elementos-categorizacion {
+  position: relative; /* Posiciona de manera relativa */
+  width: 600px; /* Ancho fijo */
+  height: 600px; /* Altura fija */
+  display: grid; /* Usa grid para organizar elementos */
+  grid-template-columns: repeat(3, 1fr); /* Tres columnas de tamaño igual */
 }
 
 .elemento {
-  font-size: 22px; /* Aumentar tamaño de letra */
-  font-family: 'Arial', sans-serif; /* Cambiar tipo de letra */
-  padding: 15px;
-  cursor: grab;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 100;
-  transition: background-color 0.3s ease, border 0.3s ease;
-  position: absolute;
+  font-size: 24px; /* Tamaño de fuente */
+  font-family: 'Arial', sans-serif; /* Tipo de fuente */
+  padding: 10px; /* Espaciado interno */
+  cursor: grab; /* Cursor de agarre */
+  background-color: #f9f9f9; /* Fondo claro */
+  border: 1px solid #ddd; /* Borde gris claro */
+  border-radius: 5px; /* Bordes redondeados */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra ligera */
+  transition: background-color 0.3s ease, border 0.3s ease; /* Transición suave */
+  position: absolute; /* Posiciona de manera absoluta */
+  display: flex; /* Usa Flexbox para centrar texto */
+  text-align: center; /* Texto centrado */
+  box-sizing: border-box; /* Incluye padding y border en el tamaño total */
+  height: 75px;
+  width: 175px;
+  align-content: center;
 }
 
 .arrastrando {
-  cursor: grabbing;
+  cursor: grabbing; /* Cursor de agarre activo */
 }
 
 .incorrecto {
-  border: 5px solid red;
+  border: 5px solid red; /* Borde rojo para elementos incorrectos */
 }
 
 .correcto-categoria {
-  border: 5px solid #00791c;
+  border: 5px solid #00791c; /* Borde verde para categorías correctas */
 }
 
 .incorrecto-categoria {
-  border: 5px solid #ff0019;
+  border: 5px solid #ff0019; /* Borde rojo para categorías incorrectas */
+}
+
+.modal {
+  position: fixed; /* Fija en la pantalla */
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  display: flex; /* Centra modal */
+  align-items: center; /* Alinea verticalmente */
+  justify-content: center; /* Centra horizontalmente */
+  background: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+  z-index: 1001; /* Asegura que esté sobre otros elementos */
+}
+
+.modal-contenido {
+  background: white; /* Fondo blanco */
+  padding: 20px; /* Espaciado interno */
+  border-radius: 5px; /* Bordes redondeados */
+  text-align: center; /* Texto centrado */
+  max-width: 300px; /* Ancho máximo */
+  width: 100%; /* Ancho total */
+}
+
+.aceptar {
+  background: green; /* Fondo verde */
+  color: white; /* Texto blanco */
+  border: none; /* Sin borde */
+  padding: 10px 20px; /* Espaciado interno */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Cursor de puntero */
+}
+
+.aceptar:hover {
+  background: darkgreen; /* Fondo verde oscuro en hover */
 }

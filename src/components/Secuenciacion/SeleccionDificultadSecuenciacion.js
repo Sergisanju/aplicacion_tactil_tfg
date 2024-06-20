@@ -25,7 +25,7 @@ const SeleccionDeDificultad = () => {
 
   return (
     <div className="contenedor-dificultad-seleccion">
-      <h1>Cartas de Memoria</h1>
+      <h1>Secuenciación</h1>
       <h2>Escoge la dificultad</h2>
       <div className="dificultad-botones">
         {dificultades.map((dificultad) => (

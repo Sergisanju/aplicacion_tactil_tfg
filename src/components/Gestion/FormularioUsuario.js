@@ -18,7 +18,7 @@ const FormularioUsuario = () => {
   const [telefono, setTelefono] = useState('');
   const [direccion, setDireccion] = useState('');
   const [genero, setGenero] = useState('');
-  const [intereses, setIntereses] = useState('');
+  const [nivelEducativo, setNivelEducativo] = useState(''); // Cambiado a nivelEducativo
   const [biografia, setBiografia] = useState('');
   const [password, setPassword] = useState('');
   const [jugadores, setJugadores] = useState([]); // Lista de jugadores asociados
@@ -39,7 +39,7 @@ const FormularioUsuario = () => {
         setTelefono(data.telefono || '');
         setDireccion(data.direccion || '');
         setGenero(data.genero || '');
-        setIntereses(data.intereses || '');
+        setNivelEducativo(data.nivelEducativo || ''); // Nivel Educativo en vez de Intereses
         setBiografia(data.biografia || '');
 
         // Si es un analista, obtener los jugadores asociados
@@ -69,7 +69,7 @@ const FormularioUsuario = () => {
         telefono,
         direccion,
         genero,
-        intereses,
+        nivelEducativo, // Nivel Educativo en vez de Intereses
         biografia
       });
 
@@ -166,12 +166,18 @@ const FormularioUsuario = () => {
           </select>
         </div>
         <div>
-          <label>Intereses:</label>
-          <input
-            type="text"
-            value={intereses}
-            onChange={(e) => setIntereses(e.target.value)}
-          />
+          <label>Nivel Educativo:</label>
+          <select value={nivelEducativo} onChange={(e) => setNivelEducativo(e.target.value)}>
+            <option value="">Seleccione</option>
+            <option value="ESO">ESO</option>
+            <option value="Bachillerato">Bachillerato</option>
+            <option value="Grado Medio">Grado Medio</option>
+            <option value="Grado Superior">Grado Superior</option>
+            <option value="Licenciatura">Licenciatura</option>
+            <option value="Sin estudios">Maestría</option>
+            <option value="Doctorado">Doctorado</option>
+            <option value="Otro">Otro</option>
+          </select>
         </div>
         <div>
           <label>Biografía:</label>

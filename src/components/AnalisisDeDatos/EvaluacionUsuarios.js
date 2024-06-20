@@ -42,7 +42,7 @@ const EvaluacionUsuarios = () => {
         setResultados(resultadosList); // Actualiza el estado con los resultados obtenidos
       } catch (error) {
         console.error("Error fetching resultados:", error);
-        setError(error.message);
+        setError(error.message); // Actualiza el estado de error
       }
     };
 
@@ -55,6 +55,27 @@ const EvaluacionUsuarios = () => {
       .split('_') // Divide el nombre en partes usando guion bajo
       .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1)) // Capitaliza la primera letra de cada parte
       .join(' '); // Une las partes con espacios
+  };
+
+  // Función para formatear las categorías
+  const formatearCategorias = (categorias) => {
+    if (Array.isArray(categorias)) {
+      // Si categorias es un array
+      return categorias.map(categoria =>
+        categoria
+          .split('_')
+          .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+          .join(' ')
+      ).join(', ');
+    } else if (typeof categorias === 'string') {
+      // Si categorias es un string
+      return categorias
+        .split('_')
+        .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+        .join(' ');
+    } else {
+      return 'N/A';
+    }
   };
 
   // Convierte duración de segundos a formato mm:ss
@@ -72,8 +93,9 @@ const EvaluacionUsuarios = () => {
         throw new Error('Usuario no encontrado'); // Verifica si el documento del usuario existe
       }
       const { nombre, email } = usuarioDoc.data(); // Obtiene el nombre y email del usuario
-      const { categoria, nivel, dificultad, intentos, aciertos, errores, duracion, timestamp, juego } = resultado; // Desestructura los datos del resultado, incluyendo el juego
+      const { categoria, categorias, dificultad, elementosClasificados, errores, duracion, timestamp, juego, intentos, aciertos, nivel } = resultado; // Desestructura los datos del resultado
       const fecha = new Date(timestamp).toLocaleString(); // Convierte la fecha a formato local
+      const categoriasFormateadas = formatearCategorias(categoria || categorias); // Formatea las categorías
 
       // Define el contenido CSV según el tipo de juego
       let csvContent = '';
@@ -81,13 +103,13 @@ const EvaluacionUsuarios = () => {
 
       switch (juego) {
         case 'cartas_de_memoria':
-          csvContent = `Nombre,Email,Juego,Categoría,Nivel,Dificultad,Intentos,Aciertos,Errores,Duración,Fecha\n${nombre},${email},${formatearNombreJuego(juego)},${categoria},${nivel},${dificultad},${intentos},${aciertos},${errores},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
+          csvContent = `Nombre,Email,Juego,Categoría,Nivel,Dificultad,Intentos,Aciertos,Errores,Duración,Fecha\n${nombre},${email},${formatearNombreJuego(juego)},${categoriasFormateadas},${nivel},${dificultad},${intentos},${aciertos},${errores},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
           break;
         case 'secuenciacion':
-          csvContent = `Nombre,Email,Juego,Categoría,Dificultad,Intentos,Duración,Fecha\n${nombre},${email},${formatearNombreJuego(juego)},${categoria},${dificultad},${intentos},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
+          csvContent = `Nombre,Email,Juego,Categoría,Dificultad,Intentos,Duración,Fecha\n${nombre},${email},${formatearNombreJuego(juego)},${categoriasFormateadas},${dificultad},${intentos},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
           break;
         case 'categorizacion':
-          csvContent = `Nombre,Email,Juego,Categoría,Dificultad,Intentos,Aciertos,Errores,Duración,Fecha\n${nombre},${email},${formatearNombreJuego(juego)},${categoria},${dificultad},${intentos},${aciertos},${errores},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
+          csvContent = `Nombre,Email,Juego,Categorías,Dificultad,Elementos Clasificados,Errores,Duración,Fecha\n${nombre},${email},${formatearNombreJuego(juego)},${categoriasFormateadas},${dificultad},${elementosClasificados},${errores},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
           break;
         default:
           throw new Error('Tipo de juego no soportado para exportación');
@@ -110,16 +132,18 @@ const EvaluacionUsuarios = () => {
 
   // Renderiza la información específica para cada juego
   const renderizarResultado = (resultado) => {
+    const categoriasFormateadas = formatearCategorias(resultado.categoria || resultado.categorias);
+    
     switch (resultado.juego) {
       case 'cartas_de_memoria':
         return (
           <>
-            <p>Categoría: {resultado.categoria}</p>
-            <p>Nivel: {resultado.nivel}</p>
-            <p>Dificultad: {resultado.dificultad}</p>
-            <p>Intentos: {resultado.intentos}</p>
-            <p>Aciertos: {resultado.aciertos}</p>
-            <p>Errores: {resultado.errores}</p>
+            <p>Categoría: {categoriasFormateadas}</p>
+            <p>Nivel: {resultado.nivel ?? 'N/A'}</p>
+            <p>Dificultad: {resultado.dificultad ?? 'N/A'}</p>
+            <p>Intentos: {resultado.intentos ?? 'N/A'}</p>
+            <p>Aciertos: {resultado.aciertos ?? 'N/A'}</p>
+            <p>Errores: {resultado.errores ?? 'N/A'}</p>
             <p>Duración: {convertirSegundosAMinutosSegundos(resultado.duracion)}</p>
             <p>Fecha: {new Date(resultado.timestamp).toLocaleString()}</p>
           </>
@@ -127,9 +151,9 @@ const EvaluacionUsuarios = () => {
       case 'secuenciacion':
         return (
           <>
-            <p>Categoría: {resultado.categoria}</p>
-            <p>Dificultad: {resultado.dificultad}</p>
-            <p>Intentos: {resultado.intentos}</p>
+            <p>Categoría: {categoriasFormateadas}</p>
+            <p>Dificultad: {resultado.dificultad ?? 'N/A'}</p>
+            <p>Intentos: {resultado.intentos ?? 'N/A'}</p>
             <p>Duración: {convertirSegundosAMinutosSegundos(resultado.duracion)}</p>
             <p>Fecha: {new Date(resultado.timestamp).toLocaleString()}</p>
           </>
@@ -137,11 +161,10 @@ const EvaluacionUsuarios = () => {
       case 'categorizacion':
         return (
           <>
-            <p>Categoría: {resultado.categoria}</p>
-            <p>Dificultad: {resultado.dificultad}</p>
-            <p>Intentos: {resultado.intentos}</p>
-            <p>Aciertos: {resultado.aciertos}</p>
-            <p>Errores: {resultado.errores}</p>
+            <p>Categorías: {categoriasFormateadas}</p>
+            <p>Dificultad: {resultado.dificultad ?? 'N/A'}</p>
+            <p>Elementos Clasificados: {resultado.elementosClasificados ?? 'N/A'}</p>
+            <p>Errores: {resultado.errores ?? 'N/A'}</p>
             <p>Duración: {convertirSegundosAMinutosSegundos(resultado.duracion)}</p>
             <p>Fecha: {new Date(resultado.timestamp).toLocaleString()}</p>
           </>

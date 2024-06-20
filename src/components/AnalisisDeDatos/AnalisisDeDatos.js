@@ -87,21 +87,24 @@ const AnalisisDeDatos = () => {
     datosUsuarios.forEach(datosUsuario => {
       const { nombre, email, evaluaciones } = datosUsuario;
 
-      //Iteramos sobre cada evaluacion y sus valores/resultados
+      // Iteramos sobre cada evaluación y sus valores/resultados
       evaluaciones.forEach(evaluacion => { 
-        const { juego, categoria, dificultad, intentos, aciertos, errores, duracion, timestamp } = evaluacion;
+        const { juego, categoria, dificultad, intentos = '', aciertos = '', errores = '', duracion, timestamp, categorias } = evaluacion;
         const fecha = new Date(timestamp).toLocaleString(); // Convierte la fecha a formato local
+
+        // Formatear el nombre de la categoría para evitar valores "undefined"
+        const categoriaFormateada = categorias ? categorias.join(', ') : categoria || '';
 
         // Añade los valores a la fila según el tipo de juego
         switch (juego) {
           case 'cartas_de_memoria':
-            csvContent += `${nombre},${email},${juego},${categoria},${dificultad},${intentos},${aciertos},${errores},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
+            csvContent += `${nombre},${email},${juego},${categoria || ''},${dificultad || ''},${intentos || ''},${aciertos || ''},${errores || ''},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
             break;
           case 'secuenciacion':
-            csvContent += `${nombre},${email},${juego},${categoria},${dificultad},${intentos},,,${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
+            csvContent += `${nombre},${email},${juego},${categoria || ''},${dificultad || ''},${intentos || ''},${aciertos || ''},${errores || ''},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
             break;
           case 'categorizacion':
-            csvContent += `${nombre},${email},${juego},${categoria},${dificultad},${intentos},,,${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
+            csvContent += `${nombre},${email},${juego},${categoriaFormateada},${dificultad || ''},${intentos || ''},${aciertos || ''},${errores || ''},${convertirSegundosAMinutosSegundos(duracion)},${fecha}\n`;
             break;
           default:
             break;
@@ -127,13 +130,13 @@ const AnalisisDeDatos = () => {
       const nombreArchivo = nombre.toLowerCase().replace(/ /g, '_'); // Genera el nombre del archivo
 
       const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a'); //Crea un elemento de enlace en el DOM
+      const link = document.createElement('a'); // Crea un elemento de enlace en el DOM
       link.href = URL.createObjectURL(blob); // Crea un enlace al Blob (archivo), es una URL temporal
       link.setAttribute('download', `resultados_${nombreArchivo}.csv`); // Nombre del archivo
 
-      document.body.appendChild(link); //Agregamos el enlace al DOM
+      document.body.appendChild(link); // Agregamos el enlace al DOM
       link.click(); // Dispara la descarga
-      document.body.removeChild(link); //Limpiamos el documento eliminando el enlace del DOM
+      document.body.removeChild(link); // Limpiamos el documento eliminando el enlace del DOM
     } catch (error) {
       console.error('Error al exportar los datos:', error); 
     }
@@ -141,7 +144,7 @@ const AnalisisDeDatos = () => {
 
   const exportarTodosLosDatos = async () => {
     try {
-      //Obtiene todos los datos de todos los usuarios esperando a que todas las promesas se completen
+      // Obtiene todos los datos de todos los usuarios esperando a que todas las promesas se completen
       const datosUsuarios = await Promise.all(
         usuarios.map(usuario => obtenerDatosUsuario(usuario.id)) // Obtiene los datos de todos los usuarios devolviendo una promesa para cada usuario
       );

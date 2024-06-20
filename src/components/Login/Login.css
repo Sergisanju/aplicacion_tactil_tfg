@@ -5,11 +5,12 @@
 .login-container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Cambiado para alinear el contenido con la parte superior */
   height: 100vh;
   background-color: #f0f0f0;
   padding: 20px;
   box-sizing: border-box;
+  padding-top: 50px; /* Añadido para dar un margen superior */
 }
 
 /* Estilos para la caja de login */

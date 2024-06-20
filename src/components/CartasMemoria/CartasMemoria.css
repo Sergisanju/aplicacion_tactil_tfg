@@ -58,8 +58,8 @@ h1 {
   display: flex; /* Usa Flexbox para centrar el contenido dentro de la cara */
   align-items: center; /* Centra el contenido verticalmente */
   justify-content: center; /* Centra el contenido horizontalmente */
-  font-size: 24px; /* Tamaño de fuente para el texto dentro de la carta */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad a la carta */
+  text-align: center; /* Asegura que el texto esté centrado */
 }
 
 /* Estilos específicos para la cara frontal */
@@ -67,6 +67,8 @@ h1 {
   background: #ffffff; /* Fondo blanco */
   color: #000000; /* Texto negro */
   transform: rotateY(180deg); /* Inicialmente oculta la cara frontal, se verá después de voltear */
+  font-size: 28px; /* Ajusta el tamaño de fuente para que el texto se vea bien */
+  line-height: 1.2; /* Ajusta la altura de línea para mejorar el espaciado del texto */
 }
 
 /* Estilos específicos para la cara trasera */
@@ -92,6 +94,82 @@ h1 {
 /* Bordes rojos para las cartas incorrectas */
 .carta-juego.incorrecta .cara-frontal {
   border: 5px solid red; 
+}
+
+/* Estilos específicos para las cartas de color */
+.carta-juego.color .cara-frontal {
+  color: white; /* Texto blanco */
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Sombra de texto para mejor visibilidad */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background-color: #ffffff; /* Fondo blanco para las cartas de color visual */
+}
+
+/* Estilos específicos para colores */
+.color.azul {
+  background-color: #0000ff; /* Azul */
+}
+.color.rojo {
+  background-color: #ff0000; /* Rojo */
+}
+.color.verde {
+  background-color: #008000; /* Verde */
+}
+.color.amarillo {
+  background-color: #ffff00; /* Amarillo */
+  color: black;
+}
+.color.naranja {
+  background-color: #ffa500; /* Naranja */
+}
+.color.violeta {
+  background-color: #8a2be2; /* Violeta */
+}
+.color.celeste {
+  background-color: #00bfff; /* Celeste */
+}
+.color.marrón {
+  background-color: #a52a2a; /* Marrón */
+}
+.color.rosa {
+  background-color: #ffc0cb; /* Rosa */
+  color: black;
+}
+.color.morado {
+  background-color: #800080; /* Morado */
+}
+.color.turquesa {
+  background-color: #40e0d0; /* Turquesa */
+}
+.color.beige {
+  background-color: #f5f5dc; /* Beige */
+  color: black;
+}
+.color.gris {
+  background-color: #808080; /* Gris */
+}
+.color.blanco {
+  background-color: #ffffff; /* Blanco */
+  color: black;
+}
+.color.lila {
+  background-color: #c8a2c8; /* Lila */
+}
+.color.café {
+  background-color: #6f4e37; /* Café */
+}
+.color.granate {
+  background-color: #800000; /* Granate */
+}
+
+/* Estilos específicos para las cartas de números */
+.carta-juego.numero-texto .cara-frontal,
+.carta-juego.numero-numero .cara-frontal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Estilos para la superposición del modal */

@@ -1,0 +1,37 @@
+/* ResultadosCategorizacion.css */
+
+.resultados-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .resultados-lista {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .resultado-items {
+    background: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .resultado-items h2 {
+    margin-top: 0;
+  }
+  
+  .resultado-items p {
+    margin: 5px 0;
+  }
+  
