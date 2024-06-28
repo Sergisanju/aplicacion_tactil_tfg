@@ -6,7 +6,12 @@ Esta es una aplicación táctil desarrollada para la evaluación cognitiva de us
 
 - [Requisitos del Sistema](#requisitos-del-sistema)
 - [Configuración del Entorno de Desarrollo](#configuración-del-entorno-de-desarrollo)
+  - [Clonar el Repositorio](#clonar-el-repositorio)
+  - [Instalar Dependencias](#instalar-dependencias)
+  - [Configuración desde Cero](#configuración-desde-cero)
 - [Despliegue de la Aplicación](#despliegue-de-la-aplicación)
+  - [Arranque del Frontend](#arranque-del-frontend)
+  - [Arranque del Backend](#arranque-del-backend)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Acceso a Firebase](#acceso-a-firebase)
 - [Contribuciones](#contribuciones)
@@ -46,59 +51,39 @@ Sigue estos pasos para configurar el entorno de desarrollo:
     npm install
     ```
 
-## Despliegue de la Aplicación
+### Configuración desde Cero
 
-### Arranque del Frontend
+Sigue estos pasos si deseas iniciar un nuevo proyecto desde cero:
 
-1. Asegúrate de estar en el directorio raíz del proyecto.
-2. Inicia el servidor de desarrollo de React:
+#### 1. Instalar Node.js y npm
+
+1. Descarga e instala Node.js desde [nodejs.org](https://nodejs.org/). La instalación de Node.js incluye npm (Node Package Manager).
+
+2. Verifica la instalación abriendo una terminal y ejecutando los siguientes comandos:
     ```sh
-    npm start
-    ```
-3. La aplicación estará disponible en `http://localhost:3000`.
-
-### Arranque del Backend
-
-1. Inicia sesión en Firebase desde la terminal:
-    ```sh
-    firebase login
-    ```
-2. Despliega el backend en Firebase:
-    ```sh
-    firebase deploy
+    node -v
+    npm -v
     ```
 
-## Estructura del Proyecto
+#### 2. Crear el Proyecto con Create React App
 
-La estructura general del proyecto es la siguiente:
+3. Utiliza Create React App para crear una nueva aplicación React. Abre una terminal y ejecuta:
+    ```sh
+    npx create-react-app aplicacion-tactil-tfg
+    cd aplicacion-tactil-tfg
+    ```
 
-- **.github**: Configuraciones para GitHub, como flujos de trabajo de GitHub Actions.
-- **build**: Carpeta generada automáticamente al compilar la aplicación para producción.
-- **functions**: Contiene las funciones de Firebase (Cloud Functions) para el backend.
-- **node_modules**: Módulos y paquetes instalados por npm necesarios para el proyecto.
-- **public**: Archivos estáticos como imágenes y el archivo `index.html`.
-- **src**: Todo el código fuente del proyecto, incluyendo componentes de React, servicios y utilidades.
-  - **assets**: Recursos como imágenes.
-  - **components**: Componentes de React organizados por funcionalidades.
-  - **upload-json**: Directorio para la subida de archivos JSON.
-  - **App.css**: Estilos CSS para la aplicación principal.
-  - **App.js**: Componente principal de la aplicación.
-  - **firebase-config.js**: Configuración de Firebase.
-  - **index.css**: Estilos CSS globales.
-  - **index.js**: Punto de entrada principal de la aplicación.
-- **.env**: Archivo de variables de entorno con configuraciones sensibles (no incluido en el repositorio).
-- **.firebaserc**: Configuración de Firebase para el proyecto.
-- **.gitignore**: Especifica los archivos y directorios que Git debe ignorar.
-- **firebase.json**: Configuración de Firebase Hosting.
-- **package-lock.json**: Describe la estructura completa de las dependencias del proyecto.
-- **package.json**: Lista las dependencias del proyecto y scripts de npm.
+#### 3. Configurar Firebase
 
-## Acceso a Firebase
+##### Crear un Nuevo Proyecto de Firebase
 
-Para que la aplicación funcione correctamente, sigue estos pasos:
+1. Ve a la [consola de Firebase](https://console.firebase.google.com/).
+2. Haz clic en "Agregar proyecto" y sigue las instrucciones para crear un nuevo proyecto.
 
-1. **Solicitar Acceso al Proyecto de Firebase**: Asegúrate de que el propietario del proyecto te ha otorgado acceso desde la [consola de Firebase](https://console.firebase.google.com/).
-2. **Credenciales y Configuración**: Las credenciales necesarias estarán incluidas en el proyecto clonado. Configura tu archivo `.env` con las siguientes variables:
+##### Configurar Firebase para el Proyecto
+
+3. Una vez creado el proyecto, ve a la sección "Configuración del proyecto" y selecciona "Tus aplicaciones".
+4. Agrega una nueva aplicación web y sigue las instrucciones. Obtendrás un conjunto de claves de configuración de Firebase. Añade estas claves a un archivo `.env` en la raíz del proyecto:
     ```plaintext
     REACT_APP_FIREBASE_API_KEY=your_api_key
     REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
@@ -109,4 +94,91 @@ Para que la aplicación funcione correctamente, sigue estos pasos:
     REACT_APP_FIREBASE_APP_ID=your_app_id
     REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
     ```
-3. **Archivo `serviceAccountKey`**: Este archivo contiene las credenciales privadas necesarias para desplegar y ejecutar funciones de Firebase en el servidor. Solicita este archivo al propietario del proyecto y guárdalo en un lugar seguro.
+
+##### Instalar Firebase SDK
+
+5. Instala Firebase SDK en tu proyecto:
+    ```sh
+    npm install firebase
+    ```
+
+#### 4. Configurar Firebase CLI
+
+##### Instalar Firebase CLI
+
+1. Instala Firebase CLI si no lo tienes:
+    ```sh
+    npm install -g firebase-tools
+    ```
+
+##### Iniciar Sesión en Firebase
+
+2. Inicia sesión en Firebase:
+    ```sh
+    firebase login
+    ```
+
+##### Inicializar Firebase en el Proyecto
+
+3. Inicializa Firebase en el proyecto:
+    ```sh
+    firebase init
+    ```
+    Selecciona las siguientes opciones:
+    - Firestore: Configurar Firestore.
+    - Functions: Configurar Cloud Functions.
+    - Hosting: Configurar Firebase Hosting.
+    - Si es necesario, selecciona también otros servicios que vayas a utilizar.
+
+#### 5. Configurar el Proyecto React
+
+##### Crear el Archivo de Configuración de Firebase
+
+1. Crea un archivo `src/firebase-config.js` y añade la configuración de Firebase:
+    ```javascript
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "firebase/app";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+      authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+      databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+      projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+      storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+      appId: process.env.REACT_APP_FIREBASE_APP_ID,
+      measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    export default app;
+    ```
+
+### 6. Crear la Estructura del Proyecto
+
+#### Estructura de Directorios
+
+Asegúrate de que la estructura de directorios sea la siguiente:
+
+```plaintext
+aplicacion-tactil-tfg/
+├── public/
+│   ├── index.html
+│   └── ...
+├── src/
+│   ├── assets/
+│   ├── components/
+│   ├── App.css
+│   ├── App.js
+│   ├── firebase-config.js
+│   ├── index.css
+│   └── index.js
+├── .env
+├── .firebaserc
+├── .gitignore
+├── firebase.json
+├── package-lock.json
+└── package.json
