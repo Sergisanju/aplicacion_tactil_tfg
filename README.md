@@ -1,70 +1,112 @@
-# Getting Started with Create React App
+# Aplicación Táctil TFG
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Esta es una aplicación táctil desarrollada para la evaluación cognitiva de usuarios. La aplicación está construida utilizando Node.js, React y Firebase. Este README proporciona una guía completa para configurar el entorno de desarrollo, desplegar la aplicación y entender la estructura del proyecto.
 
-## Available Scripts
+## Tabla de Contenidos
 
-In the project directory, you can run:
+- [Requisitos del Sistema](#requisitos-del-sistema)
+- [Configuración del Entorno de Desarrollo](#configuración-del-entorno-de-desarrollo)
+- [Despliegue de la Aplicación](#despliegue-de-la-aplicación)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Acceso a Firebase](#acceso-a-firebase)
+- [Contribuciones](#contribuciones)
+- [Licencia](#licencia)
 
-### `npm start`
+## Requisitos del Sistema
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Para desarrollar y mantener la aplicación, asegúrate de tener instalados los siguientes componentes:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Node.js (v20.11.1)
+- npm (incluido con Node.js)
+- Firebase CLI
+- Git
 
-### `npm test`
+## Configuración del Entorno de Desarrollo
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Sigue estos pasos para configurar el entorno de desarrollo:
 
-### `npm run build`
+### Clonar el Repositorio
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Abre una terminal y clona el repositorio:
+    ```sh
+    git clone https://github.com/Sergisanju/aplicacion_tactil_tfg.git
+    cd aplicacion_tactil_tfg
+    ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Instalar Dependencias
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Instala Node.js y npm desde [nodejs.org](https://nodejs.org/).
+3. Verifica la instalación:
+    ```sh
+    node -v
+    npm -v
+    ```
+4. Instala las dependencias del proyecto:
+    ```sh
+    npm install
+    ```
 
-### `npm run eject`
+## Despliegue de la Aplicación
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Arranque del Frontend
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Asegúrate de estar en el directorio raíz del proyecto.
+2. Inicia el servidor de desarrollo de React:
+    ```sh
+    npm start
+    ```
+3. La aplicación estará disponible en `http://localhost:3000`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Arranque del Backend
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+1. Inicia sesión en Firebase desde la terminal:
+    ```sh
+    firebase login
+    ```
+2. Despliega el backend en Firebase:
+    ```sh
+    firebase deploy
+    ```
 
-## Learn More
+## Estructura del Proyecto
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+La estructura general del proyecto es la siguiente:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- **.github**: Configuraciones para GitHub, como flujos de trabajo de GitHub Actions.
+- **build**: Carpeta generada automáticamente al compilar la aplicación para producción.
+- **functions**: Contiene las funciones de Firebase (Cloud Functions) para el backend.
+- **node_modules**: Módulos y paquetes instalados por npm necesarios para el proyecto.
+- **public**: Archivos estáticos como imágenes y el archivo `index.html`.
+- **src**: Todo el código fuente del proyecto, incluyendo componentes de React, servicios y utilidades.
+  - **assets**: Recursos como imágenes.
+  - **components**: Componentes de React organizados por funcionalidades.
+  - **upload-json**: Directorio para la subida de archivos JSON.
+  - **App.css**: Estilos CSS para la aplicación principal.
+  - **App.js**: Componente principal de la aplicación.
+  - **firebase-config.js**: Configuración de Firebase.
+  - **index.css**: Estilos CSS globales.
+  - **index.js**: Punto de entrada principal de la aplicación.
+- **.env**: Archivo de variables de entorno con configuraciones sensibles (no incluido en el repositorio).
+- **.firebaserc**: Configuración de Firebase para el proyecto.
+- **.gitignore**: Especifica los archivos y directorios que Git debe ignorar.
+- **firebase.json**: Configuración de Firebase Hosting.
+- **package-lock.json**: Describe la estructura completa de las dependencias del proyecto.
+- **package.json**: Lista las dependencias del proyecto y scripts de npm.
 
-### Code Splitting
+## Acceso a Firebase
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Para que la aplicación funcione correctamente, sigue estos pasos:
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. **Solicitar Acceso al Proyecto de Firebase**: Asegúrate de que el propietario del proyecto te ha otorgado acceso desde la [consola de Firebase](https://console.firebase.google.com/).
+2. **Credenciales y Configuración**: Las credenciales necesarias estarán incluidas en el proyecto clonado. Configura tu archivo `.env` con las siguientes variables:
+    ```plaintext
+    REACT_APP_FIREBASE_API_KEY=your_api_key
+    REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
+    REACT_APP_FIREBASE_DATABASE_URL=your_database_url
+    REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+    REACT_APP_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+    REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+    REACT_APP_FIREBASE_APP_ID=your_app_id
+    REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
+    ```
+3. **Archivo `serviceAccountKey`**: Este archivo contiene las credenciales privadas necesarias para desplegar y ejecutar funciones de Firebase en el servidor. Solicita este archivo al propietario del proyecto y guárdalo en un lugar seguro.
