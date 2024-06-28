@@ -24,6 +24,6 @@ yarn-error.log*
 
 public/manifest.json
 
-.firebase
+.firebase/
 
 .env
