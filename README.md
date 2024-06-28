@@ -28,9 +28,11 @@ Para desarrollar y mantener la aplicación, asegúrate de tener instalados los s
 
 ## Configuración del Entorno de Desarrollo
 
-Sigue estos pasos para configurar el entorno de desarrollo:
+### Opción 1: Clonar el Repositorio
 
-### Clonar el Repositorio
+Sigue estos pasos para configurar el entorno de desarrollo clonando el repositorio existente:
+
+#### Clonar el Repositorio
 
 1. Abre una terminal y clona el repositorio:
     ```sh
@@ -38,7 +40,7 @@ Sigue estos pasos para configurar el entorno de desarrollo:
     cd aplicacion_tactil_tfg
     ```
 
-### Instalar Dependencias
+#### Instalar Dependencias
 
 2. Instala Node.js y npm desde [nodejs.org](https://nodejs.org/).
 3. Verifica la instalación:
@@ -51,7 +53,7 @@ Sigue estos pasos para configurar el entorno de desarrollo:
     npm install
     ```
 
-### Configuración desde Cero
+### Opción 2: Configuración desde Cero
 
 Sigue estos pasos si deseas iniciar un nuevo proyecto desde cero:
 
