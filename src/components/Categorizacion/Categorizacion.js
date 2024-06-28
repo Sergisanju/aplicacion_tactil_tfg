@@ -15,6 +15,7 @@ const Categorizacion = () => {
   const [mostrarModal, setMostrarModal] = useState(false); // Estado para mostrar el modal de finalización
   const [horaDeInicio, setHoraDeInicio] = useState(null); // Estado para almacenar la hora de inicio del juego
   const [errores, setErrores] = useState(0); // Estado para contar los errores cometidos durante el juego
+  const [sessionId] = useState(Date.now().toString()); // Estado para el ID de la sesión de juego
   const firestore = getFirestore(); // Instancia de Firestore
   const auth = getAuth(); // Instancia de autenticación de Firebase
   const navigate = useNavigate(); // Hook para la navegación programática
@@ -141,6 +142,31 @@ const Categorizacion = () => {
     cargarDatos(); // Llama a la función para cargar los datos al montar el componente
   }, [firestore, nivel, dificultad]);
 
+  // Función para guardar los resultados del juego en Firestore
+  const guardarResultadosDelJuego = useCallback(async (horaDeFinActual) => {
+    const duracionDelJuegoMs = horaDeFinActual - horaDeInicio;
+    const duracionDelJuegoSegundos = Math.floor(duracionDelJuegoMs / 1000); // Convierte la duración a segundos
+    const usuario = auth.currentUser;
+    const resultado = {
+      nivel,
+      dificultad,
+      duracion: duracionDelJuegoSegundos,
+      timestamp: new Date().toISOString(),
+      jugadorId: usuario ? usuario.email : 'anonimo',
+      elementosClasificados: elementos.length,
+      errores, // Guarda el número de errores
+      categorias: categorias,
+      sessionId, // Guarda el ID de la sesión de juego
+    };
+    try {
+      const usuarioDocRef = collection(firestore, `ResultadosJuegos/categorizacion/usuarios/${usuario ? usuario.uid : 'anonimo'}/resultados`);
+      await addDoc(usuarioDocRef, resultado);
+      console.log('Resultados del juego guardados con éxito');
+    } catch (error) {
+      console.error('Error al guardar los resultados del juego:', error);
+    }
+  }, [horaDeInicio, auth, firestore, nivel, dificultad, elementos, errores, categorias, sessionId]);
+
   // Maneja el inicio del arrastre de un elemento
   const manejarArrastreInicio = (e, elemento) => {
     const clientX = e.clientX || (e.touches && e.touches[0].clientX);
@@ -169,7 +195,7 @@ const Categorizacion = () => {
   }, [arrastrando, elementoActual, posicionInicial]);
 
   // Maneja la acción al soltar un elemento
-  const manejarSoltar = (e) => {
+  const manejarSoltar = useCallback((e) => {
     if (arrastrando && elementoActual) {
       const clientX = e.clientX !== undefined ? e.clientX : e.changedTouches[0].clientX;
       const clientY = e.clientY !== undefined ? e.clientY : e.changedTouches[0].clientY;
@@ -237,34 +263,7 @@ const Categorizacion = () => {
       setElementoActual(null); // Restablece el elemento actual
       setArrastrando(false); // Indica que se ha terminado de arrastrar
     }
-  };
-
-  // Función para guardar los resultados del juego en Firestore
-  const guardarResultadosDelJuego = async (horaDeFinActual) => {
-    const duracionDelJuegoMs = horaDeFinActual - horaDeInicio;
-    const duracionDelJuegoSegundos = Math.floor(duracionDelJuegoMs / 1000); // Convierte la duración a segundos
-    const usuario = auth.currentUser;
-    const resultado = {
-      nivel,
-      dificultad,
-      duracion: duracionDelJuegoSegundos,
-      timestamp: new Date().toISOString(),
-      jugadorId: usuario ? usuario.email : 'anonimo',
-      elementosClasificados: elementos.length,
-      errores, // Guarda el número de errores
-      categorias: categorias,
-      sessionId, // Guarda el ID de la sesión de juego
-    };
-    try {
-      const usuarioDocRef = collection(firestore, `ResultadosJuegos/categorizacion/usuarios/${usuario ? usuario.uid : 'anonimo'}/resultados`);
-      await addDoc(usuarioDocRef, resultado);
-      console.log('Resultados del juego guardados con éxito');
-    } catch (error) {
-      console.error('Error al guardar los resultados del juego:', error);
-    }
-  };
-
-  const [sessionId] = useState(Date.now().toString());
+  }, [arrastrando, elementoActual, guardarResultadosDelJuego, elementos]);
 
   // Función para cerrar el modal y navegar a la página de resultados
   const cerrarModal = () => {
