@@ -26,4 +26,6 @@ public/manifest.json
 
 .firebase/
 
+functions/serviceAccountKey.json
+
 .env
