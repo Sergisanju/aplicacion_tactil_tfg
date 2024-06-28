@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 
 // Configuración de Firebase Admin
-const rutaCuentaServicio = 'C:/Users/sergi/OneDrive - Universidade de Santiago de Compostela/USC/4º_Ing_Informatica/TFG/APP/aplicacion-tactil-tfg-firebase-adminsdk-cypc7-440047711d.json';
+const rutaCuentaServicio = 'C:/Users/sergi/OneDrive - Universidade de Santiago de Compostela/USC/4º_Ing_Informatica/TFG/APP/aplicacion-tactil-tfg-firebase-adminsdk-cypc7-085e9a13e6.json';
 const cuentaServicio = JSON.parse(fs.readFileSync(rutaCuentaServicio, 'utf8'));
 
 initializeApp({
